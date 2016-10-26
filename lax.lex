@@ -50,24 +50,22 @@ BR_CL "]"
 
 %%
 {ID} {
-    printf("ID");
+    printf("%s\tID\n", yytext);
 }
 {CHARCONST} {
-    printf("CHARCONST");
+    printf("%s\tCHARCONST\n", yytext);
 }
 {WHITESPACE} {
-    printf("WHITESPACE");
+    printf("%s\tWHITESPACE\n", yytext);
 }
 {COMMENT} {
-    printf("COMMENT");
+    printf("%s\tCOMMENT\n", yytext);
 }
 
 . {
-    printf("Unknown");
+    printf("%s\tUnknown\n", yytext);
 }
 
-"program" {
-}
 %%
 int main() {
     yylex();

@@ -1,1 +1,3 @@
-231a
+record #po11 {
+int #xx11, #yy11;
+}

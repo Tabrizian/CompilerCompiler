@@ -13,7 +13,7 @@ NUMCONST {digit}+
 CHARCONST_SINGLEQOUTE ("'"[^"'"]"'")
 CHARCONST_SINGLEBACKSLASH ("\\"[^n0])
 CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
-BOOLCONST ("true") | ("false")
+BOOLCONST ("true"|"false")
 
 WHITESPACE [ \t]+
 
@@ -40,13 +40,15 @@ KW_UN_OPERATOR ("++"|"--")
 KW_COND_OPERATOR ("or"|"and"|"and then"|"or else")
 KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
-KW_UN_MATH_OPERATOR ({WHITESPACE}([-*?])|(^[-*?])
-KW_BI_MATH_OPERATOR [+-*/%]
+KW_UN_MATH_OPERATOR {WHITESPACE}(["-""*""?"]|^["-""*""?"])
+KW_BI_MATH_OPERATOR ["+""-""*""/""%"]
 
 PAR_OP "("
 PAR_CL ")"
 BR_OP "["
 BR_CL "]"
+CR_OP [{]
+CR_CL [}]
 
 %%
 {ID} {
@@ -151,6 +153,12 @@ BR_CL "]"
     printf("%s\tBR_OP\n", yytext);
 }
 {BR_CL} {
+    printf("%s\tBR_CL\n", yytext);
+}
+{CR_OP} {
+    printf("%s\tBR_OP\n", yytext);
+}
+{CR_CL} {
     printf("%s\tBR_CL\n", yytext);
 }
 

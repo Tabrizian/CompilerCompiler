@@ -156,10 +156,10 @@ CR_CL [}]
     printf("%s\tBR_CL\n", yytext);
 }
 {CR_OP} {
-    printf("%s\tBR_OP\n", yytext);
+    printf("%s\tCR_OP\n", yytext);
 }
 {CR_CL} {
-    printf("%s\tBR_CL\n", yytext);
+    printf("%s\tCR_CL\n", yytext);
 }
 
 

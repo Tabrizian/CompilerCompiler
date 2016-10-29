@@ -1,3 +1,4 @@
+
 record #SR00{
 	real #gr01;
 	bool #fl00;}

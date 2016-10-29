@@ -10,7 +10,7 @@ letdig ({digit}|{letter})
 
 ID #{letter}{letter}{digit}{digit}
 FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
-REAL (("0")|({non_zero_digit}{digit}*))"."({digit}*{non_zero_digit})
+REAL (("0")|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})|"0")
 
 NUMCONST ("0")|({non_zero_digit}{digit}*)
 FAKE_NUMCONST ("0")|({digit}*)

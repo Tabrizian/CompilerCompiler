@@ -1,3 +1,3 @@
-record #po11 {
-int #xx11, #yy11;
+record #po112 {
+inti #xx11, #yy11;
 }

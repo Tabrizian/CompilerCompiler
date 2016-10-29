@@ -8,8 +8,9 @@ letter [a-zA-Z]
 letdig ({digit}|{letter})
 
 ID #{letter}{letter}{digit}{digit}
-NUMCONST {digit}+
+FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
 
+NUMCONST {digit}+
 CHARCONST_SINGLEQOUTE ("'"[^"'"]"'")
 CHARCONST_SINGLEBACKSLASH ("\\"[^n0])
 CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
@@ -162,9 +163,9 @@ CR_CL [}]
     printf("%s\tCR_CL\n", yytext);
 }
 
-
-
-
+{FAKE_ID} {
+    printf("%s\tFAKE_ID\n", yytext);
+}
 
 . {
     printf("%s\tUnknown\n", yytext);

@@ -1,5 +1,5 @@
 record #po11{
-inti #xx11, #yy11;
+inti if          #xx11, #yy11;
 }
 ifs
 while

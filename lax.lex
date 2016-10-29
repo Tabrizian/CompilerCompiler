@@ -14,7 +14,7 @@ REAL (("0")|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})|"0")
 
 NUMCONST ("0")|({non_zero_digit}{digit}*)
 FAKE_NUMCONST ("0")|({digit}*)
-FAKE_NUM (("0")|({digit}*))"."({digit}*)
+FAKE_REAL (("0")|({digit}*))"."({digit}*)
 CHARCONST_SINGLEQOUTE ("'"{letdig}"'")
 CHARCONST_SINGLEBACKSLASH ("\\"{letdig})
 CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
@@ -40,16 +40,18 @@ KW_WHILE "while"
 KW_RETURN "return"
 KW_SEMICOLON ";"
 KW_BREAK "break"
-KW_BI_OPERATOR ("+="|"+"|"-="|"="|"/="|"*=")
-KW_UN_OPERATOR ("++"|"--")
-KW_COND_OPERATOR ("or"|"and"|"and then"|"or else")
+KW_PLUS "+"
+KW_MINUS "-"
+KW_EQUAL "="
+KW_DIVIDE "/"
+KW_MULTIPLY "*"
+KW_MODULU "%"
+KW_COND_OR "or"
+KW_COND_AND "and"
+KW_COND_ELSE "else"
+KW_COND_THEN "then"
 KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
-KW_UN_MATH_OPERATOR {WHITESPACE}(["-""*""?"]|^["-""*""?"])
-KW_BI_MATH_OPERATOR ["+"""*""/""%"]
-KW_MINUS "-"
-KW_MULTIPLY "*"
-KW_EQUAL "="
 
 PAR_OP "("
 PAR_CL ")"
@@ -129,26 +131,41 @@ PUNC_KW "[,]"
 {KW_BREAK} {
     printf("%s\tKW_BREAK\n", yytext);
 }
-{KW_BI_OPERATOR} {
-    printf("%s\tKW_BI_OPERATOR\n", yytext);
+
+{KW_PLUS} {
+    printf("%s\tKW_PLUS\n", yytext);
 }
-{KW_UN_OPERATOR} {
-    printf("%s\tKW_UN_OPERATOR\n", yytext);
+{KW_MINUS} {
+    printf("%s\tKW_MINUS\n", yytext);
 }
-{KW_COND_OPERATOR} {
-    printf("%s\tKW_COND_OPERATOR\n", yytext);
+{KW_EQUAL} {
+    printf("%s\tKW_EQUAL\n", yytext);
 }
+{KW_DIVIDE} {
+    printf("%s\tKW_DIVIDE\n", yytext);
+}
+{KW_MULTIPLY} {
+    printf("%s\tKW_MULTIPLY\n", yytext);
+}
+{KW_MODULU} {
+    printf("%s\tKW_MODULU\n", yytext);
+}
+
 {KW_COND_NOT} {
     printf("%s\tKW_COND_NOT\n", yytext);
 }
+{KW_COND_OR} {
+    printf("%s\tKW_COND_OR\n", yytext);
+}
+{KW_COND_AND} {
+    printf("%s\tKW_COND_AND\n", yytext);
+}
+{KW_COND_THEN} {
+    printf("%s\tKW_COND_THEN\n", yytext);
+}
+
 {KW_RELOP} {
     printf("%s\tKW_RELOP\n", yytext);
-}
-{KW_UN_MATH_OPERATOR} {
-    printf("%s\tKW_UN_MATH_OPERATOR\n", yytext);
-}
-{KW_BI_MATH_OPERATOR} {
-    printf("%s\tKW_BI_MATH_OPERATOR\n", yytext);
 }
 
 
@@ -171,21 +188,21 @@ PUNC_KW "[,]"
     printf("%s\tCR_CL\n", yytext);
 }
 
-{FAKE_ID} {
-    printf("%s\tFAKE_ID\n", yytext);
-}
 
 {REAL} {
     printf("%s\tREAL\n", yytext);
 }
 
-{FAKE_NUM} {
-    printf("%s\tFAKE_NUM\n", yytext);
+{FAKE_REAL} {
+    printf("%s\tFAKE_REAL\n", yytext);
 }
-
 {FAKE_NUMCONST} {
     printf("%s\tFAKE_NUMCONST\n", yytext);
 }
+{FAKE_ID} {
+    printf("%s\tFAKE_ID\n", yytext);
+}
+
 . {
     printf("%s\tUnknown\n", yytext);
 }

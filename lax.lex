@@ -59,7 +59,7 @@ BR_OP "["
 BR_CL "]"
 CR_OP [{]
 CR_CL [}]
-PUNC_KW "[,]"
+PUNC_KW ","
 
 %%
 {ID} {
@@ -203,6 +203,9 @@ PUNC_KW "[,]"
     printf("%s\tFAKE_ID\n", yytext);
 }
 
+{PUNC_KW} {
+    printf("%s\tPUNC_KW\n", yytext);
+}
 . {
     printf("%s\tUnknown\n", yytext);
 }

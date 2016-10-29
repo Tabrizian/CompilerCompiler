@@ -9,11 +9,11 @@ record #SD33
 	char #ln11[10];
 }
 
-real #ma33(#SD33 #in33[]){
+real #ma33(#SD33 #in33[]){	// this is a function 
 	int #co00=0;
 	real #te25=0.0;
 	while(#co00 .lt *#in33){
-		if(#in33[#co00].#xs03.#fl00 .eq true)
+		if(#in33[#co00].#xs03.#fl00 .eq true)	// this is if
 			#te25 += #in33[#co00].#xs03.#gr01;
 		else
 			#te25 -= 2*#in33[#co00].#xs03.#gr01;

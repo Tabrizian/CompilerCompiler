@@ -1,3 +1,9 @@
-record #po112 {
+record #po11{
 inti #xx11, #yy11;
 }
+ifs
+while
+1025
+10.25
+10.250
+01025

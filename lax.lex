@@ -4,13 +4,17 @@
 %}
 
 digit [0-9]
+non_zero_digit [1-9]
 letter [a-zA-Z]
 letdig ({digit}|{letter})
 
 ID #{letter}{letter}{digit}{digit}
 FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
+REAL (("0")|({non_zero_digit}{digit}*))"."({digit}*{non_zero_digit})
 
-NUMCONST {digit}+
+NUMCONST ("0")|({non_zero_digit}{digit}*)
+FAKE_NUMCONST ("0")|({digit}*)
+FAKE_NUM (("0")|({digit}*))"."({digit}*)
 CHARCONST_SINGLEQOUTE ("'"[^"'"]"'")
 CHARCONST_SINGLEBACKSLASH ("\\"[^n0])
 CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
@@ -167,6 +171,17 @@ CR_CL [}]
     printf("%s\tFAKE_ID\n", yytext);
 }
 
+{REAL} {
+    printf("%s\tREAL\n", yytext);
+}
+
+{FAKE_NUM} {
+    printf("%s\tFAKE_NUM\n", yytext);
+}
+
+{FAKE_NUMCONST} {
+    printf("%s\tFAKE_NUMCONST\n", yytext);
+}
 . {
     printf("%s\tUnknown\n", yytext);
 }

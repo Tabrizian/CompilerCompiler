@@ -15,8 +15,8 @@ REAL (("0")|({non_zero_digit}{digit}*))"."({digit}*{non_zero_digit})
 NUMCONST ("0")|({non_zero_digit}{digit}*)
 FAKE_NUMCONST ("0")|({digit}*)
 FAKE_NUM (("0")|({digit}*))"."({digit}*)
-CHARCONST_SINGLEQOUTE ("'"[^"'"]"'")
-CHARCONST_SINGLEBACKSLASH ("\\"[^n0])
+CHARCONST_SINGLEQOUTE ("'"{letdig}"'")
+CHARCONST_SINGLEBACKSLASH ("\\"{letdig})
 CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
 BOOLCONST ("true"|"false")
 
@@ -40,13 +40,16 @@ KW_WHILE "while"
 KW_RETURN "return"
 KW_SEMICOLON ";"
 KW_BREAK "break"
-KW_BI_OPERATOR ("+="|"+"|"-"|"-="|"="|"/="|"*=")
+KW_BI_OPERATOR ("+="|"+"|"-="|"="|"/="|"*=")
 KW_UN_OPERATOR ("++"|"--")
 KW_COND_OPERATOR ("or"|"and"|"and then"|"or else")
 KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
 KW_UN_MATH_OPERATOR {WHITESPACE}(["-""*""?"]|^["-""*""?"])
-KW_BI_MATH_OPERATOR ["+""-""*""/""%"]
+KW_BI_MATH_OPERATOR ["+"""*""/""%"]
+KW_MINUS "-"
+KW_MULTIPLY "*"
+KW_EQUAL "="
 
 PAR_OP "("
 PAR_CL ")"
@@ -54,6 +57,7 @@ BR_OP "["
 BR_CL "]"
 CR_OP [{]
 CR_CL [}]
+PUNC_KW "[,]"
 
 %%
 {ID} {

@@ -1,4 +1,6 @@
-all:
+all: lex run
+
+lex:
 	flex lax.lex
 	gcc lex.yy.c -o compilercompiler.out
 

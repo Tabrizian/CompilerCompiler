@@ -1,24 +1,32 @@
 %option noyywrap
 %{
     int counter = 0;
+    int no_of_id = 0;
+    struct record {
+        int id;
+        char *token;
+        char *value;
+    };
+
+    struct record symbol_table[100];
 %}
 
 digit [0-9]
 non_zero_digit [1-9]
 letter [a-zA-Z]
-letdig ({digit}|{letter})
+letdig ({digit}%s\t\t\t|{letter})
 
 ID #{letter}{letter}{digit}{digit}
-FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
-REAL (("0")|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})|"0")
+FAKE_ID ("#"{letdig}*)%s\t\t\t|({letter}{letdig}*)
+REAL (("0")%s\t\t\t|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})%s\t\t\t|"0")
 
-NUMCONST ("0")|({non_zero_digit}{digit}*)
-FAKE_NUMCONST ("0")|({digit}*)
-FAKE_REAL (("0")|({digit}*))"."({digit}*)
+NUMCONST ("0")%s\t\t\t|({non_zero_digit}{digit}*)
+FAKE_NUMCONST ("0")%s\t\t\t|({digit}*)
+FAKE_REAL (("0")%s\t\t\t|({digit}*))"."({digit}*)
 CHARCONST_SINGLEQOUTE ("'"{letdig}"'")
 CHARCONST_SINGLEBACKSLASH ("\\"{letdig})
-CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
-BOOLCONST ("true"|"false")
+CHARCONST ({CHARCONST_SINGLEQOUTE}%s\t\t\t|{CHARCONST_SINGLEBACKSLASH})
+BOOLCONST ("true"%s\t\t\t|"false")
 
 WHITESPACE [ \t]+
 
@@ -51,7 +59,7 @@ KW_COND_AND "and"
 KW_COND_ELSE "else"
 KW_COND_THEN "then"
 KW_COND_NOT "not"
-KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
+KW_RELOP (".le"%s\t\t\t|".lt"%s\t\t\t|".gt"%s\t\t\t|".ge"%s\t\t\t|".eq"%s\t\t\t|".ne")
 
 PAR_OP "("
 PAR_CL ")"
@@ -63,154 +71,161 @@ PUNC_KW ","
 
 %%
 {ID} {
-    printf("%s\tID\n", yytext);
+    struct record new_record;
+    new_record.token = "ID";
+    new_record.id = no_of_id;
+    new_record.value = yytext;
+    symbol_table[no_of_id].id = new_record.id;
+    printf("%s\t\t\tID\t\t%d\n", yytext, new_record.id);
+    no_of_id++;
 }
 {NUMCONST} {
-    printf("%s\tNUMCONST\n", yytext);
+    printf("%s\t\t\tNUMCONST\t\t-\n", yytext);
 }
 {CHARCONST} {
-    printf("%s\tCHARCONST\n", yytext);
+    printf("%s\t\t\tCHARCONST\t\t-\n", yytext);
 }
 {BOOLCONST} {
-    printf("%s\tBOOLCONST\n", yytext);
+    printf("%s\t\t\tBOOLCONST\t\t-\n", yytext);
 }
 {WHITESPACE} {
-    printf("%s\tWHITESPACE\n", yytext);
+    printf("%s\t\t\tKW_RECORD\t\t-\n", "white");
 }
 {COMMENT} {
-    printf("%s\tCOMMENT\n", yytext);
+    printf("%.4s\t\t\tCOMMENT\t\t-\n", yytext);
 }
 
 
 
 {KW_RECORD} {
-    printf("%s\tKW_RECORD\n", yytext);
+    printf("%s\t\t\tKW_RECORD\t\t-\n", yytext);
 }
 {KW_STATIC} {
-    printf("%s\tKW_STATIC\n", yytext);
+    printf("%s\t\t\tKW_STATIC\t\t-\n", yytext);
 }
 {KW_INT} {
-    printf("%s\tKW_INT\n", yytext);
+    printf("%s\t\t\tKW_INT\t\t-\n", yytext);
 }
 {KW_REAL} {
-    printf("%s\tKW_REAL\n", yytext);
+    printf("%s\t\t\tKW_REAL\t\t-\n", yytext);
 }
 {KW_BOOL} {
-    printf("%s\tKW_BOOL\n", yytext);
+    printf("%s\t\t\tKW_BOOL\t\t-\n", yytext);
 }
 {KW_CHAR} {
-    printf("%s\tKW_CHAR\n", yytext);
+    printf("%s\t\t\tKW_CHAR\t\t-\n", yytext);
 }
 {KW_IF} {
-    printf("%s\tKW_IF\n", yytext);
+    printf("%s\t\t\tKW_IF\t\t-\n", yytext);
 }
 {KW_ELSE} {
-    printf("%s\tKW_ELSE\n", yytext);
+    printf("%s\t\t\tKW_ELSE\t\t-\n", yytext);
 }
 {KW_SWITCH} {
-    printf("%s\tKW_SWITCH\n", yytext);
+    printf("%s\t\t\tKW_SWITCH\t\t-\n", yytext);
 }
 {KW_END} {
-    printf("%s\tKW_END\n", yytext);
+    printf("%s\t\t\tKW_END\t\t-\n", yytext);
 }
 {KW_CASE} {
-    printf("%s\tKW_CASE\n", yytext);
+    printf("%s\t\t\tKW_CASE\t\t-\n", yytext);
 }
 {KW_DEFAULT} {
-    printf("%s\tKW_DEFAULT\n", yytext);
+    printf("%s\t\t\tKW_DEFAULT\t\t-\n", yytext);
 }
 {KW_WHILE} {
-    printf("%s\tKW_WHILE\n", yytext);
+    printf("%s\t\t\tKW_WHILE\t\t-\n", yytext);
 }
 {KW_RETURN} {
-    printf("%s\tKW_RETURN\n", yytext);
+    printf("%s\t\t\tKW_RETURN\t\t-\n", yytext);
 }
 {KW_SEMICOLON} {
-    printf("%s\tKW_SEMICOLON\n", yytext);
+    printf("%s\t\t\tKW_SEMICOLON\t\t-\n", yytext);
 }
 {KW_BREAK} {
-    printf("%s\tKW_BREAK\n", yytext);
+    printf("%s\t\t\tKW_BREAK\t\t-\n", yytext);
 }
 
 {KW_PLUS} {
-    printf("%s\tKW_PLUS\n", yytext);
+    printf("%s\t\t\tKW_PLUS\t\t-\n", yytext);
 }
 {KW_MINUS} {
-    printf("%s\tKW_MINUS\n", yytext);
+    printf("%s\t\t\tKW_MINUS\t\t-\n", yytext);
 }
 {KW_EQUAL} {
-    printf("%s\tKW_EQUAL\n", yytext);
+    printf("%s\t\t\tKW_EQUAL\t\t-\n", yytext);
 }
 {KW_DIVIDE} {
-    printf("%s\tKW_DIVIDE\n", yytext);
+    printf("%s\t\t\tKW_DIVIDE\t\t-\n", yytext);
 }
 {KW_MULTIPLY} {
-    printf("%s\tKW_MULTIPLY\n", yytext);
+    printf("%s\t\t\tKW_MULTIPLY\t\t-\n", yytext);
 }
 {KW_MODULU} {
-    printf("%s\tKW_MODULU\n", yytext);
+    printf("%s\t\t\tKW_MODULU\t\t-\n", yytext);
 }
 
 {KW_COND_NOT} {
-    printf("%s\tKW_COND_NOT\n", yytext);
+    printf("%s\t\t\tKW_COND_NOT\t\t-\n", yytext);
 }
 {KW_COND_OR} {
-    printf("%s\tKW_COND_OR\n", yytext);
+    printf("%s\t\t\tKW_COND_OR\t\t-\n", yytext);
 }
 {KW_COND_AND} {
-    printf("%s\tKW_COND_AND\n", yytext);
+    printf("%s\t\t\tKW_COND_AND\t\t-\n", yytext);
 }
 {KW_COND_THEN} {
-    printf("%s\tKW_COND_THEN\n", yytext);
+    printf("%s\t\t\tKW_COND_THEN\t\t-\n", yytext);
 }
 
 {KW_RELOP} {
-    printf("%s\tKW_RELOP\n", yytext);
+    printf("%s\t\t\tKW_RELOP\t\t-\n", yytext);
 }
 
 
 {PAR_OP} {
-    printf("%s\tPAR_OP\n", yytext);
+    printf("%s\t\t\tPAR_OP\t\t-\n", yytext);
 }
 {PAR_CL} {
-    printf("%s\tPAR_CL\n", yytext);
+    printf("%s\t\t\tPAR_CL\t\t-\n", yytext);
 }
 {BR_OP} {
-    printf("%s\tBR_OP\n", yytext);
+    printf("%s\t\t\tBR_OP\t\t-\n", yytext);
 }
 {BR_CL} {
-    printf("%s\tBR_CL\n", yytext);
+    printf("%s\t\t\tBR_CL\t\t-\n", yytext);
 }
 {CR_OP} {
-    printf("%s\tCR_OP\n", yytext);
+    printf("%s\t\t\tCR_OP\t\t-\n", yytext);
 }
 {CR_CL} {
-    printf("%s\tCR_CL\n", yytext);
+    printf("%s\t\t\tCR_CL\t\t-\n", yytext);
 }
 
 
 {REAL} {
-    printf("%s\tREAL\n", yytext);
+    printf("%s\t\t\tREAL\t\t-\n", yytext);
 }
 
 {FAKE_REAL} {
-    printf("%s\tFAKE_REAL\n", yytext);
+    printf("%s\t\t\tFAKE_REAL\t\t-\n", yytext);
 }
 {FAKE_NUMCONST} {
-    printf("%s\tFAKE_NUMCONST\n", yytext);
+    printf("%s\t\t\tFAKE_NUMCONST\t\t-\n", yytext);
 }
 {FAKE_ID} {
-    printf("%s\tFAKE_ID\n", yytext);
+    printf("%s\t\t\tFAKE_ID\t\t-\n", yytext);
 }
 
 {PUNC_KW} {
-    printf("%s\tPUNC_KW\n", yytext);
+    printf("%s\t\t\tPUNC_KW\t\t-\n", yytext);
 }
 . {
-    printf("%s\tUnknown\n", yytext);
+    printf("%s\t\t\tUnknown\t\t-\n", yytext);
 }
 
 %%
 int main() {
+    printf("Text\t\t\tToken\t\tRefrence To symbol table\n");
     yylex();
 }

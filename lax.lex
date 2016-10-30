@@ -89,7 +89,7 @@ PUNC_KW ","
     printf("%s\t\t\tBOOLCONST\t\t-\n", yytext);
 }
 {WHITESPACE} {
-    printf("%s\t\t\tKW_RECORD\t\t-\n", "white");
+    printf("%s\t\t\tWHITESPACE\t\t-\n", "white");
 }
 {COMMENT} {
     printf("%.4s\t\t\tCOMMENT\t\t-\n", yytext);

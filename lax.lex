@@ -16,6 +16,8 @@ non_zero_digit [1-9]
 letter [a-zA-Z]
 letdig ({digit}|{letter})
 
+PUNC_KW ["."","]
+
 ID #{letter}{letter}{digit}{digit}
 FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
 REAL (("0")|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})|"0")
@@ -67,7 +69,6 @@ BR_OP "["
 BR_CL "]"
 CR_OP [{]
 CR_CL [}]
-PUNC_KW ","
 
 %%
 {ID} {

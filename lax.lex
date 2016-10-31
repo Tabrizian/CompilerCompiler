@@ -14,19 +14,19 @@
 digit [0-9]
 non_zero_digit [1-9]
 letter [a-zA-Z]
-letdig ({digit}%s\t\t\t|{letter})
+letdig ({digit}|{letter})
 
 ID #{letter}{letter}{digit}{digit}
-FAKE_ID ("#"{letdig}*)%s\t\t\t|({letter}{letdig}*)
-REAL (("0")%s\t\t\t|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})%s\t\t\t|"0")
+FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
+REAL (("0")|({non_zero_digit}{digit}*))"."(({digit}*{non_zero_digit})|"0")
 
-NUMCONST ("0")%s\t\t\t|({non_zero_digit}{digit}*)
-FAKE_NUMCONST ("0")%s\t\t\t|({digit}*)
-FAKE_REAL (("0")%s\t\t\t|({digit}*))"."({digit}*)
+NUMCONST ("0")|({non_zero_digit}{digit}*)
+FAKE_NUMCONST ("0")|({digit}*)
+FAKE_REAL (("0")|({digit}*))"."({digit}*)
 CHARCONST_SINGLEQOUTE ("'"{letdig}"'")
 CHARCONST_SINGLEBACKSLASH ("\\"{letdig})
-CHARCONST ({CHARCONST_SINGLEQOUTE}%s\t\t\t|{CHARCONST_SINGLEBACKSLASH})
-BOOLCONST ("true"%s\t\t\t|"false")
+CHARCONST ({CHARCONST_SINGLEQOUTE}|{CHARCONST_SINGLEBACKSLASH})
+BOOLCONST ("true"|"false")
 
 WHITESPACE [ \t]+
 
@@ -59,7 +59,7 @@ KW_COND_AND "and"
 KW_COND_ELSE "else"
 KW_COND_THEN "then"
 KW_COND_NOT "not"
-KW_RELOP (".le"%s\t\t\t|".lt"%s\t\t\t|".gt"%s\t\t\t|".ge"%s\t\t\t|".eq"%s\t\t\t|".ne")
+KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
 
 PAR_OP "("
 PAR_CL ")"

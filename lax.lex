@@ -77,20 +77,20 @@ CR_CL [}]
     new_record.id = no_of_id;
     new_record.value = yytext;
     symbol_table[no_of_id].id = new_record.id;
-    printf("%s\t\t\tID\t\t%d\n", yytext, new_record.id);
     no_of_id++;
+    return "ID";
 }
 {NUMCONST} {
-    printf("%s\t\t\tNUMCONST\t\t-\n", yytext);
+    return NUMCONST;
 }
 {CHARCONST} {
-    printf("%s\t\t\tCHARCONST\t\t-\n", yytext);
+    return CHARCONST;
 }
 {BOOLCONST} {
-    printf("%s\t\t\tBOOLCONST\t\t-\n", yytext);
+    return BOOLCONST;
 }
 {WHITESPACE} {
-    printf("%s\t\t\tWHITESPACE\t\t-\n", "white");
+    return WHITESPACE;
 }
 {COMMENT} {
     printf("%.4s\t\t\tCOMMENT\t\t-\n", yytext);
@@ -225,6 +225,5 @@ CR_CL [}]
 
 %%
 int main() {
-    printf("Text\t\t\tToken\t\tRefrence To symbol table\n");
     yylex();
 }

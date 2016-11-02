@@ -1,8 +1,7 @@
-all: parse run
+all: lex parse run
 
 lex:
 	flex lax.lex
-	gcc lex.yy.c -o compilercompiler.out
 
 parse:
 	bison -d parser.y

@@ -17,7 +17,7 @@ FILE *fout;
     _Bool bval;
     char *id;
 }
-%token PUNC_KW ID REAL FAKE_ID NUMCONST FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST BOOLCONST WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND KW_COND_ELSE KW_COND_THEN KW_COND_NOT KW_RELOP PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL
+%token PUNC_KW ID REAL FAKE_ID NUMCONST FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST BOOLCONST WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND KW_COND_ELSE KW_COND_THEN KW_COND_NOT KW_RELOP PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown
 
 %%
 program : declarationList {
@@ -56,10 +56,8 @@ int main() {
 
 
 void yyerror(const char *s) {
-
-    fprintf(fout, "**Error: Line %d near token '%s' --> Message: %s **\n", yylineno,yytext ,s);
-    printf("**Error: Line %d near token '%s' --> Message: %s **\n", yylineno,yytext, s);
-    // might as well halt now:
-    //exit(-1);
-
+    fprintf(fout, "**Error: Line %d near token '%s' --> Message: %s **\n",
+        yylineno, yytext, s);
+    printf("**Error: Line %d near token '%s' --> Message: %s **\n", yylineno,
+        yytext, s);
 }

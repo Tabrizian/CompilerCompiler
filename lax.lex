@@ -1,5 +1,6 @@
 %option noyywrap
 %{
+    #include "parser.tab.h"
     int counter = 0;
     int no_of_id = 0;
     struct record {
@@ -93,137 +94,134 @@ CR_CL [}]
     return WHITESPACE;
 }
 {COMMENT} {
-    printf("%.4s\t\t\tCOMMENT\t\t-\n", yytext);
+    return COMMENT;
 }
 
 {KW_RECORD} {
-    printf("%s\t\t\tKW_RECORD\t\t-\n", yytext);
+    return KW_RECORD;
 }
 {KW_STATIC} {
-    printf("%s\t\t\tKW_STATIC\t\t-\n", yytext);
+    return KW_STATIC;
 }
 {KW_INT} {
-    printf("%s\t\t\tKW_INT\t\t-\n", yytext);
+    return KW_INT;
 }
 {KW_REAL} {
-    printf("%s\t\t\tKW_REAL\t\t-\n", yytext);
+    return KW_REAL;
 }
 {KW_BOOL} {
-    printf("%s\t\t\tKW_BOOL\t\t-\n", yytext);
+    return KW_BOOL;
 }
 {KW_CHAR} {
-    printf("%s\t\t\tKW_CHAR\t\t-\n", yytext);
+    return KW_CHAR;
 }
 {KW_IF} {
-    printf("%s\t\t\tKW_IF\t\t-\n", yytext);
+    return KW_IF;
 }
 {KW_ELSE} {
-    printf("%s\t\t\tKW_ELSE\t\t-\n", yytext);
+    return KW_ELSE;
 }
 {KW_SWITCH} {
-    printf("%s\t\t\tKW_SWITCH\t\t-\n", yytext);
+    return KW_SWITCH;
 }
 {KW_END} {
-    printf("%s\t\t\tKW_END\t\t-\n", yytext);
+    return KW_END;
 }
 {KW_CASE} {
-    printf("%s\t\t\tKW_CASE\t\t-\n", yytext);
+    return KW_CASE;
 }
 {KW_DEFAULT} {
-    printf("%s\t\t\tKW_DEFAULT\t\t-\n", yytext);
+    return KW_DEFAULT;
 }
 {KW_WHILE} {
-    printf("%s\t\t\tKW_WHILE\t\t-\n", yytext);
+    return KW_WHILE;
 }
 {KW_RETURN} {
-    printf("%s\t\t\tKW_RETURN\t\t-\n", yytext);
+    return KW_RETURN;
 }
 {KW_SEMICOLON} {
-    printf("%s\t\t\tKW_SEMICOLON\t\t-\n", yytext);
+    return KW_SEMICOLON;
 }
 {KW_BREAK} {
-    printf("%s\t\t\tKW_BREAK\t\t-\n", yytext);
+    return KW_BREAK;
 }
 
 {KW_PLUS} {
-    printf("%s\t\t\tKW_PLUS\t\t-\n", yytext);
+    return KW_PLUS;
 }
 {KW_MINUS} {
-    printf("%s\t\t\tKW_MINUS\t\t-\n", yytext);
+    return KW_MINUS;
 }
 {KW_EQUAL} {
-    printf("%s\t\t\tKW_EQUAL\t\t-\n", yytext);
+    return KW_EQUAL;
 }
 {KW_DIVIDE} {
-    printf("%s\t\t\tKW_DIVIDE\t\t-\n", yytext);
+    return KW_DIVIDE;
 }
 {KW_MULTIPLY} {
-    printf("%s\t\t\tKW_MULTIPLY\t\t-\n", yytext);
+    return KW_MULTIPLY;
 }
 {KW_MODULU} {
-    printf("%s\t\t\tKW_MODULU\t\t-\n", yytext);
+    return KW_MODULU;
 }
 
 {KW_COND_NOT} {
-    printf("%s\t\t\tKW_COND_NOT\t\t-\n", yytext);
+    return KW_COND_NOT;
 }
 {KW_COND_OR} {
-    printf("%s\t\t\tKW_COND_OR\t\t-\n", yytext);
+    return KW_COND_OR;
 }
 {KW_COND_AND} {
-    printf("%s\t\t\tKW_COND_AND\t\t-\n", yytext);
+    return KW_COND_AND;
 }
 {KW_COND_THEN} {
-    printf("%s\t\t\tKW_COND_THEN\t\t-\n", yytext);
+    return KW_COND_THEN;
 }
 {KW_RELOP} {
-    printf("%s\t\t\tKW_RELOP\t\t-\n", yytext);
+    return KW_RELOP;
 }
 
 {PAR_OP} {
-    printf("%s\t\t\tPAR_OP\t\t-\n", yytext);
+    return PAR_OP;
 }
 {PAR_CL} {
-    printf("%s\t\t\tPAR_CL\t\t-\n", yytext);
+    return PAR_CL;
 }
 
 {BR_OP} {
-    printf("%s\t\t\tBR_OP\t\t-\n", yytext);
+    return BR_OP;
 }
 {BR_CL} {
-    printf("%s\t\t\tBR_CL\t\t-\n", yytext);
+    return BR_CL;
 }
 
 {CR_OP} {
-    printf("%s\t\t\tCR_OP\t\t-\n", yytext);
+    return CR_OP;
 }
 {CR_CL} {
-    printf("%s\t\t\tCR_CL\t\t-\n", yytext);
+    return CR_CL;
 }
 
 {REAL} {
-    printf("%s\t\t\tREAL\t\t-\n", yytext);
+    return REAL;
 }
 
 {FAKE_REAL} {
-    printf("%s\t\t\tFAKE_REAL\t\t-\n", yytext);
+    return FAKE_REAL;
 }
 {FAKE_NUMCONST} {
-    printf("%s\t\t\tFAKE_NUMCONST\t\t-\n", yytext);
+    return FAKE_NUMCONST;
 }
 {FAKE_ID} {
-    printf("%s\t\t\tFAKE_ID\t\t-\n", yytext);
+    return FAKE_ID;
 }
 
 {PUNC_KW} {
-    printf("%s\t\t\tPUNC_KW\t\t-\n", yytext);
+    return PUNC_KW;
 }
 
 . {
-    printf("%s\t\t\tUnknown\t\t-\n", yytext);
+    return Unknown;
 }
 
 %%
-int main() {
-    yylex();
-}

@@ -96,8 +96,6 @@ CR_CL [}]
     printf("%.4s\t\t\tCOMMENT\t\t-\n", yytext);
 }
 
-
-
 {KW_RECORD} {
     printf("%s\t\t\tKW_RECORD\t\t-\n", yytext);
 }
@@ -178,11 +176,9 @@ CR_CL [}]
 {KW_COND_THEN} {
     printf("%s\t\t\tKW_COND_THEN\t\t-\n", yytext);
 }
-
 {KW_RELOP} {
     printf("%s\t\t\tKW_RELOP\t\t-\n", yytext);
 }
-
 
 {PAR_OP} {
     printf("%s\t\t\tPAR_OP\t\t-\n", yytext);
@@ -190,19 +186,20 @@ CR_CL [}]
 {PAR_CL} {
     printf("%s\t\t\tPAR_CL\t\t-\n", yytext);
 }
+
 {BR_OP} {
     printf("%s\t\t\tBR_OP\t\t-\n", yytext);
 }
 {BR_CL} {
     printf("%s\t\t\tBR_CL\t\t-\n", yytext);
 }
+
 {CR_OP} {
     printf("%s\t\t\tCR_OP\t\t-\n", yytext);
 }
 {CR_CL} {
     printf("%s\t\t\tCR_CL\t\t-\n", yytext);
 }
-
 
 {REAL} {
     printf("%s\t\t\tREAL\t\t-\n", yytext);
@@ -221,6 +218,7 @@ CR_CL [}]
 {PUNC_KW} {
     printf("%s\t\t\tPUNC_KW\t\t-\n", yytext);
 }
+
 . {
     printf("%s\t\t\tUnknown\t\t-\n", yytext);
 }

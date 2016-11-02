@@ -23,7 +23,30 @@ FILE *fout;
 program : declarationList {
             fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         };
-declarationList : FAKE_ID
+declarationList : declarationList declaration {
+            fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
+        }; | declaration
+        {
+            fprintf(fout, "Rule 3 \t\t declarationList -> declarationList declaration\n");
+        };
+declaration : varDeclaration
+        {
+            fprintf(fout, "Rule 4 \t\t declarationList -> declarationList declaration\n");
+        }; | funDeclaration
+        {
+            fprintf(fout, "Rule 5 \t\t declarationList -> declarationList declaration\n");
+        }; | recDeclaration
+        {
+            fprintf(fout, "Rule 6 \t\t declarationList -> declarationList declaration\n");
+        };
+
+recDeclaration : KW_RECORD ID PAR_OP localDeclarations PAR_CL
+               {
+                 fprintf(fout, "Rule 7 \t\t declarationList -> declarationList declaration\n");
+               };
+varDeclaration : typeSpecifier varDeclist PUNC_KW {
+                 fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
+                };
 %%
 int main() {
 

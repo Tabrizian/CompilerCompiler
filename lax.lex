@@ -1,6 +1,10 @@
 %option noyywrap
 %{
+    #include <stdio.h>
+    #include <stdlib.h>
+
     #include "parser.tab.h"
+
     int counter = 0;
     int no_of_id = 0;
     struct record {
@@ -79,7 +83,7 @@ CR_CL [}]
     new_record.value = yytext;
     symbol_table[no_of_id].id = new_record.id;
     no_of_id++;
-    return "ID";
+    return ID;
 }
 {NUMCONST} {
     return NUMCONST;

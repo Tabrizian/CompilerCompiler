@@ -98,7 +98,12 @@ funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
 		 ID PAR_OP params PAR_CL statement{
 		fprintf(fout, "Rule 25 \t\t declarationList -> declarationList declaration\n");
 		};|
-
+params : paramList{
+		fprintf(fout, "Rule 26 \t\t declarationList -> declarationList declaration\n");
+		};|
+		{
+		fprintf(fout, "Rule 27 \t\t declarationList -> declarationList declaration\n");
+		};
 %%
 int main() {
 

@@ -68,6 +68,36 @@ varDeclId : ID {
 		ID BR_OP NUMCONST BR_CL{
 		fprintf(fout, "Rule 15 \t\t declarationList -> declarationList declaration\n");
 		};
+scopedTypeSpecifier : KW_STATIC typeSpecifier{
+		fprintf(fout, "Rule 16 \t\t declarationList -> declarationList declaration\n");
+		};|
+		typeSpecifier{
+		fprintf(fout, "Rule 17 \t\t declarationList -> declarationList declaration\n");
+		};
+typeSpecifier : returnTypeSpecifier{
+		fprintf(fout, "Rule 18 \t\t declarationList -> declarationList declaration\n");
+		};|
+		RECTYPE{
+		fprintf(fout, "Rule 19 \t\t declarationList -> declarationList declaration\n");
+		};
+returnTypeSpecifier : KW_INT{
+		fprintf(fout, "Rule 20 \t\t declarationList -> declarationList declaration\n");
+		};|
+		 KW_REAL{
+		fprintf(fout, "Rule 21 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_BOOL{
+		fprintf(fout, "Rule 22 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_CHAR{
+		fprintf(fout, "Rule 23 \t\t declarationList -> declarationList declaration\n");
+		};
+funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
+		fprintf(fout, "Rule 24 \t\t declarationList -> declarationList declaration\n");
+		};|
+		 ID PAR_OP params PAR_CL statement{
+		fprintf(fout, "Rule 25 \t\t declarationList -> declarationList declaration\n");
+		};|
 
 %%
 int main() {

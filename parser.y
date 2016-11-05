@@ -115,7 +115,33 @@ funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
 		 ID PAR_OP params PAR_CL statement{
 		fprintf(fout, "Rule 25 \t\t declarationList -> declarationList declaration\n");
 		};|
-
+params : paramList{
+		fprintf(fout, "Rule 26 \t\t declarationList -> declarationList declaration\n");
+		};|
+		{
+		fprintf(fout, "Rule 27 \t\t declarationList -> declarationList declaration\n");
+		};
+paramList : paramList KW_SEMICOLON paramTypeList{
+		fprintf(fout, "Rule 28 \t\t declarationList -> declarationList declaration\n");
+		};|
+		paramTypeList{
+		fprintf(fout, "Rule 29 \t\t declarationList -> declarationList declaration\n");
+		};
+paramTypeList : typeSpecifier paramIdList {
+		fprintf(fout, "Rule 30 \t\t declarationList -> declarationList declaration\n");
+		};
+paramIdList : paramIdList PUNC_KW paramId {
+		fprintf(fout, "Rule 31 \t\t declarationList -> declarationList declaration\n");
+		};|
+		paramId{
+		fprintf(fout, "Rule 32 \t\t declarationList -> declarationList declaration\n");
+		};
+paramId : ID {
+		fprintf(fout, "Rule 33 \t\t declarationList -> declarationList declaration\n");
+		};|
+		ID BR_OP BR_CL{
+		fprintf(fout, "Rule 34 \t\t declarationList -> declarationList declaration\n");
+		};
 %%
 int main() {
 

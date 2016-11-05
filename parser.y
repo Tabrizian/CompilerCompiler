@@ -44,9 +44,27 @@ recDeclaration : KW_RECORD ID PAR_OP localDeclarations PAR_CL
                {
                  fprintf(fout, "Rule 7 \t\t declarationList -> declarationList declaration\n");
                };
-varDeclaration : typeSpecifier varDeclist PUNC_KW {
+varDeclaration : typeSpecifier varDeclist KW_SEMICOLON
+               {
                  fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
+               };
+scopedVarDeclaration : scopedTypeSpecifier varDeclList KW_SEMICOLON
+                     {
+                        fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
+                     };
+varDeclList : varDeclList PUNC_KW varDeclInitialize
+            {
+                fprintf(fout, "Rule 10 \t\t declarationList -> declarationList declaration\n");
+            }; | varDeclInitialize
+                {
+                    fprintf(fout, "Rule 11 \t\t declarationList -> declarationList declaration\n");
                 };
+varDeclInitialize : varDeclId
+                  {
+                    fprintf(fout, "Rule 12 \t\t declarationList -> declarationList declaration\n");
+                  };
+
+
 %%
 int main() {
 

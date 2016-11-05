@@ -56,7 +56,18 @@ varDecList : varDecList  PUNC_KW varDeclInitialize {
 		varDeclInitialize{
 		 fprintf(fout, "Rule 11 \t\t declarationList -> declarationList declaration\n");
 		};	
-
+varDeclInitialize : varDeclId {
+                 fprintf(fout, "Rule 12 \t\t declarationList -> declarationList declaration\n");
+                };|
+		varDeclId KW_COLON simpleExpression{
+		 fprintf(fout, "Rule 13 \t\t declarationList -> declarationList declaration\n");
+		};
+varDeclId : ID {
+		fprintf(fout, "Rule 14 \t\t declarationList -> declarationList declaration\n");
+		};|
+		ID BR_OP NUMCONST BR_CL{
+		fprintf(fout, "Rule 15 \t\t declarationList -> declarationList declaration\n");
+		};
 
 %%
 int main() {

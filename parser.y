@@ -160,7 +160,27 @@ statement : expressionStmt {
 		breakStmt{
 		fprintf(fout, "Rule 40 \t\t declarationList -> declarationList declaration\n");
 		};
-		
+compoundStmt :	CR_OP localDeclarations statementList CR_CL{
+		fprintf(fout, "Rule 41 \t\t declarationList -> declarationList declaration\n");
+		};
+localDeclarations :	localDeclarations scopedVarDeclaration{
+		fprintf(fout, "Rule 42 \t\t declarationList -> declarationList declaration\n");
+		};|
+		{
+		fprintf(fout, "Rule 43 \t\t declarationList -> declarationList declaration\n");
+		};
+statementList :	statementList statement{
+		fprintf(fout, "Rule 44 \t\t declarationList -> declarationList declaration\n");
+		};|
+		{
+		fprintf(fout, "Rule 45 \t\t declarationList -> declarationList declaration\n");
+		};
+expressionStmt :	expression KW_SEMICOLON{
+		fprintf(fout, "Rule 46 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_SEMICOLON{
+		fprintf(fout, "Rule 47 \t\t declarationList -> declarationList declaration\n");
+		};	
 %%
 int main() {
 

@@ -142,6 +142,25 @@ paramId : ID {
 		ID BR_OP BR_CL{
 		fprintf(fout, "Rule 34 \t\t declarationList -> declarationList declaration\n");
 		};
+statement : expressionStmt {
+		fprintf(fout, "Rule 35 \t\t declarationList -> declarationList declaration\n");
+		};|
+		compoundStmt{
+		fprintf(fout, "Rule 36 \t\t declarationList -> declarationList declaration\n");
+		};|
+		selectionStmt{
+		fprintf(fout, "Rule 37 \t\t declarationList -> declarationList declaration\n");
+		};|
+		iterationStmt{
+		fprintf(fout, "Rule 38 \t\t declarationList -> declarationList declaration\n");
+		};|
+		returnStmt{
+		fprintf(fout, "Rule 39 \t\t declarationList -> declarationList declaration\n");
+		};|
+		breakStmt{
+		fprintf(fout, "Rule 40 \t\t declarationList -> declarationList declaration\n");
+		};
+		
 %%
 int main() {
 

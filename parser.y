@@ -180,7 +180,44 @@ expressionStmt :	expression KW_SEMICOLON{
 		};|
 		KW_SEMICOLON{
 		fprintf(fout, "Rule 47 \t\t declarationList -> declarationList declaration\n");
-		};	
+		};
+
+selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement {
+		fprintf(fout, "Rule 48 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement{
+		fprintf(fout, "Rule 49 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END{
+		fprintf(fout, "Rule 50 \t\t declarationList -> declarationList declaration\n");
+		};
+
+caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON { 
+		fprintf(fout, "Rule 51 \t\t declarationList -> declarationList declaration\n");
+		};|
+		caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON{
+		fprintf(fout, "Rule 52 \t\t declarationList -> declarationList declaration\n");
+		};
+defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON {
+		fprintf(fout, "Rule 53 \t\t declarationList -> declarationList declaration\n");
+		};|
+		{
+		fprintf(fout, "Rule 54 \t\t declarationList -> declarationList declaration\n");
+		};
+iterationStmt : KW_WHILE PAR_OP simpleExpression PAR_CL statement {
+		fprintf(fout, "Rule 55 \t\t declarationList -> declarationList declaration\n");
+		};
+returnStmt : KW_RETURN KW_SEMICOLON {
+		fprintf(fout, "Rule 56 \t\t declarationList -> declarationList declaration\n");
+		};|
+		KW_RETURN expression KW_SEMICOLON {
+		fprintf(fout, "Rule 57 \t\t declarationList -> declarationList declaration\n");
+		};
+breakStmt : KW_BREAK KW_SEMICOLON {
+		fprintf(fout, "Rule 58 \t\t declarationList -> declarationList declaration\n");
+		};
+
+
 %%
 int main() {
 

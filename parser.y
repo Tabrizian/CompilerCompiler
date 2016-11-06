@@ -44,7 +44,7 @@ recDeclaration : KW_RECORD ID PAR_OP localDeclarations PAR_CL
                {
                  fprintf(fout, "Rule 7 \t\t declarationList -> declarationList declaration\n");
                };
-varDeclaration : typeSpecifier varDeclist KW_SEMICOLON
+varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                {
                  fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
                };
@@ -64,7 +64,7 @@ varDeclInitialize : varDeclId
                     fprintf(fout, "Rule 12 \t\t declarationList -> declarationList declaration\n");
                   };
 
-scopedVarDeclaration : scopedTypeSpecifier varDeclist PUNC_KW {
+scopedVarDeclaration : scopedTypeSpecifier varDecList PUNC_KW {
                  fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
                 };
 varDecList : varDecList  PUNC_KW varDeclInitialize {
@@ -342,7 +342,18 @@ argList : argList PUNC_KW expression {
 		expression{
 		fprintf(fout, "Rule 105 \t\t declarationList -> declarationList declaration\n");
 		};
-
+constant : NUMCONST {
+		fprintf(fout, "Rule 106 \t\t declarationList -> declarationList declaration\n");
+		};|
+		REAL{
+		fprintf(fout, "Rule 107 \t\t declarationList -> declarationList declaration\n");
+		};|
+		CHARCONST {
+		fprintf(fout, "Rule 108 \t\t declarationList -> declarationList declaration\n");
+		};|
+		BOOLCONST{
+		fprintf(fout, "Rule 109 \t\t declarationList -> declarationList declaration\n");
+		};
 
 %%
 int main() {

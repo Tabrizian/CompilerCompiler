@@ -68,6 +68,7 @@ KW_COND_THEN "then"
 KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
 KW_COLON ":"
+KW_QUESTION_MARK "?"
 
 PAR_OP "("
 PAR_CL ")"
@@ -187,6 +188,9 @@ CR_CL [}]
 }
 {KW_COLON} {
     return KW_COLON;
+}
+{KW_QUESTION_MARK} {
+    return KW_QUESTION_MARK;
 }
 
 {PAR_OP} {

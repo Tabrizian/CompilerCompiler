@@ -354,6 +354,9 @@ constant : NUMCONST {
 		BOOLCONST{
 		fprintf(fout, "Rule 109 \t\t declarationList -> declarationList declaration\n");
 		};
+RECTYPE : ID {
+		fprintf(fout, "Rule 110 \t\t declarationList -> declarationList declaration\n");
+		};
 
 %%
 int main() {

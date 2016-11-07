@@ -48,21 +48,6 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                {
                  fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
                };
-scopedVarDeclaration : scopedTypeSpecifier varDeclList KW_SEMICOLON
-                     {
-                        fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
-                     };
-varDeclList : varDeclList PUNC_KW varDeclInitialize
-            {
-                fprintf(fout, "Rule 10 \t\t declarationList -> declarationList declaration\n");
-            }; | varDeclInitialize
-                {
-                    fprintf(fout, "Rule 11 \t\t declarationList -> declarationList declaration\n");
-                };
-varDeclInitialize : varDeclId
-                  {
-                    fprintf(fout, "Rule 12 \t\t declarationList -> declarationList declaration\n");
-                  };
 
 scopedVarDeclaration : scopedTypeSpecifier varDecList PUNC_KW {
                  fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
@@ -192,7 +177,7 @@ selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement {
 		fprintf(fout, "Rule 50 \t\t declarationList -> declarationList declaration\n");
 		};
 
-caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON { 
+caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
 		fprintf(fout, "Rule 51 \t\t declarationList -> declarationList declaration\n");
 		};|
 		caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON{
@@ -220,7 +205,7 @@ expression : mutable KW_EQUAL expression{
 		fprintf(fout, "Rule 59 \t\t declarationList -> declarationList declaration\n");
 		};|
 		mutable KW_PLUS KW_EQUAL expression {
-		fprintf(fout, "Rule 60 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 60 \t\t declarationList -> declarationList declaration\n");
 		};|
 		mutable KW_MINUS KW_EQUAL expression{
 		fprintf(fout, "Rule 61 \t\t declarationList -> declarationList declaration\n");
@@ -292,40 +277,40 @@ unaryExpression : unaryop unaryExpression{
 		fprintf(fout, "Rule 88 \t\t declarationList -> declarationList declaration\n");
 		};|
 		factor{
-		fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");
 		};
 unaryop : KW_MINUS {
-		fprintf(fout, "Rule 90 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 90 \t\t declarationList -> declarationList declaration\n");
 		};|
 		KW_MULTIPLY{
-		fprintf(fout, "Rule 91 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 91 \t\t declarationList -> declarationList declaration\n");
 		};|
 		KW_QUESTION_MARK{
-		fprintf(fout, "Rule 92 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 92 \t\t declarationList -> declarationList declaration\n");
 		};
 factor : immutable {
-		fprintf(fout, "Rule 93 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 93 \t\t declarationList -> declarationList declaration\n");
 		};|
 		mutable{
-		fprintf(fout, "Rule 94 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 94 \t\t declarationList -> declarationList declaration\n");
 		};
 mutable : ID {
-		fprintf(fout, "Rule 95 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 95 \t\t declarationList -> declarationList declaration\n");
 		};|
 		mutable BR_OP expression BR_CL {
-		fprintf(fout, "Rule 96 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 96 \t\t declarationList -> declarationList declaration\n");
 		};|
 		mutable PUNC_KW ID{
-		fprintf(fout, "Rule 97 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 97 \t\t declarationList -> declarationList declaration\n");
 		};
 immutable : PAR_OP expression PAR_CL{
-		fprintf(fout, "Rule 98 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 98 \t\t declarationList -> declarationList declaration\n");
 		};|
 		call {
-		fprintf(fout, "Rule 99 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 99 \t\t declarationList -> declarationList declaration\n");
 		};|
 		constant{
-		fprintf(fout, "Rule 100 \t\t declarationList -> declarationList declaration\n");	
+		fprintf(fout, "Rule 100 \t\t declarationList -> declarationList declaration\n");
 		};
 call : ID PAR_OP args PAR_CL{
 		fprintf(fout, "Rule 101 \t\t declarationList -> declarationList declaration\n");

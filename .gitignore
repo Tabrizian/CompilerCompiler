@@ -2,3 +2,4 @@
 output.txt
 *.tab*
 *.yy.c
+parser.output

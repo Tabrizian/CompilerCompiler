@@ -27,7 +27,7 @@ declarationList : declarationList declaration {
             fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
         }; | declaration
         {
-            fprintf(fout, "Rule 3 \t\t declarationList -> declarationList declaration\n");
+            fprintf(fout, "Rule 3 \t\t declarationList -> declaration\n");
         };
 declaration : varDeclaration
         {
@@ -40,7 +40,7 @@ declaration : varDeclaration
             fprintf(fout, "Rule 6 \t\t declarationList -> declarationList declaration\n");
         };
 
-recDeclaration : KW_RECORD ID PAR_OP localDeclarations PAR_CL
+recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
                {
                  fprintf(fout, "Rule 7 \t\t declarationList -> declarationList declaration\n");
                };
@@ -49,7 +49,7 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                  fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
                };
 
-scopedVarDeclaration : scopedTypeSpecifier varDecList PUNC_KW {
+scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
                  fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
                 };
 varDecList : varDecList  PUNC_KW varDeclInitialize {

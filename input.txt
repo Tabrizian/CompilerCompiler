@@ -1,1 +1,1 @@
-record
+bool

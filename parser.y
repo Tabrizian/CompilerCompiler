@@ -29,6 +29,7 @@ FILE *fout;
 %left KW_MULTIPLY KW_DIVIDE
 %left KW_COND_OR
 %left KW_COND_AND
+%left KW_COND_ELSE
 
 %%
 program : declarationList {

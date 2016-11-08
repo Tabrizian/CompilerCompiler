@@ -24,11 +24,10 @@ FILE *fout;
 %token <bval> BOOLCONST
 %token <id> ID
 
-%right KW_EQUAL
-%left KW_PLUS KW_MINUS
-%left KW_MULTIPLY KW_DIVIDE
 %left KW_COND_OR
 %left KW_COND_AND
+%left KW_PLUS KW_MINUS
+%left KW_COND_NOT
 %left KW_COND_ELSE
 
 %%
@@ -114,8 +113,7 @@ funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
 		};
 params : paramList{
 		fprintf(fout, "Rule 26 \t\t declarationList -> declarationList declaration\n");
-		};| %empty
-		{
+		};|{
 		fprintf(fout, "Rule 27 \t\t declarationList -> declarationList declaration\n");
 		};
 paramList : paramList KW_SEMICOLON paramTypeList{
@@ -162,14 +160,12 @@ compoundStmt :	CR_OP localDeclarations statementList CR_CL{
 		};
 localDeclarations :	localDeclarations scopedVarDeclaration{
 		fprintf(fout, "Rule 42 \t\t declarationList -> declarationList declaration\n");
-		};| %empty
-		{
+		};|{
 		fprintf(fout, "Rule 43 \t\t declarationList -> declarationList declaration\n");
 		};
 statementList :	statementList statement{
 		fprintf(fout, "Rule 44 \t\t declarationList -> declarationList declaration\n");
-		};| %empty
-		{
+		};|{
 		fprintf(fout, "Rule 45 \t\t declarationList -> declarationList declaration\n");
 		};
 expressionStmt :	expression KW_SEMICOLON{
@@ -197,8 +193,7 @@ caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
 		};
 defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON {
 		fprintf(fout, "Rule 53 \t\t declarationList -> declarationList declaration\n");
-		};| %empty
-		{
+		};|{
 		fprintf(fout, "Rule 54 \t\t declarationList -> declarationList declaration\n");
 		};
 iterationStmt : KW_WHILE PAR_OP simpleExpression PAR_CL statement {
@@ -264,32 +259,29 @@ relExpression : mathlogicExpression relop mathlogicExpression {
 relop : KW_RELOP{
 		fprintf(fout, "Rule 75-80 \t\t declarationList -> declarationList declaration\n");
 		};
-mathlogicExpression : mathlogicExpression mathop mathlogicExpression {
+mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression {
 		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
 		};|
-		unaryExpression{
-		fprintf(fout, "Rule 82 \t\t declarationList -> declarationList declaration\n");
-		};
-mathop : KW_PLUS{
-		fprintf(fout, "Rule 83 \t\t declarationList -> declarationList declaration\n");
+        mathlogicExpression KW_MINUS mathlogicExpression {
+		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
 		};|
-		KW_MINUS{
-		fprintf(fout, "Rule 84 \t\t declarationList -> declarationList declaration\n");
+        mathlogicExpression KW_MULTIPLY mathlogicExpression {
+		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
 		};|
-		KW_MULTIPLY{
-		fprintf(fout, "Rule 85 \t\t declarationList -> declarationList declaration\n");
+        mathlogicExpression KW_DIVIDE mathlogicExpression {
+		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
 		};|
-		KW_DIVIDE{
-		fprintf(fout, "Rule 86 \t\t declarationList -> declarationList declaration\n");
+        mathlogicExpression KW_MODULU mathlogicExpression {
+		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
 		};|
-		KW_MODULU{
-		fprintf(fout, "Rule 87 \t\t declarationList -> declarationList declaration\n");
-		};
+        unaryExpression {
+        fprintf(fout, "Rule 82 \t\t declarationList -> declarationList declaration\n");
+        };
 unaryExpression : unaryop unaryExpression{
 		fprintf(fout, "Rule 88 \t\t declarationList -> declarationList declaration\n");
 		};|
 		factor{
-		fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");
+        fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");
 		};
 unaryop : KW_MINUS {
 		fprintf(fout, "Rule 90 \t\t declarationList -> declarationList declaration\n");
@@ -329,8 +321,7 @@ call : ID PAR_OP args PAR_CL{
 		};
 args : argList {
 		fprintf(fout, "Rule 102 \t\t declarationList -> declarationList declaration\n");
-		};| %empty
-		{
+		};|{
 		fprintf(fout, "Rule 103 \t\t declarationList -> declarationList declaration\n");
 		};
 argList : argList PUNC_COMMA expression {

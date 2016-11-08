@@ -111,10 +111,10 @@ funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
 		};|
 		 ID PAR_OP params PAR_CL statement{
 		fprintf(fout, "Rule 25 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};
 params : paramList{
 		fprintf(fout, "Rule 26 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};| %empty
 		{
 		fprintf(fout, "Rule 27 \t\t declarationList -> declarationList declaration\n");
 		};
@@ -162,13 +162,13 @@ compoundStmt :	CR_OP localDeclarations statementList CR_CL{
 		};
 localDeclarations :	localDeclarations scopedVarDeclaration{
 		fprintf(fout, "Rule 42 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};| %empty
 		{
 		fprintf(fout, "Rule 43 \t\t declarationList -> declarationList declaration\n");
 		};
 statementList :	statementList statement{
 		fprintf(fout, "Rule 44 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};| %empty
 		{
 		fprintf(fout, "Rule 45 \t\t declarationList -> declarationList declaration\n");
 		};
@@ -197,7 +197,7 @@ caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
 		};
 defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON {
 		fprintf(fout, "Rule 53 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};| %empty
 		{
 		fprintf(fout, "Rule 54 \t\t declarationList -> declarationList declaration\n");
 		};
@@ -329,7 +329,7 @@ call : ID PAR_OP args PAR_CL{
 		};
 args : argList {
 		fprintf(fout, "Rule 102 \t\t declarationList -> declarationList declaration\n");
-		};|
+		};| %empty
 		{
 		fprintf(fout, "Rule 103 \t\t declarationList -> declarationList declaration\n");
 		};

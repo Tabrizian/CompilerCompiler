@@ -24,8 +24,11 @@ FILE *fout;
 %token <bval> BOOLCONST
 %token <id> ID
 
+%right KW_EQUAL
 %left KW_PLUS KW_MINUS
 %left KW_MULTIPLY KW_DIVIDE
+%left KW_COND_OR
+%left KW_COND_AND
 
 %%
 program : declarationList {

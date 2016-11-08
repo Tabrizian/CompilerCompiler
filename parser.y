@@ -17,7 +17,7 @@ FILE *fout;
     _Bool bval;
     char *id;
 }
-%token PUNC_KW FAKE_ID  FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST  WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND KW_COND_ELSE KW_COND_THEN KW_COND_NOT KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown
+%token PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST  WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND KW_COND_ELSE KW_COND_THEN KW_COND_NOT KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown
 
 %token <ival> NUMCONST
 %token <rval> REAL
@@ -64,7 +64,7 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
                  fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
                 };
-varDecList : varDecList  PUNC_KW varDeclInitialize {
+varDecList : varDecList  PUNC_COMMA varDeclInitialize {
                  fprintf(fout, "Rule 10 \t\t declarationList -> declarationList declaration\n");
                 };|
 		varDeclInitialize{
@@ -127,7 +127,7 @@ paramList : paramList KW_SEMICOLON paramTypeList{
 paramTypeList : typeSpecifier paramIdList {
 		fprintf(fout, "Rule 30 \t\t declarationList -> declarationList declaration\n");
 		};
-paramIdList : paramIdList PUNC_KW paramId {
+paramIdList : paramIdList PUNC_COMMA paramId {
 		fprintf(fout, "Rule 31 \t\t declarationList -> declarationList declaration\n");
 		};|
 		paramId{
@@ -312,7 +312,7 @@ mutable : ID {
 		mutable BR_OP expression BR_CL {
 		fprintf(fout, "Rule 96 \t\t declarationList -> declarationList declaration\n");
 		};|
-		mutable PUNC_KW ID{
+		mutable PUNC_DOT ID{
 		fprintf(fout, "Rule 97 \t\t declarationList -> declarationList declaration\n");
 		};
 immutable : PAR_OP expression PAR_CL{
@@ -333,7 +333,7 @@ args : argList {
 		{
 		fprintf(fout, "Rule 103 \t\t declarationList -> declarationList declaration\n");
 		};
-argList : argList PUNC_KW expression {
+argList : argList PUNC_COMMA expression {
 		fprintf(fout, "Rule 104 \t\t declarationList -> declarationList declaration\n");
 		};|
 		expression{

@@ -21,7 +21,8 @@ non_zero_digit [1-9]
 letter [a-zA-Z]
 letdig ({digit}|{letter})
 
-PUNC_KW ["."","]
+PUNC_DOT "."
+PUNC_COMMA ","
 
 ID #{letter}{letter}{digit}{digit}
 FAKE_ID ("#"{letdig}*)|({letter}{letdig}*)
@@ -228,8 +229,12 @@ CR_CL [}]
     return FAKE_ID;
 }
 
-{PUNC_KW} {
-    return PUNC_KW;
+{PUNC_DOT} {
+    return PUNC_DOT;
+}
+
+{PUNC_COMMA} {
+    return PUNC_COMMA;
 }
 
 . {

@@ -27,6 +27,7 @@ FILE *fout;
 %left KW_COND_OR
 %left KW_COND_AND
 %left KW_PLUS KW_MINUS
+%left KW_MULTIPLY KW_DIVIDE KW_MODULU
 %left KW_COND_NOT
 %left KW_COND_ELSE
 
@@ -284,7 +285,7 @@ unaryExpression : unaryop unaryExpression{
         fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");
 		};
 unaryop : KW_MINUS {
-		fprintf(fout, "Rule 90 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rfule 90 \t\t declarationList -> declarationList declaration\n");
 		};|
 		KW_MULTIPLY{
 		fprintf(fout, "Rule 91 \t\t declarationList -> declarationList declaration\n");

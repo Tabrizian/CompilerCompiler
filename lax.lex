@@ -64,7 +64,6 @@ KW_MULTIPLY "*"
 KW_MODULU "%"
 KW_COND_OR "or"
 KW_COND_AND "and"
-KW_COND_ELSE "else"
 KW_COND_THEN "then"
 KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")

@@ -17,22 +17,22 @@ FILE *fout;
     _Bool bval;
     char *id;
 }
-%token PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST  WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND KW_COND_ELSE KW_COND_THEN KW_COND_NOT KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown
-
+%token THEN PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST  WHITESPACE COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND  KW_COND_THEN KW_COND_NOT KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown
 %token <ival> NUMCONST
 %token <rval> REAL
 %token <bval> BOOLCONST
 %token <id> ID
+%token IF_WITHOUT_ELSE
 
-%token IFX
 
 %left KW_COND_OR
 %left KW_COND_AND
 %left KW_PLUS KW_MINUS
 %left KW_MULTIPLY KW_DIVIDE KW_MODULU
 %left KW_COND_NOT
-%nonassoc IFX
-%nonassoc KW_COND_ELSE
+%nonassoc IF_WITHOUT_ELSE
+%nonassoc KW_ELSE
+%right KW_COND_THEN
 %%
 program : declarationList {
             fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
@@ -178,7 +178,7 @@ expressionStmt :	expression KW_SEMICOLON{
 		fprintf(fout, "Rule 47 \t\t declarationList -> declarationList declaration\n");
 		};
 
-selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IFX {
+selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_ELSE{
 		fprintf(fout, "Rule 48 \t\t declarationList -> declarationList declaration\n");
 		};|
 		KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement{
@@ -241,7 +241,7 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression {
 		simpleExpression KW_COND_AND simpleExpression {
 		fprintf(fout, "Rule 68 \t\t declarationList -> declarationList declaration\n");
 		};|
-		simpleExpression KW_COND_OR KW_COND_ELSE simpleExpression {
+		simpleExpression KW_COND_OR KW_ELSE simpleExpression {
 		fprintf(fout, "Rule 69 \t\t declarationList -> declarationList declaration\n");
 		};|
 		simpleExpression KW_COND_AND KW_COND_THEN simpleExpression{

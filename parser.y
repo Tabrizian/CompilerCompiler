@@ -24,13 +24,15 @@ FILE *fout;
 %token <bval> BOOLCONST
 %token <id> ID
 
+%token IFX
+
 %left KW_COND_OR
 %left KW_COND_AND
 %left KW_PLUS KW_MINUS
 %left KW_MULTIPLY KW_DIVIDE KW_MODULU
 %left KW_COND_NOT
-%left KW_COND_ELSE
-
+%nonassoc IFX
+%nonassoc KW_COND_ELSE
 %%
 program : declarationList {
             fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
@@ -176,7 +178,7 @@ expressionStmt :	expression KW_SEMICOLON{
 		fprintf(fout, "Rule 47 \t\t declarationList -> declarationList declaration\n");
 		};
 
-selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement {
+selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IFX {
 		fprintf(fout, "Rule 48 \t\t declarationList -> declarationList declaration\n");
 		};|
 		KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement{

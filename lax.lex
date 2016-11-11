@@ -69,6 +69,12 @@ KW_COND_NOT "not"
 KW_RELOP (".le"|".lt"|".gt"|".ge"|".eq"|".ne")
 KW_COLON ":"
 KW_QUESTION_MARK "?"
+KW_PLUS_PLUS "++"
+KW_MINUS_MINUS "--"
+KW_PLUS_EQUAL "+="
+KW_MINUS_EQUAL "-="
+KW_DIVIDE_EQUAL "/="
+KW_MULTIPLY_EQUAL "*="
 
 PAR_OP "("
 PAR_CL ")"
@@ -236,6 +242,29 @@ CR_CL [}]
     return PUNC_COMMA;
 }
 
+{KW_PLUS_PLUS} {
+    return KW_PLUS_PLUS;
+}
+
+{KW_MINUS_MINUS} {
+    return KW_MINUS_MINUS;
+}
+
+{KW_MINUS_EQUAL} {
+    return KW_MINUS_EQUAL;
+}
+
+{KW_PLUS_EQUAL} {
+    return KW_PLUS_EQUAL;
+}
+
+{KW_MULTIPLY_EQUAL} {
+    return KW_MULTIPLY_EQUAL;
+}
+
+{KW_DIVIDE_EQUAL} {
+    return KW_DIVIDE_EQUAL;
+}
 . {
     return Unknown;
 }

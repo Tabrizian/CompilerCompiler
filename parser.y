@@ -3,6 +3,9 @@
 
 #include <stdio.h>
 
+
+extern char yylex();
+extern char* yyparser();
 extern FILE *yyin;
 extern int yylineno;
 extern char *yytext;
@@ -46,302 +49,302 @@ declarationList : declarationList declaration {
         };
 declaration : varDeclaration
         {
-            fprintf(fout, "Rule 4 \t\t declarationList -> declarationList declaration\n");
+            fprintf(fout, "Rule 4 \t\t declaration -> varDeclaration \n");
         }; | funDeclaration
         {
-            fprintf(fout, "Rule 5 \t\t declarationList -> declarationList declaration\n");
+            fprintf(fout, "Rule 5 \t\t declaration -> funDeclaration \n");
         }; | recDeclaration
         {
-            fprintf(fout, "Rule 6 \t\t declarationList -> declarationList declaration\n");
+            fprintf(fout, "Rule 6 \t\t declaration -> recDeclaration \n");
         };
 
 recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
                {
-                 fprintf(fout, "Rule 7 \t\t declarationList -> declarationList declaration\n");
+                 fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
                };
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                {
-                 fprintf(fout, "Rule 8 \t\t declarationList -> declarationList declaration\n");
+                 fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
                };
 
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
-                 fprintf(fout, "Rule 9 \t\t declarationList -> declarationList declaration\n");
+                 fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
                 };
 varDecList : varDecList  PUNC_COMMA varDeclInitialize {
-                 fprintf(fout, "Rule 10 \t\t declarationList -> declarationList declaration\n");
+                 fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
                 };|
 		varDeclInitialize{
-		 fprintf(fout, "Rule 11 \t\t declarationList -> declarationList declaration\n");
+		 fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
 		};
 varDeclInitialize : varDeclId {
-                 fprintf(fout, "Rule 12 \t\t declarationList -> declarationList declaration\n");
+                 fprintf(fout, "Rule 12 \t\t varDeclInitialize -> varDeclId\n");
                 };|
 		varDeclId KW_COLON simpleExpression{
-		 fprintf(fout, "Rule 13 \t\t declarationList -> declarationList declaration\n");
+		 fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
 		};
 varDeclId : ID {
-		fprintf(fout, "Rule 14 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 14 \t\t varDeclId -> ID\n");
 		};|
 		ID BR_OP NUMCONST BR_CL{
-		fprintf(fout, "Rule 15 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 15 \t\t varDeclId -> ID BR_OP NUMCONST BR_CL\n");
 		};
 scopedTypeSpecifier : KW_STATIC typeSpecifier{
-		fprintf(fout, "Rule 16 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 16 \t\t scopedTypeSpecifier -> KW_STATIC typeSpecifier\n");
 		};|
 		typeSpecifier{
-		fprintf(fout, "Rule 17 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
 		};
 typeSpecifier : returnTypeSpecifier{
-		fprintf(fout, "Rule 18 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
 		};
 returnTypeSpecifier : KW_INT{
-		fprintf(fout, "Rule 20 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 20 \t\t returnTypeSpecifier -> KW_INT\n");
 		};|
 		 KW_REAL{
-		fprintf(fout, "Rule 21 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 21 \t\t returnTypeSpecifier -> KW_REAL\n");
 		};|
 		KW_BOOL{
-		fprintf(fout, "Rule 22 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 22 \t\t returnTypeSpecifier -> KW_BOOL\n");
 		};|
 		KW_CHAR{
-		fprintf(fout, "Rule 23 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 23 \t\t returnTypeSpecifier -> KW_CHAR\n");
 		};
 funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
-		fprintf(fout, "Rule 24 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params PAR_CL statement\n");
 		};|
 		 ID PAR_OP params PAR_CL statement{
-		fprintf(fout, "Rule 25 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
 		};
 params : paramList{
-		fprintf(fout, "Rule 26 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 26 \t\t params -> paramList\n");
 		};|{
-		fprintf(fout, "Rule 27 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 27 \t\t params -> empty \n");
 		};
 paramList : paramList KW_SEMICOLON paramTypeList{
-		fprintf(fout, "Rule 28 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 28 \t\t paramList -> paramList KW_SEMICOLON paramTypeList\n");
 		};|
 		paramTypeList{
-		fprintf(fout, "Rule 29 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 29 \t\t paramList -> paramTypeList\n");
 		};
 paramTypeList : typeSpecifier paramIdList {
-		fprintf(fout, "Rule 30 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 30 \t\t paramTypeList -> typeSpecifier paramIdList\n");
 		};
 paramIdList : paramIdList PUNC_COMMA paramId {
-		fprintf(fout, "Rule 31 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 31 \t\t paramIdList -> paramIdList PUNC_COMMA paramId\n");
 		};|
 		paramId{
-		fprintf(fout, "Rule 32 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 32 \t\t paramIdList -> paramId\n");
 		};
 paramId : ID {
-		fprintf(fout, "Rule 33 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 33 \t\t paramId -> ID\n");
 		};|
 		ID BR_OP BR_CL{
-		fprintf(fout, "Rule 34 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 34 \t\t paramId -> ID BR_OP BR_CL\n");
 		};
 statement : expressionStmt {
-		fprintf(fout, "Rule 35 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 35 \t\t statement -> expressionStmt\n");
 		};|
 		compoundStmt{
-		fprintf(fout, "Rule 36 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 36 \t\t statement -> compoundStmt\n");
 		};|
 		selectionStmt{
-		fprintf(fout, "Rule 37 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 37 \t\t statement -> selectionStmt\n");
 		};|
 		iterationStmt{
-		fprintf(fout, "Rule 38 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 38 \t\t statement -> iterationStmt\n");
 		};|
 		returnStmt{
-		fprintf(fout, "Rule 39 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 39 \t\t statement -> returnStmt\n");
 		};|
 		breakStmt{
-		fprintf(fout, "Rule 40 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 40 \t\t statement -> breakStmt\n");
 		};
 compoundStmt :	CR_OP localDeclarations statementList CR_CL{
-		fprintf(fout, "Rule 41 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
 		};
 localDeclarations :	localDeclarations scopedVarDeclaration{
-		fprintf(fout, "Rule 42 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 42 \t\t localDeclarations -> localDeclarations scopedVarDeclaration\n");
 		};|{
-		fprintf(fout, "Rule 43 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
 		};
 statementList :	statementList statement{
-		fprintf(fout, "Rule 44 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 44 \t\t statementList -> statementList statement\n");
 		};|{
-		fprintf(fout, "Rule 45 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 45 \t\t statementList -> empty\n");
 		};
 expressionStmt :	expression KW_SEMICOLON{
-		fprintf(fout, "Rule 46 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 46 \t\t expressionStmt -> expression KW_SEMICOLON\n");
 		};|
 		KW_SEMICOLON{
-		fprintf(fout, "Rule 47 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 47 \t\t expressionStmt -> empty\n");
 		};
 
 selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_ELSE{
-		fprintf(fout, "Rule 48 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression PAR_CL statement\n");
 		};|
 		KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement{
-		fprintf(fout, "Rule 49 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement\n");
 		};|
 		KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END{
-		fprintf(fout, "Rule 50 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END declaration\n");
 		};
 
 caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
-		fprintf(fout, "Rule 51 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
 		};|
 		caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON{
-		fprintf(fout, "Rule 52 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 52 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
 		};
 defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON {
-		fprintf(fout, "Rule 53 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 53 \t\t defaultElement -> KW_DEFAULT KW_COLON statement KW_SEMICOLON\n");
 		};|{
-		fprintf(fout, "Rule 54 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 54 \t\t defaultElement -> empty\n");
 		};
 iterationStmt : KW_WHILE PAR_OP simpleExpression PAR_CL statement {
-		fprintf(fout, "Rule 55 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression PAR_CL statement\n");
 		};
 returnStmt : KW_RETURN KW_SEMICOLON {
-		fprintf(fout, "Rule 56 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 56 \t\t returnStmt -> KW_RETURN KW_SEMICOLON\n");
 		};|
 		KW_RETURN expression KW_SEMICOLON {
-		fprintf(fout, "Rule 57 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 57 \t\t returnStmt -> KW_RETURN expression KW_SEMICOLON\n");
 		};
 breakStmt : KW_BREAK KW_SEMICOLON {
-		fprintf(fout, "Rule 58 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 58 \t\t breakStmt -> KW_BREAK KW_SEMICOLON\n");
 		};
 expression : mutable KW_EQUAL expression {
-		fprintf(fout, "Rule 59 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 59 \t\t expression -> mutable KW_EQUAL expression\n");
 		};|
 		mutable KW_PLUS_EQUAL expression {
-		fprintf(fout, "Rule 60 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 60 \t\t expression -> mutable KW_PLUS_EQUAL expression\n");
 		};|
 		mutable KW_MINUS_EQUAL expression {
-		fprintf(fout, "Rule 61 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 61 \t\t expression -> mutable KW_MINUS_EQUAL expression\n");
 		};|
 		mutable KW_MULTIPLY_EQUAL expression {
-		fprintf(fout, "Rule 62 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 62 \t\t expression -> mutable KW_MULTIPLY_EQUAL expression\n");
 		};|
 		mutable KW_DIVIDE_EQUAL expression {
-		fprintf(fout, "Rule 63 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 63 \t\t expression -> mutable KW_DIVIDE_EQUAL expression\n");
 		};|
 		mutable KW_PLUS_PLUS {
-		fprintf(fout, "Rule 64 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 64 \t\t expression -> mutable KW_PLUS_PLUS\n");
 		};|
 		mutable KW_MINUS_MINUS {
-		fprintf(fout, "Rule 65 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 65 \t\t expression -> mutable KW_MINUS_MINUS\n");
 		};|
 		simpleExpression{
-		fprintf(fout, "Rule 66 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 66 \t\t expression -> simpleExpression\n");
 		};
 simpleExpression : simpleExpression KW_COND_OR simpleExpression {
-		fprintf(fout, "Rule 67 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
 		};|
 		simpleExpression KW_COND_AND simpleExpression {
-		fprintf(fout, "Rule 68 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 68 \t\t simpleExpression -> simpleExpression KW_COND_AND simpleExpression\n");
 		};|
 		simpleExpression KW_COND_OR KW_ELSE simpleExpression {
-		fprintf(fout, "Rule 69 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
 		};|
 		simpleExpression KW_COND_AND KW_COND_THEN simpleExpression{
-		fprintf(fout, "Rule 70 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 70 \t\t simpleExpression -> simpleExpression KW_COND_AND KW_COND_THEN simpleExpression\n");
 		};|
 		KW_COND_NOT simpleExpression{
-		fprintf(fout, "Rule 71 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 71 \t\t simpleExpression -> KW_COND_NOT simpleExpression\n");
 		};|
 		relExpression{
-		fprintf(fout, "Rule 72 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 72 \t\t simpleExpression -> relExpression\n");
 		};
 relExpression : mathlogicExpression relop mathlogicExpression {
-		fprintf(fout, "Rule 73 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
 		};|
 		mathlogicExpression {
-		fprintf(fout, "Rule 74 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
 		};
 relop : KW_RELOP{
-		fprintf(fout, "Rule 75-80 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 75-80 \t\t relop -> KW_RELOP\n");
 		};
 mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression {
-		fprintf(fout, "Rule 81 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
 		};|
         mathlogicExpression KW_MINUS mathlogicExpression {
-		fprintf(fout, "Rule 82 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 82 \t\t mathlogicExpression -> mathlogicExpression KW_MINUS mathlogicExpression\n");
 		};|
         mathlogicExpression KW_MULTIPLY mathlogicExpression {
-		fprintf(fout, "Rule 83 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 83 \t\t mathlogicExpression -> mathlogicExpression KW_MULTIPLY mathlogicExpression\n");
 		};|
         mathlogicExpression KW_DIVIDE mathlogicExpression {
-		fprintf(fout, "Rule 84 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 84 \t\t mathlogicExpression -> mathlogicExpression KW_DIVIDE mathlogicExpression\n");
 		};|
         mathlogicExpression KW_MODULU mathlogicExpression {
-		fprintf(fout, "Rule 85 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 85 \t\t mathlogicExpression -> mathlogicExpression KW_MODULU mathlogicExpression\n");
 		};|
         unaryExpression {
-        fprintf(fout, "Rule 86 \t\t declarationList -> declarationList declaration\n");
+        fprintf(fout, "Rule 86 \t\t mathlogicExpression -> unaryExpression\n");
         };
 unaryExpression : unaryop unaryExpression{
-		fprintf(fout, "Rule 88 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 88 \t\t unaryExpression -> unaryop unaryExpression\n");
 		};|
 		factor{
-        fprintf(fout, "Rule 89 \t\t declarationList -> declarationList declaration\n");
+        fprintf(fout, "Rule 89 \t\t unaryExpression -> factor\n");
 		};
 unaryop : KW_MINUS {
-		fprintf(fout, "Rfule 90 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rfule 90 \t\t unaryop -> KW_MINUS\n");
 		};|
 		KW_MULTIPLY{
-		fprintf(fout, "Rule 91 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 91 \t\t unaryop -> KW_MULTIPLY\n");
 		};|
 		KW_QUESTION_MARK{
-		fprintf(fout, "Rule 92 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 92 \t\t unaryop -> KW_QUESTION_MARK\n");
 		};
 factor : immutable {
-		fprintf(fout, "Rule 93 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 93 \t\t factor -> immutable\n");
 		};|
 		mutable{
-		fprintf(fout, "Rule 94 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 94 \t\t factor -> mutable\n");
 		};
 mutable : ID {
-		fprintf(fout, "Rule 95 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 95 \t\t mutable -> ID\n");
 		};|
 		mutable BR_OP expression BR_CL {
-		fprintf(fout, "Rule 96 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 96 \t\t mutable -> mutable BR_OP expression BR_CL\n");
 		};|
 		mutable PUNC_DOT ID{
-		fprintf(fout, "Rule 97 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
 		};
 immutable : PAR_OP expression PAR_CL{
-		fprintf(fout, "Rule 98 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression PAR_CL\n");
 		};|
 		call {
-		fprintf(fout, "Rule 99 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 99 \t\t immutable -> call\n");
 		};|
 		constant{
-		fprintf(fout, "Rule 100 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
 		};
 call : ID PAR_OP args PAR_CL{
-		fprintf(fout, "Rule 101 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args PAR_CL\n");
 		};
 args : argList {
-		fprintf(fout, "Rule 102 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 102 \t\t args -> argList\n");
 		};|{
-		fprintf(fout, "Rule 103 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 103 \t\t args -> empty\n");
 		};
 argList : argList PUNC_COMMA expression {
-		fprintf(fout, "Rule 104 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 104 \t\t argList -> argList PUNC_COMMA expression\n");
 		};|
 		expression{
-		fprintf(fout, "Rule 105 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 105 \t\t argList -> expression\n");
 		};
 constant : NUMCONST {
-		fprintf(fout, "Rule 106 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
 		};|
 		REAL{
-		fprintf(fout, "Rule 107 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 107 \t\t constant -> REAL\n");
 		};|
 		CHARCONST {
-		fprintf(fout, "Rule 108 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 108 \t\t constant -> CHARCONST\n");
 		};|
 		BOOLCONST{
-		fprintf(fout, "Rule 109 \t\t declarationList -> declarationList declaration\n");
+		fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
 		};
 
 %%

@@ -92,9 +92,6 @@ scopedTypeSpecifier : KW_STATIC typeSpecifier{
 		};
 typeSpecifier : returnTypeSpecifier{
 		fprintf(fout, "Rule 18 \t\t declarationList -> declarationList declaration\n");
-		};|
-		RECTYPE{
-		fprintf(fout, "Rule 19 \t\t declarationList -> declarationList declaration\n");
 		};
 returnTypeSpecifier : KW_INT{
 		fprintf(fout, "Rule 20 \t\t declarationList -> declarationList declaration\n");
@@ -344,9 +341,6 @@ constant : NUMCONST {
 		};|
 		BOOLCONST{
 		fprintf(fout, "Rule 109 \t\t declarationList -> declarationList declaration\n");
-		};
-RECTYPE : ID {
-		fprintf(fout, "Rule 110 \t\t declarationList -> declarationList declaration\n");
 		};
 
 %%

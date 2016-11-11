@@ -4,7 +4,7 @@ lex:
 	flex lax.lex
 
 parse:
-	bison --verbose parser.y
+	bison -d parser.y
 	gcc lex.yy.c parser.tab.h parser.tab.c -o parser.out
 
 run:

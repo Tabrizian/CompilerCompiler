@@ -1,10 +1,16 @@
 all: lex parse run
+debug: lex parse-debug run
 
 lex:
 	flex lax.lex
 
 parse:
 	bison -d parser.y
+	gcc lex.yy.c parser.tab.h parser.tab.c -o parser.out
+
+parse-debug:
+	bison -d parser.y
+	bison --verbose parser.y
 	gcc lex.yy.c parser.tab.h parser.tab.c -o parser.out
 
 run:

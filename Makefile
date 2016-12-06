@@ -10,4 +10,5 @@ parse:
 run:
 	./parser.out
 
-
+clean:
+	rm lex.yy.c parser.tab.c parser.tab.h parser.out

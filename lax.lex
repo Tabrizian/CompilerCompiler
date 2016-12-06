@@ -1,19 +1,17 @@
 %option noyywrap
 %{
-    #include <stdio.h>
-    #include <stdlib.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include "parser.tab.h"
 
-    #include "parser.tab.h"
-
-    int counter = 0;
-    int no_of_id = 0;
-    struct record {
+int counter = 0;
+int no_of_id = 0;
+struct record {
         int id;
         char *token;
         char *value;
     };
-
-    struct record symbol_table[100];
+ struct record symbol_table[100];
 %}
 
 digit [0-9]
@@ -84,6 +82,7 @@ CR_OP [{]
 CR_CL [}]
 
 %%
+
 {ID} {
     struct record new_record;
     new_record.token = "ID";
@@ -102,11 +101,8 @@ CR_CL [}]
 {BOOLCONST} {
     return BOOLCONST;
 }
-{WHITESPACE} {
-    return WHITESPACE;
-}
 {COMMENT} {
-    return COMMENT;
+	//nothing
 }
 
 {KW_RECORD} {
@@ -225,13 +221,13 @@ CR_CL [}]
 }
 
 {FAKE_REAL} {
-    return FAKE_REAL;
+    //nothing
 }
 {FAKE_NUMCONST} {
-    return FAKE_NUMCONST;
+    //nothing
 }
 {FAKE_ID} {
-    return FAKE_ID;
+    //nothing
 }
 
 {PUNC_DOT} {
@@ -265,8 +261,9 @@ CR_CL [}]
 {KW_DIVIDE_EQUAL} {
     return KW_DIVIDE_EQUAL;
 }
-. {
-    return Unknown;
-}
 
-%%
+[\n] {++yylineno;}
+. {}
+
+
+

@@ -33,6 +33,7 @@ FILE *fout;
 %left KW_MULTIPLY KW_DIVIDE KW_MODULU
 %left KW_COND_NOT
 %nonassoc IF_WITHOUT_ELSE
+%nonassoc ID_PREC
 %left KW_COND_THEN
 %left KW_ELSE
 
@@ -64,11 +65,18 @@ recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                {
                  fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
-               };
+               };| ID varDecList KW_SEMICOLON {
+                 fprintf(fout, "Rule 8.1 \t\t varDeclaration -> ID varDecList KW_SEMICOLON\n");
+};
 
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
-                     fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
-                };
+                   fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
+                };|
+                ID varDecList KW_SEMICOLON {
+                   fprintf(fout, "Rule 9.1 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
+                }
+
+
 varDecList : varDecList  PUNC_COMMA varDeclInitialize {
            fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
                 };|
@@ -92,7 +100,11 @@ scopedTypeSpecifier : KW_STATIC typeSpecifier{
         };|
         typeSpecifier{
         fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
-        };
+        };|
+        KW_STATIC ID {
+
+        fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
+};
 typeSpecifier : returnTypeSpecifier{
               fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
         };
@@ -113,7 +125,10 @@ funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
         };|
          ID PAR_OP params PAR_CL statement{
         fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
-        };
+        };|
+ID ID PAR_OP params PAR_CL statement{
+        fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
+};
 params : paramList{
        fprintf(fout, "Rule 26 \t\t params -> paramList\n");
         };|{

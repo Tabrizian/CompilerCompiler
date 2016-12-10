@@ -1,17 +1,29 @@
 %option noyywrap
+
 %{
+
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "parser.tab.h"
 
 int counter = 0;
-int no_of_id = 0;
-struct record {
-        int id;
-        char *token;
-        char *value;
-    };
- struct record symbol_table[100];
+char symbol_table[100][50];
+
+int install_id(char *next) {
+    int i = 0;
+
+    for (i = 0; i < counter; i++) {
+        if(strcmp(next, symbol_table[i]) == 0) {
+            return i;
+        }
+    }
+
+    strcpy(symbol_table[counter], next);
+    counter++;
+
+    return counter - 1;
+}
 %}
 
 digit [0-9]
@@ -84,23 +96,67 @@ CR_CL [}]
 %%
 
 {ID} {
-    struct record new_record;
-    new_record.token = "ID";
-    new_record.id = no_of_id;
-    new_record.value = yytext;
-    symbol_table[no_of_id].id = new_record.id;
-    no_of_id++;
+    install_id(yytext);
+    yylval.eval.place = new char[strlen(yytext)];
+    yylval.eval.true_list = new char[100];
+    yylval.eval.true_list[0] = '\0';
+    yylval.eval.false_list = new char[100];
+    yylval.eval.false_list[0] = '\0';
+    yylval.eval.next_list = new char[100];
+    yylval.eval.next_list[0] = '\0';
+    strcpy(yylval.eval.place, yytext);
+    yylval.eval.code = "";
     return ID;
 }
+
 {NUMCONST} {
+    yylval.eval.place = new char[strlen(yytext)];
+    yylval.eval.true_list = new char[100];
+    yylval.eval.true_list[0] = '\0';
+    yylval.eval.false_list = new char[100];
+    yylval.eval.false_list[0] = '\0';
+    yylval.eval.next_list = new char[100];
+    yylval.eval.next_list[0] = '\0';
+    strcpy(yylval.eval.place, yytext);
+    yylval.eval.code = "";
+    yylval.eval.type = "integer";
     return NUMCONST;
 }
+
 {CHARCONST} {
+    yylval.eval.place = new char[strlen(yytext)];
+    yylval.eval.true_list = new char[100];
+    yylval.eval.true_list[0] = '\0';
+    yylval.eval.false_list = new char[100];
+    yylval.eval.false_list[0] = '\0';
+    yylval.eval.next_list = new char[100];
+    yylval.eval.next_list[0] = '\0';
+    strcpy(yylval.eval.place, yytext);
+    yylval.eval.code = "";
+    yylval.eval.type = "string";
     return CHARCONST;
 }
+
 {BOOLCONST} {
+    yylval.eval.place = new char[1];
+    yylval.eval.true_list = new char[100];
+    yylval.eval.true_list[0] = '\0';
+    yylval.eval.false_list = new char[100];
+    yylval.eval.false_list[0] = '\0';
+    yylval.eval.next_list = new char[100];
+    yylval.eval.next_list[0] = '\0';
+
+    if(strcmp(yytext, "false") == 0) {
+        yylval.eval.place[0] = '0';
+    } else if(strcmp(yytext, "true") == 0) {
+        yylval.eval.place[0] = '1';
+    }
+
+    yylval.eval.code = "";
+    yylval.eval.type = "integer";
     return BOOLCONST;
 }
+
 {COMMENT} {
 	//nothing
 }
@@ -108,48 +164,63 @@ CR_CL [}]
 {KW_RECORD} {
     return KW_RECORD;
 }
+
 {KW_STATIC} {
     return KW_STATIC;
 }
+
 {KW_INT} {
     return KW_INT;
 }
+
 {KW_REAL} {
     return KW_REAL;
 }
+
 {KW_BOOL} {
     return KW_BOOL;
 }
+
 {KW_CHAR} {
     return KW_CHAR;
 }
+
 {KW_IF} {
     return KW_IF;
 }
+
 {KW_ELSE} {
     return KW_ELSE;
 }
+
 {KW_SWITCH} {
     return KW_SWITCH;
 }
+
 {KW_END} {
     return KW_END;
 }
+
 {KW_CASE} {
     return KW_CASE;
 }
+
 {KW_DEFAULT} {
     return KW_DEFAULT;
 }
+
 {KW_WHILE} {
     return KW_WHILE;
 }
+
 {KW_RETURN} {
     return KW_RETURN;
 }
+
 {KW_SEMICOLON} {
     return KW_SEMICOLON;
 }
+
 {KW_BREAK} {
     return KW_BREAK;
 }
@@ -157,18 +228,23 @@ CR_CL [}]
 {KW_PLUS} {
     return KW_PLUS;
 }
+
 {KW_MINUS} {
     return KW_MINUS;
 }
+
 {KW_EQUAL} {
     return KW_EQUAL;
 }
+
 {KW_DIVIDE} {
     return KW_DIVIDE;
 }
+
 {KW_MULTIPLY} {
     return KW_MULTIPLY;
 }
+
 {KW_MODULU} {
     return KW_MODULU;
 }
@@ -176,21 +252,27 @@ CR_CL [}]
 {KW_COND_NOT} {
     return KW_COND_NOT;
 }
+
 {KW_COND_OR} {
     return KW_COND_OR;
 }
+
 {KW_COND_AND} {
     return KW_COND_AND;
 }
+
 {KW_COND_THEN} {
     return KW_COND_THEN;
 }
+
 {KW_RELOP} {
     return KW_RELOP;
 }
+
 {KW_COLON} {
     return KW_COLON;
 }
+
 {KW_QUESTION_MARK} {
     return KW_QUESTION_MARK;
 }
@@ -264,6 +346,3 @@ CR_CL [}]
 
 [\n] {++yylineno;}
 . {}
-
-
-

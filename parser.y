@@ -1,33 +1,57 @@
 %{
 
-#include <stdio.h>
+#include <cstdio>
+
 
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
 
 void yyerror(const char *s);
-int yylex(void);
+extern int yylex(void);
 
 
 FILE *fout;
+
 %}
 
 %union {
-    int ival;
-    float rval;
-    bool bval;
-    char *id;
+    struct {
+        char *true_list;
+        char *false_list;
+        char *next_list;
+        int quad;
+        int is_boolean;
+        char *place;
+        char *code;
+        char *type;
+    } eval;
 }
 
 
-%token THEN PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL CHARCONST_SINGLEQOUTE CHARCONST   COMMENT KW_RECORD KW_STATIC KW_INT KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND  KW_COND_THEN KW_COND_NOT KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL Unknown KW_PLUS_PLUS KW_MINUS_MINUS KW_MINUS_EQUAL KW_PLUS_EQUAL KW_DIVIDE_EQUAL KW_MULTIPLY_EQUAL WHITESPACE
-%token <ival> NUMCONST
-%token <rval> REAL
-%token <bval> BOOLCONST
-%token <id> ID
+%token THEN PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL
+CHARCONST_SINGLEQOUTE CHARCONST   COMMENT KW_RECORD KW_STATIC KW_INT
+KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT
+KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE
+ KW_MULTIPLY KW_MODULU KW_COND_OR KW_COND_AND  KW_COND_THEN KW_COND_NOT
+KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL
+Unknown KW_PLUS_PLUS KW_MINUS_MINUS KW_MINUS_EQUAL KW_PLUS_EQUAL
+KW_DIVIDE_EQUAL KW_MULTIPLY_EQUAL WHITESPACE
+
+%token <eval> NUMCONST
+%token <eval> REAL
+%token <eval> BOOLCONST
+%token <eval> ID
 %token IF_WITHOUT_ELSE
 
+%type <eval> program declarationList declaration recDeclaration varDeclaration
+scopedVarDeclaration varDecList varDeclInitialize varDeclId scopedTypeSpecifier
+typeSpecifier returnTypeSpecifier funDeclaration params paramList paramTypeList
+paramIdList paramId statement compoundStmt localDeclarations statementList
+expressionStmt selectionStmt caseElement defaultElement iterationStmt
+returnStmt breakStmt expression simpleExpression relExpression relop
+mathlogicExpression unaryExpression unaryop factor mutable immutable call
+args argList constant
 
 %left KW_COND_OR
 %left KW_COND_AND
@@ -40,25 +64,31 @@ FILE *fout;
 %left KW_ELSE
 
 %%
-program : declarationList {
+program : declarationList
+    {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
-        };
-declarationList : declarationList declaration {
-                fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
-        }; | declaration
-        {
-            fprintf(fout, "Rule 3 \t\t declarationList -> declaration\n");
-        };
+    };
+
+declarationList : declarationList declaration
+    {
+        fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
+    };
+    | declaration
+    {
+        fprintf(fout, "Rule 3 \t\t declarationList -> declaration\n");
+    };
 declaration : varDeclaration
-            {
-            fprintf(fout, "Rule 4 \t\t declaration -> varDeclaration \n");
-        }; | funDeclaration
-        {
-            fprintf(fout, "Rule 5 \t\t declaration -> funDeclaration \n");
-        }; | recDeclaration
-        {
-            fprintf(fout, "Rule 6 \t\t declaration -> recDeclaration \n");
-        };
+    {
+        fprintf(fout, "Rule 4 \t\t declaration -> varDeclaration \n");
+    };
+    | funDeclaration
+    {
+        fprintf(fout, "Rule 5 \t\t declaration -> funDeclaration \n");
+    };
+    | recDeclaration
+    {
+        fprintf(fout, "Rule 6 \t\t declaration -> recDeclaration \n");
+    };
 
 recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
                {
@@ -72,7 +102,7 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
 };
 
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
-                   fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
+                     fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
                 };
 
 
@@ -102,7 +132,7 @@ scopedTypeSpecifier : KW_STATIC typeSpecifier{
         };|
         KW_STATIC ID {
 
-        fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
+fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
 };
 typeSpecifier : returnTypeSpecifier{
               fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");

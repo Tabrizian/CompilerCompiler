@@ -7,6 +7,8 @@ extern int yylineno;
 extern char* yytext;
 
 void yyerror(const char *s);
+int yylex(void);
+
 
 FILE *fout;
 %}
@@ -14,7 +16,7 @@ FILE *fout;
 %union {
     int ival;
     float rval;
-    _Bool bval;
+    bool bval;
     char *id;
 }
 

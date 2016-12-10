@@ -1,11 +1,46 @@
 %{
 
 #include <cstdio>
+#include <vector>
+#include <iostream>
 
+using namespace std;
 
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
+
+vector <string> quadruple[4];
+vector <string> symbol_table[2];
+vector <string> registers;
+
+int symbol_table_lookup(char *token) {
+}
+
+void symbol_table_insert(char *token, char *type) {
+}
+
+
+// What?!
+char* new_temp(char *c) {
+}
+
+void quadruple_print() {
+
+    ofstream intermediate_code("inter_code.c");
+    intermediate_code << "#include <stdio.h>\n";
+    intermediate_code << endl << "int main()" << endl;
+    for (int i = 0; i < quadruple[0].size(); i++) {
+        intermediate_code << "L" << i << ":";
+    }
+}
+
+void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
+    quadruple[0].push_back(arg1);
+    quadruple[1].push_back(arg2);
+    quadruple[2].push_back(op);
+    quadruple[3].push_back(result);
+}
 
 void yyerror(const char *s);
 extern int yylex(void);

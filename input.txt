@@ -1,19 +1,19 @@
 int #at11(int #ba12, #ca23[]; bool #do43, #el32;int #fo12)
 {
 int #gn11, #ho12[100];
-#po11 #aP11;
-#li11 #aL11;
-#li11 #tw33[2];
-//#aP11.#xx11= 666;
-//#aP11.#yy11= 667;
-//#aL11.#xx11.
-#xx11= 1;
-
-#aL11.#xx11.#yy11= 2;
-#aL11.#yy11.#xx11= 3;
-#aL11.#yy11.#yy11= 4;
-#tw33[0].#xx11.#xx11= 42;
-#tw33[1].#yy11.#xx11= 43;
+//#po11 #aP11;
+//#li11 #aL11;
+//#li11 #tw33[2];
+////#aP11.#xx11= 666;
+////#aP11.#yy11= 667;
+////#aL11.#xx11.
+//#xx11= 1;
+//
+//#aL11.#xx11.#yy11= 2;
+//#aL11.#yy11.#xx11= 3;
+//#aL11.#yy11.#yy11= 4;
+//#tw33[0].#xx11.#xx11= 42;
+//#tw33[1].#yy11.#xx11= 43;
 #gn11= #ho12[2] = 3**#ca23;// hog is 3 times the size of array passed to cat
 if (#do43 and  #el32or  #ba12.gt#ca23[3])
      #do43 =  not #do43;

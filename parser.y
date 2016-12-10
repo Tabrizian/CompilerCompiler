@@ -71,10 +71,7 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
 
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
                    fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
-                };|
-                ID varDecList KW_SEMICOLON {
-                   fprintf(fout, "Rule 9.1 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
-                }
+                };
 
 
 varDecList : varDecList  PUNC_COMMA varDeclInitialize {

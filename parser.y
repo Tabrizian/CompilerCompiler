@@ -1,40 +1,43 @@
 %{
-
 #include <cstdio>
 #include <vector>
+#include <fstream>
 #include <iostream>
-
 using namespace std;
-
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
-
 vector <string> quadruple[4];
 vector <string> symbol_table[2];
 vector <string> registers;
-
 int symbol_table_lookup(char *token) {
 }
-
 void symbol_table_insert(char *token, char *type) {
 }
-
-
 // What?!
 char* new_temp(char *c) {
 }
-
 void quadruple_print() {
+    ofstream myfile;
+    //WE CONSIDER TO PRINT OUR CODE AS A ".C" FILE
+    myfile.open("intermediatecode.c");
+    myfile << "#include <stdio.h>\n\n";
+    myfile << endl<<"int main(){\n\n";
 
-    ofstream intermediate_code("inter_code.c");
-    intermediate_code << "#include <stdio.h>\n";
-    intermediate_code << endl << "int main()" << endl;
-    for (int i = 0; i < quadruple[0].size(); i++) {
-        intermediate_code << "L" << i << ":";
+    for(int i = 0; i < quadruple[0].size(); i++){
+        myfile << "L" << i <<" : ";
+        if(quadruple[2][i] == ":=")
+                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<";"<<endl;
+        else if(quadruple[2][i] == "+")
+                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<" + "<<quadruple[1][i]<<";";
+        else if(quadruple[2][i] == "-")
+                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<" - "<<quadruple[1][i]<<";";
+        else if(quadruple[2][i] == "*")
+                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<" * "<<quadruple[1][i]<<";";
+        else if(quadruple[2][i] == "/")
+                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<" / "<<quadruple[1][i]<<";";
     }
 }
-
 void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
     quadruple[0].push_back(arg1);
     quadruple[1].push_back(arg2);
@@ -42,14 +45,30 @@ void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
     quadruple[3].push_back(result);
 }
 
+void backpatch(char* a,int b){
+
+}
+
+char* merge(char* a,char* b){
+
+}
+
+char* makeList(int a){
+
+}
+
+char* intToCharStar(int a){
+
+}
+
+char* addToList(char* a){
+
+}
+
 void yyerror(const char *s);
 extern int yylex(void);
-
-
 FILE *fout;
-
 %}
-
 %union {
     struct {
         char *true_list;
@@ -62,8 +81,6 @@ FILE *fout;
         char *type;
     } eval;
 }
-
-
 %token THEN PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL
 CHARCONST_SINGLEQOUTE CHARCONST   COMMENT KW_RECORD KW_STATIC KW_INT
 KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT
@@ -72,13 +89,11 @@ KW_WHILE KW_RETURN KW_SEMICOLON KW_BREAK KW_PLUS KW_MINUS KW_EQUAL KW_DIVIDE
 KW_RELOP KW_COLON KW_QUESTION_MARK PAR_OP PAR_CL BR_OP BR_CL CR_OP CR_CL
 Unknown KW_PLUS_PLUS KW_MINUS_MINUS KW_MINUS_EQUAL KW_PLUS_EQUAL
 KW_DIVIDE_EQUAL KW_MULTIPLY_EQUAL WHITESPACE
-
 %token <eval> NUMCONST
 %token <eval> REAL
 %token <eval> BOOLCONST
 %token <eval> ID
 %token IF_WITHOUT_ELSE
-
 %type <eval> program declarationList declaration recDeclaration varDeclaration
 scopedVarDeclaration varDecList varDeclInitialize varDeclId scopedTypeSpecifier
 typeSpecifier returnTypeSpecifier funDeclaration params paramList paramTypeList
@@ -87,7 +102,6 @@ expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
 args argList constant
-
 %left KW_COND_OR
 %left KW_COND_AND
 %left KW_PLUS KW_MINUS
@@ -97,13 +111,12 @@ args argList constant
 %nonassoc ID_PREC
 %left KW_COND_THEN
 %left KW_ELSE
-
 %%
 program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
-    };
 
+    };
 declarationList : declarationList declaration
     {
         fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
@@ -124,23 +137,19 @@ declaration : varDeclaration
     {
         fprintf(fout, "Rule 6 \t\t declaration -> recDeclaration \n");
     };
-
 recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
-               {
-                 fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
-               };
+    {
+        fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
+    };
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON
                {
                  fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
                };| ID varDecList KW_SEMICOLON {
                  fprintf(fout, "Rule 8.1 \t\t varDeclaration -> ID varDecList KW_SEMICOLON\n");
 };
-
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
                      fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
                 };
-
-
 varDecList : varDecList  PUNC_COMMA varDeclInitialize {
            fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
                 };|
@@ -166,7 +175,6 @@ scopedTypeSpecifier : KW_STATIC typeSpecifier{
         fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
         };|
         KW_STATIC ID {
-
 fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
 };
 typeSpecifier : returnTypeSpecifier{
@@ -256,7 +264,6 @@ expressionStmt :	expression KW_SEMICOLON{
         KW_SEMICOLON{
         fprintf(fout, "Rule 47 \t\t expressionStmt -> empty\n");
         };
-
 selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_ELSE{
               fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression PAR_CL statement\n");
         };|
@@ -266,7 +273,6 @@ selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_
         KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END{
         fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END declaration\n");
         };
-
 caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
             fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
         };|
@@ -424,13 +430,8 @@ constant : NUMCONST {
         BOOLCONST{
         fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
         };
-
-
-
 %%
-
 int main() {
-
 yyin = fopen("input.txt", "r");
     fout = fopen("output.txt", "w");
     fprintf(fout, "\n \t \t \t PARSER \n");
@@ -438,24 +439,16 @@ yyin = fopen("input.txt", "r");
     if (fout == NULL) {
         printf("Error opening file!\n");
     }
-
 else if (!yyin) {
         printf("Error opening file!\n");
     }
-
 else
         yyparse();
-
 return 0;
-
 }
-
-
-
 void yyerror(const char *s) {
     fprintf(fout, "**Error: Line %d near token '%s' --> Message: %s **\n",
         yylineno, yytext, s);
     printf("**Error: Line %d near token '%s' --> Message: %s **\n", yylineno,
         yytext, s);
-
 }

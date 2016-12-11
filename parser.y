@@ -354,6 +354,7 @@ expression : mutable KW_EQUAL expression {
         simpleExpression{
         fprintf(fout, "Rule 66 \t\t expression -> simpleExpression\n");
         };
+
 simpleExpression : simpleExpression KW_COND_OR simpleExpression {
                  fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
         };|
@@ -381,90 +382,128 @@ relExpression : mathlogicExpression relop mathlogicExpression {
 relop : KW_RELOP{
       fprintf(fout, "Rule 75-80 \t\t relop -> KW_RELOP\n");
         };
-mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression {
-                    fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
-        };|
-        mathlogicExpression KW_MINUS mathlogicExpression {
-        fprintf(fout, "Rule 82 \t\t mathlogicExpression -> mathlogicExpression KW_MINUS mathlogicExpression\n");
-        };|
-        mathlogicExpression KW_MULTIPLY mathlogicExpression {
-        fprintf(fout, "Rule 83 \t\t mathlogicExpression -> mathlogicExpression KW_MULTIPLY mathlogicExpression\n");
-        };|
-        mathlogicExpression KW_DIVIDE mathlogicExpression {
-        fprintf(fout, "Rule 84 \t\t mathlogicExpression -> mathlogicExpression KW_DIVIDE mathlogicExpression\n");
-        };|
-        mathlogicExpression KW_MODULU mathlogicExpression {
-        fprintf(fout, "Rule 85 \t\t mathlogicExpression -> mathlogicExpression KW_MODULU mathlogicExpression\n");
-        };|
-        unaryExpression {
-        fprintf(fout, "Rule 86 \t\t mathlogicExpression -> unaryExpression\n");
-        };
-unaryExpression : unaryop unaryExpression{
-                fprintf(fout, "Rule 88 \t\t unaryExpression -> unaryop unaryExpression\n");
-        };|
-        factor{
-        fprintf(fout, "Rule 89 \t\t unaryExpression -> factor\n");
-        };
-unaryop : KW_MINUS {
-        fprintf(fout, "Rfule 90 \t\t unaryop -> KW_MINUS\n");
-        };|
-        KW_MULTIPLY{
-        fprintf(fout, "Rule 91 \t\t unaryop -> KW_MULTIPLY\n");
-        };|
-        KW_QUESTION_MARK{
-        fprintf(fout, "Rule 92 \t\t unaryop -> KW_QUESTION_MARK\n");
-        };
-factor : immutable {
-       fprintf(fout, "Rule 93 \t\t factor -> immutable\n");
-        };|
-        mutable{
-        fprintf(fout, "Rule 94 \t\t factor -> mutable\n");
-        };
-mutable : ID {
-        fprintf(fout, "Rule 95 \t\t mutable -> ID\n");
-        };|
-        mutable BR_OP expression BR_CL {
-        fprintf(fout, "Rule 96 \t\t mutable -> mutable BR_OP expression BR_CL\n");
-        };|
-        mutable PUNC_DOT ID{
-        fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
-        };
-immutable : PAR_OP expression PAR_CL{
-          fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression PAR_CL\n");
-        };|
-        call {
-        fprintf(fout, "Rule 99 \t\t immutable -> call\n");
-        };|
-        constant{
-        fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
-        };
-call : ID PAR_OP args PAR_CL{
-     fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args PAR_CL\n");
-        };
-args : argList {
-     fprintf(fout, "Rule 102 \t\t args -> argList\n");
-        };|{
-        fprintf(fout, "Rule 103 \t\t args -> empty\n");
-        };
-argList : argList PUNC_COMMA expression {
-        fprintf(fout, "Rule 104 \t\t argList -> argList PUNC_COMMA expression\n");
-        };|
-        expression{
-        fprintf(fout, "Rule 105 \t\t argList -> expression\n");
-        };
-constant : NUMCONST {
-         fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
-        };|
-        REAL{
-        fprintf(fout, "Rule 107 \t\t constant -> REAL\n");
-        };|
-        CHARCONST {
-        fprintf(fout, "Rule 108 \t\t constant -> CHARCONST\n");
-        };|
-        BOOLCONST{
-        fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
-        };
 
+mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
+    {
+        fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
+    };
+    | mathlogicExpression KW_MINUS mathlogicExpression
+    {
+        fprintf(fout, "Rule 82 \t\t mathlogicExpression -> mathlogicExpression KW_MINUS mathlogicExpression\n");
+    };
+    | mathlogicExpression KW_MULTIPLY mathlogicExpression
+    {
+        fprintf(fout, "Rule 83 \t\t mathlogicExpression -> mathlogicExpression KW_MULTIPLY mathlogicExpression\n");
+    };
+    | mathlogicExpression KW_DIVIDE mathlogicExpression
+    {
+        fprintf(fout, "Rule 84 \t\t mathlogicExpression -> mathlogicExpression KW_DIVIDE mathlogicExpression\n");
+    };
+    | mathlogicExpression KW_MODULU mathlogicExpression
+    {
+        fprintf(fout, "Rule 85 \t\t mathlogicExpression -> mathlogicExpression KW_MODULU mathlogicExpression\n");
+    };
+    | unaryExpression
+    {
+        fprintf(fout, "Rule 86 \t\t mathlogicExpression -> unaryExpression\n");
+    };
+
+unaryExpression : unaryop unaryExpression
+    {
+        fprintf(fout, "Rule 88 \t\t unaryExpression -> unaryop unaryExpression\n");
+    };
+    | factor
+    {
+        fprintf(fout, "Rule 89 \t\t unaryExpression -> factor\n");
+    };
+
+unaryop : KW_MINUS
+    {
+        fprintf(fout, "Rfule 90 \t\t unaryop -> KW_MINUS\n");
+    };
+    | KW_MULTIPLY
+    {
+        fprintf(fout, "Rule 91 \t\t unaryop -> KW_MULTIPLY\n");
+    };
+    | KW_QUESTION_MARK
+    {
+        fprintf(fout, "Rule 92 \t\t unaryop -> KW_QUESTION_MARK\n");
+    };
+
+factor : immutable
+    {
+        fprintf(fout, "Rule 93 \t\t factor -> immutable\n");
+    };
+    | mutable
+    {
+        fprintf(fout, "Rule 94 \t\t factor -> mutable\n");
+    };
+
+mutable : ID
+    {
+        fprintf(fout, "Rule 95 \t\t mutable -> ID\n");
+    };
+    | mutable BR_OP expression BR_CL
+    {
+        fprintf(fout, "Rule 96 \t\t mutable -> mutable BR_OP expression BR_CL\n");
+    };
+    | mutable PUNC_DOT ID
+    {
+        fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
+    };
+
+immutable : PAR_OP expression PAR_CL
+    {
+        fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression PAR_CL\n");
+    };
+    | call
+    {
+        fprintf(fout, "Rule 99 \t\t immutable -> call\n");
+    };
+    | constant
+    {
+        fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
+    };
+
+call : ID PAR_OP args PAR_CL
+    {
+        fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args PAR_CL\n");
+    };
+
+args : argList
+    {
+        fprintf(fout, "Rule 102 \t\t args -> argList\n");
+    };
+    |
+    {
+        fprintf(fout, "Rule 103 \t\t args -> empty\n");
+    };
+
+argList : argList PUNC_COMMA expression
+    {
+        fprintf(fout, "Rule 104 \t\t argList -> argList PUNC_COMMA expression\n");
+    };
+    | expression
+    {
+        fprintf(fout, "Rule 105 \t\t argList -> expression\n");
+    };
+
+constant : NUMCONST
+    {
+        fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
+    };
+    | REAL
+    {
+        fprintf(fout, "Rule 107 \t\t constant -> REAL\n");
+    };
+    | CHARCONST
+    {
+        fprintf(fout, "Rule 108 \t\t constant -> CHARCONST\n");
+    };
+    | BOOLCONST
+    {
+        fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
+    };
 
 
 %%

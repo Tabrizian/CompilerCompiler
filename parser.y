@@ -1,8 +1,10 @@
 %{
 #include <cstdio>
+#include <cstdlib>
 #include <vector>
 #include <fstream>
 #include <iostream>
+#include <string>
 
 using namespace std;
 extern FILE *yyin;
@@ -69,7 +71,9 @@ char* makeList(int a){
 }
 
 char* intToCharStar(int a){
-
+    char *str = new char[100];
+    itoa(a, str, 10);
+    return str;
 }
 
 char* addToList(char* a){
@@ -521,6 +525,8 @@ constant : NUMCONST
         $$.place = new_temp($1.type);
         $$.type = $1.type;
         $$.next_list = $1.next_list;
+        quadruple_push($$.place, "", "", intToCharStar(quadruple[0].size()+2));
+        quadruple_push("", "", "goto",intToCharStar(quadruple[0].size()+1));
         quadruple_push($1.place, " ", ":=", $$.place);
     };
     | REAL

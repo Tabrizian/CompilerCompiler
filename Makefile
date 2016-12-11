@@ -6,12 +6,12 @@ lex:
 
 parse:
 	bison -d parser.y
-	g++ lex.yy.c parser.tab.h parser.tab.c -o parser.out
+	g++ -std=c++11 lex.yy.c parser.tab.h parser.tab.c -o parser.out
 
 parse-debug:
 	bison -d parser.y
 	bison --verbose parser.y
-	g++ lex.yy.c parser.tab.h parser.tab.c -o parser.out
+	g++ -std=c++11 lex.yy.c parser.tab.h parser.tab.c -o parser.out
 
 run:
 	./parser.out

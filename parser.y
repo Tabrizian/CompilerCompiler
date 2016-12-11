@@ -16,14 +16,17 @@ int num = 0;
 
 int symbol_table_lookup(char *token) {
 }
+
 void symbol_table_insert(char *token, char *type) {
 }
+
 // What?!
 char* new_temp(char *c) {
 }
+
 void quadruple_print() {
+
     ofstream myfile;
-    //WE CONSIDER TO PRINT OUR CODE AS A ".C" FILE
     myfile.open("intermediatecode.c");
     myfile << "#include <stdio.h>\n\n";
     myfile << endl<<"int main(){\n\n";
@@ -119,6 +122,7 @@ args argList constant
 program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
+        quadruple_print();
 
     };
 declarationList : declarationList declaration

@@ -3,3 +3,4 @@ output.txt
 *.tab*
 *.yy.c
 parser.output
+intermediatecode.c

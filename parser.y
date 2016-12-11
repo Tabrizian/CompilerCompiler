@@ -14,6 +14,7 @@ extern char* yytext;
 vector <string> quadruple[4];
 vector <string> symbol_table[2];
 vector <string> registers;
+int num = 0;
 
 int symbol_table_lookup(char *token) {
 }
@@ -307,12 +308,15 @@ selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_
         fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END declaration\n");
         };
 
-caseElement :KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON {
-            fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
-        };|
-        caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON{
+caseElement : KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON
+    {
+        fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
+    };
+    | caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON
+    {
         fprintf(fout, "Rule 52 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
-        };
+    };
+
 defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON {
                fprintf(fout, "Rule 53 \t\t defaultElement -> KW_DEFAULT KW_COLON statement KW_SEMICOLON\n");
         };|{
@@ -379,9 +383,10 @@ relExpression : mathlogicExpression relop mathlogicExpression {
         mathlogicExpression {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
         };
-relop : KW_RELOP{
-      fprintf(fout, "Rule 75-80 \t\t relop -> KW_RELOP\n");
-        };
+relop : KW_RELOP
+    {
+        fprintf(fout, "Rule 75-80 \t\t relop -> KW_RELOP\n");
+    };
 
 mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
     {
@@ -491,6 +496,11 @@ argList : argList PUNC_COMMA expression
 constant : NUMCONST
     {
         fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
+        $$.code = $1.code;
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        $$.next_list = $1.next_list;
+        quadruple_push($1.place, " ", ":=", $$.place);
     };
     | REAL
     {
@@ -505,31 +515,23 @@ constant : NUMCONST
         fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
     };
 
-
 %%
 
 int main() {
 
-yyin = fopen("input.txt", "r");
+    yyin = fopen("input.txt", "r");
     fout = fopen("output.txt", "w");
     fprintf(fout, "\n \t \t \t PARSER \n");
     fprintf(fout, "Rule No. --> Rule Description \n");
     if (fout == NULL) {
         printf("Error opening file!\n");
-    }
-
-else if (!yyin) {
+    } else if (!yyin) {
         printf("Error opening file!\n");
-    }
-
-else
+    } else
         yyparse();
 
-return 0;
-
+    return 0;
 }
-
-
 
 void yyerror(const char *s) {
     fprintf(fout, "**Error: Line %d near token '%s' --> Message: %s **\n",

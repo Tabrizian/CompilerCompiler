@@ -112,6 +112,7 @@ declarationList : declarationList declaration
     {
         fprintf(fout, "Rule 3 \t\t declarationList -> declaration\n");
     };
+
 declaration : varDeclaration
     {
         fprintf(fout, "Rule 4 \t\t declaration -> varDeclaration \n");
@@ -126,93 +127,131 @@ declaration : varDeclaration
     };
 
 recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
-               {
-                 fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
-               };
+    {
+        fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
+    };
+
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON
-               {
-                 fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
-               };| ID varDecList KW_SEMICOLON {
-                 fprintf(fout, "Rule 8.1 \t\t varDeclaration -> ID varDecList KW_SEMICOLON\n");
-};
+    {
+        fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
+    };
+    | ID varDecList KW_SEMICOLON
+    {
+        fprintf(fout, "Rule 8.1 \t\t varDeclaration -> ID varDecList KW_SEMICOLON\n");
+    };
 
-scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON {
-                     fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
-                };
+scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON
+    {
+        fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
+    };
 
+varDecList : varDecList  PUNC_COMMA varDeclInitialize
+    {
+        fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
+    };
+    | varDeclInitialize
+    {
+        fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
+    };
 
-varDecList : varDecList  PUNC_COMMA varDeclInitialize {
-           fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
-                };|
-        varDeclInitialize{
-         fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
-        };
-varDeclInitialize : varDeclId {
-                  fprintf(fout, "Rule 12 \t\t varDeclInitialize -> varDeclId\n");
-                };|
-        varDeclId KW_COLON simpleExpression{
-         fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
-        };
-varDeclId : ID {
-          fprintf(fout, "Rule 14 \t\t varDeclId -> ID\n");
-        };|
-        ID BR_OP NUMCONST BR_CL{
+varDeclInitialize : varDeclId
+    {
+        fprintf(fout, "Rule 12 \t\t varDeclInitialize -> varDeclId\n");
+    };
+    | varDeclId KW_COLON simpleExpression
+    {
+        fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
+    };
+
+varDeclId : ID
+    {
+        fprintf(fout, "Rule 14 \t\t varDeclId -> ID\n");
+    };
+    | ID BR_OP NUMCONST BR_CL
+    {
         fprintf(fout, "Rule 15 \t\t varDeclId -> ID BR_OP NUMCONST BR_CL\n");
-        };
-scopedTypeSpecifier : KW_STATIC typeSpecifier{
-                    fprintf(fout, "Rule 16 \t\t scopedTypeSpecifier -> KW_STATIC typeSpecifier\n");
-        };|
-        typeSpecifier{
-        fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
-        };|
-        KW_STATIC ID {
+    };
 
-fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
-};
-typeSpecifier : returnTypeSpecifier{
-              fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
-        };
-returnTypeSpecifier : KW_INT{
-                    fprintf(fout, "Rule 20 \t\t returnTypeSpecifier -> KW_INT\n");
-        };|
-         KW_REAL{
+scopedTypeSpecifier : KW_STATIC typeSpecifier
+    {
+        fprintf(fout, "Rule 16 \t\t scopedTypeSpecifier -> KW_STATIC typeSpecifier\n");
+    };
+    | typeSpecifier
+    {
+        fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
+    };
+    | KW_STATIC ID
+    {
+        fprintf(fout, "Rule 17.1 \t\t scopedTypeSpecifier -> KW_STATIC ID\n");
+    };
+
+typeSpecifier : returnTypeSpecifier
+    {
+        fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
+    };
+
+returnTypeSpecifier : KW_INT
+    {
+        fprintf(fout, "Rule 20 \t\t returnTypeSpecifier -> KW_INT\n");
+    };
+    | KW_REAL
+    {
         fprintf(fout, "Rule 21 \t\t returnTypeSpecifier -> KW_REAL\n");
-        };|
-        KW_BOOL{
+    };
+    | KW_BOOL
+    {
         fprintf(fout, "Rule 22 \t\t returnTypeSpecifier -> KW_BOOL\n");
-        };|
-        KW_CHAR{
+    };
+    | KW_CHAR
+    {
         fprintf(fout, "Rule 23 \t\t returnTypeSpecifier -> KW_CHAR\n");
-        };
-funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement{
-               fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params PAR_CL statement\n");
-        };|
-         ID PAR_OP params PAR_CL statement{
+    };
+
+funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement
+    {
+        fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params PAR_CL statement\n");
+    };
+    | ID PAR_OP params PAR_CL statement
+    {
         fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
-        };|
-ID ID PAR_OP params PAR_CL statement{
+    };
+    | ID ID PAR_OP params PAR_CL statement
+    {
         fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
-};
-params : paramList{
+    };
+
+params : paramList
+    {
        fprintf(fout, "Rule 26 \t\t params -> paramList\n");
-        };|{
+    };
+    |
+    {
         fprintf(fout, "Rule 27 \t\t params -> empty \n");
-        };
-paramList : paramList KW_SEMICOLON paramTypeList{
-          fprintf(fout, "Rule 28 \t\t paramList -> paramList KW_SEMICOLON paramTypeList\n");
-        };|
-        paramTypeList{
+    };
+
+paramList : paramList KW_SEMICOLON paramTypeList
+    {
+        fprintf(fout, "Rule 28 \t\t paramList -> paramList KW_SEMICOLON paramTypeList\n");
+    };
+    | paramTypeList
+    {
         fprintf(fout, "Rule 29 \t\t paramList -> paramTypeList\n");
-        };
-paramTypeList : typeSpecifier paramIdList {
-              fprintf(fout, "Rule 30 \t\t paramTypeList -> typeSpecifier paramIdList\n");
-        };
-paramIdList : paramIdList PUNC_COMMA paramId {
-            fprintf(fout, "Rule 31 \t\t paramIdList -> paramIdList PUNC_COMMA paramId\n");
-        };|
-        paramId{
+    };
+
+paramTypeList : typeSpecifier paramIdList
+    {
+        fprintf(fout, "Rule 30 \t\t paramTypeList -> typeSpecifier paramIdList\n");
+    };
+
+paramIdList : paramIdList PUNC_COMMA paramId
+    {
+        fprintf(fout, "Rule 31 \t\t paramIdList -> paramIdList PUNC_COMMA paramId\n");
+    };
+    | paramId
+    {
         fprintf(fout, "Rule 32 \t\t paramIdList -> paramId\n");
-        };
+    };
+
 paramId : ID {
         fprintf(fout, "Rule 33 \t\t paramId -> ID\n");
         };|

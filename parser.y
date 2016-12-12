@@ -14,8 +14,9 @@ extern char* yytext;
 vector <string> quadruple[4];
 vector <string> symbol_table[2];
 vector <string> registers;
+ofstream myfile;
 
-int num = 0;
+int num = 1;
 
 int symbol_table_lookup(char *token) {
 }
@@ -27,7 +28,9 @@ void symbol_table_insert(string token, char *type) {
 
 // What?!
 char* new_temp(char *c) {
-    string name = "t" + num;
+    string name("t");
+    name.push_back(num);
+    name += to_string(num);
     symbol_table_insert(name, c);
     num++;
     char *what = (char *) malloc(sizeof(char)*100);
@@ -37,7 +40,6 @@ char* new_temp(char *c) {
 
 void quadruple_print() {
 
-    ofstream myfile;
     myfile.open("intermediatecode.c");
     myfile << "#include <stdio.h>\n\n";
     myfile << endl<<"int main(){\n\n";
@@ -366,30 +368,38 @@ returnStmt : KW_RETURN KW_SEMICOLON {
 breakStmt : KW_BREAK KW_SEMICOLON {
           fprintf(fout, "Rule 58 \t\t breakStmt -> KW_BREAK KW_SEMICOLON\n");
         };
-expression : mutable KW_EQUAL expression {
-           fprintf(fout, "Rule 59 \t\t expression -> mutable KW_EQUAL expression\n");
-        };|
-        mutable KW_PLUS_EQUAL expression {
+expression : mutable KW_EQUAL expression
+    {
+        fprintf(fout, "Rule 59 \t\t expression -> mutable KW_EQUAL expression\n");
+    };
+    | mutable KW_PLUS_EQUAL expression
+    {
         fprintf(fout, "Rule 60 \t\t expression -> mutable KW_PLUS_EQUAL expression\n");
-        };|
-        mutable KW_MINUS_EQUAL expression {
+    };
+    | mutable KW_MINUS_EQUAL expression
+    {
         fprintf(fout, "Rule 61 \t\t expression -> mutable KW_MINUS_EQUAL expression\n");
-        };|
-        mutable KW_MULTIPLY_EQUAL expression {
+    };
+    | mutable KW_MULTIPLY_EQUAL expression
+    {
         fprintf(fout, "Rule 62 \t\t expression -> mutable KW_MULTIPLY_EQUAL expression\n");
-        };|
-        mutable KW_DIVIDE_EQUAL expression {
+    };
+    | mutable KW_DIVIDE_EQUAL expression
+    {
         fprintf(fout, "Rule 63 \t\t expression -> mutable KW_DIVIDE_EQUAL expression\n");
-        };|
-        mutable KW_PLUS_PLUS {
+    };
+    | mutable KW_PLUS_PLUS
+    {
         fprintf(fout, "Rule 64 \t\t expression -> mutable KW_PLUS_PLUS\n");
-        };|
-        mutable KW_MINUS_MINUS {
+    };
+    | mutable KW_MINUS_MINUS
+    {
         fprintf(fout, "Rule 65 \t\t expression -> mutable KW_MINUS_MINUS\n");
-        };|
-        simpleExpression{
+    };
+    | simpleExpression
+    {
         fprintf(fout, "Rule 66 \t\t expression -> simpleExpression\n");
-        };
+    };
 
 simpleExpression : simpleExpression KW_COND_OR simpleExpression {
                  fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
@@ -422,6 +432,9 @@ relop : KW_RELOP
 
 mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
     {
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, $3.place, "+", $$.place);
         fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
     };
     | mathlogicExpression KW_MINUS mathlogicExpression
@@ -529,7 +542,6 @@ constant : NUMCONST
     {
         fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
         $$.place = new_temp($1.type);
-        fprintf(fout, $$.place);
         $$.type = $1.type;
         $$.next_list = $1.next_list;
         quadruple_push($1.place, " ", ":=", $$.place);

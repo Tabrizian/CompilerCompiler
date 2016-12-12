@@ -1,5 +1,5 @@
 int #at11(int #ba12, #ca23[]; bool #do43, #el32;int #fo12)
 {
     int #xy20;
-    #xy20 = 23213 + 231;
+    #xy20 = 1 + 2 * 3 + 4 / 34 % 89;
 }

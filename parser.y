@@ -16,7 +16,7 @@ vector <string> symbol_table[2];
 vector <string> registers;
 ofstream myfile;
 
-int num = 1;
+int num = 0;
 
 int symbol_table_lookup(char *token) {
 }
@@ -29,7 +29,6 @@ void symbol_table_insert(string token, char *type) {
 // What?!
 char* new_temp(char *c) {
     string name("t");
-    name.push_back(num);
     name += to_string(num);
     symbol_table_insert(name, c);
     num++;
@@ -55,16 +54,16 @@ void quadruple_print() {
         if(quadruple[2][i] == ":=")
                 myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<";"<<endl;
         else if(quadruple[2][i] == "+")
-                myfile << quadruple[3][i]<<" = "<<quadruple[0][i]<<" + "<<quadruple[1][i]<<";";
+                myfile << quadruple[3][i]<<" = "<<quadruple[0][i]<<" + "<<quadruple[1][i]<<";" << endl;
         else if(quadruple[2][i] == "-")
                 myfile << quadruple[3][i] << " = " << quadruple[0][i] << " - "
-                    << quadruple[1][i]<<";";
+                    << quadruple[1][i]<<";" << endl;
         else if(quadruple[2][i] == "*")
                 myfile << quadruple[3][i] << " = " << quadruple[0][i] << " * "
-                    << quadruple[1][i] << ";";
+                    << quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == "/")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
-                    <<  quadruple[1][i] << ";";
+                    <<  quadruple[1][i] << ";" << endl;
     }
     myfile << "L" << quadruple[0].size()<<":" <<" return 0;"<<endl;
     myfile << endl <<"}" <<endl;
@@ -438,26 +437,38 @@ relop : KW_RELOP
 
 mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
     {
+        fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
         $$.place = new_temp($1.type);
         $$.type = $1.type;
         quadruple_push($1.place, $3.place, "+", $$.place);
-        fprintf(fout, "Rule 81 \t\t mathlogicExpression -> mathlogicExpression KW_PLUS mathlogicExpression\n");
     };
     | mathlogicExpression KW_MINUS mathlogicExpression
     {
         fprintf(fout, "Rule 82 \t\t mathlogicExpression -> mathlogicExpression KW_MINUS mathlogicExpression\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, $3.place, "-", $$.place);
     };
     | mathlogicExpression KW_MULTIPLY mathlogicExpression
     {
         fprintf(fout, "Rule 83 \t\t mathlogicExpression -> mathlogicExpression KW_MULTIPLY mathlogicExpression\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, $3.place, "*", $$.place);
     };
     | mathlogicExpression KW_DIVIDE mathlogicExpression
     {
         fprintf(fout, "Rule 84 \t\t mathlogicExpression -> mathlogicExpression KW_DIVIDE mathlogicExpression\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, $3.place, "/", $$.place);
     };
     | mathlogicExpression KW_MODULU mathlogicExpression
     {
         fprintf(fout, "Rule 85 \t\t mathlogicExpression -> mathlogicExpression KW_MODULU mathlogicExpression\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, $3.place, "%", $$.place);
     };
     | unaryExpression
     {

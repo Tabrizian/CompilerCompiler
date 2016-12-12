@@ -19,11 +19,16 @@ int num = 0;
 int symbol_table_lookup(char *token) {
 }
 
-void symbol_table_insert(char *token, char *type) {
+void symbol_table_insert(string token, char *type) {
+    symbol_table[0].push_back(token);
+    symbol_table[1].push_back(type);
 }
 
 // What?!
 char* new_temp(char *c) {
+    string name = "t" + num;
+    symbol_table_insert(name, c);
+    num++;
 }
 
 void quadruple_print() {
@@ -72,7 +77,6 @@ char* makeList(int a){
 
 char* intToCharStar(int a){
     char *str = new char[100];
-    itoa(a, str, 10);
     return str;
 }
 
@@ -521,12 +525,9 @@ argList : argList PUNC_COMMA expression
 constant : NUMCONST
     {
         fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
-        $$.code = $1.code;
         $$.place = new_temp($1.type);
         $$.type = $1.type;
         $$.next_list = $1.next_list;
-        quadruple_push($$.place, "", "", intToCharStar(quadruple[0].size()+2));
-        quadruple_push("", "", "goto",intToCharStar(quadruple[0].size()+1));
         quadruple_push($1.place, " ", ":=", $$.place);
     };
     | REAL

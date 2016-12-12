@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include <cstring>
 
 using namespace std;
 extern FILE *yyin;
@@ -29,6 +30,9 @@ char* new_temp(char *c) {
     string name = "t" + num;
     symbol_table_insert(name, c);
     num++;
+    char *what = (char *) malloc(sizeof(char)*100);
+    strcpy(what, name.c_str());
+    return what;
 }
 
 void quadruple_print() {
@@ -51,10 +55,10 @@ void quadruple_print() {
                 myfile << quadruple[3][i] << " = " << quadruple[0][i] << " * "
                     << quadruple[1][i] << ";";
         else if(quadruple[2][i] == "/")
-                myfile <<quadruple[3][i] << " = " <<quadruple[0][i] << " / "
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
                     <<  quadruple[1][i] << ";";
     }
-    myfile << endl <<"}";
+    myfile << endl << "}" << endl;
 }
 void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
     quadruple[0].push_back(arg1);
@@ -265,9 +269,7 @@ paramList : paramList KW_SEMICOLON paramTypeList
     {
         fprintf(fout, "Rule 28 \t\t paramList -> paramList KW_SEMICOLON paramTypeList\n");
     };
-    | paramTypeList
-    {
-        fprintf(fout, "Rule 29 \t\t paramList -> paramTypeList\n");
+    | paramTypeList { fprintf(fout, "Rule 29 \t\t paramList -> paramTypeList\n");
     };
 
 paramTypeList : typeSpecifier paramIdList
@@ -526,6 +528,7 @@ constant : NUMCONST
     {
         fprintf(fout, "Rule 106 \t\t constant -> NUMCONST\n");
         $$.place = new_temp($1.type);
+        fprintf(fout, $$.place);
         $$.type = $1.type;
         $$.next_list = $1.next_list;
         quadruple_push($1.place, " ", ":=", $$.place);

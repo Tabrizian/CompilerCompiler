@@ -1,35 +1,5 @@
 int #at11(int #ba12, #ca23[]; bool #do43, #el32;int #fo12)
 {
-int #gn11, #ho12[100];
-//#po11 #aP11;
-//#li11 #aL11;
-//#li11 #tw33[2];
-////#aP11.#xx11= 666;
-////#aP11.#yy11= 667;
-////#aL11.#xx11.
-//#xx11= 1;
-//
-//#aL11.#xx11.#yy11= 2;
-//#aL11.#yy11.#xx11= 3;
-//#aL11.#yy11.#yy11= 4;
-//#tw33[0].#xx11.#xx11= 42;
-//#tw33[1].#yy11.#xx11= 43;
-#gn11= #ho12[2] = 3**#ca23;// hog is 3 times the size of array passed to cat
-if (#do43 and  #el32or  #ba12.gt#ca23[3])
-     #do43 =  not #do43;
-else #fo12++;
-if (#ba12 .le #fo12)
-{
-while (#do43) {
-static int #ho12;  // hog in new scope
-#ho12= #fo12;
-#do43= #fr77(#fo12++, #ca23).lt 666;
-if (#ho12.gt #ba12) break;
-else if (#fo12 .ne 0)
-#fo12+= 7;
+    int #xy20;
+    #xy20 = 23213;
 }
-}
-return (#fo12 + #ba12 *#ca23[#ba12])/-#fo12;}
-// note that functions are defined using a statement
-int #ma11(int #aa11, #bb11) if (#aa11 .gt #bb11) return #aa11;
-else return #bb11;

@@ -58,7 +58,8 @@ void quadruple_print() {
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
                     <<  quadruple[1][i] << ";";
     }
-    myfile << endl << "}" << endl;
+    myfile << "L" << quadruple[0].size()<<" return 0;"<<endl;
+    myfile << endl <<"}" <<endl;
 }
 void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
     quadruple[0].push_back(arg1);

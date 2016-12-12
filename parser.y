@@ -44,6 +44,12 @@ void quadruple_print() {
     myfile << "#include <stdio.h>\n\n";
     myfile << endl<<"int main(){\n\n";
 
+    for(int i = 0 ; i < symbol_table[0].size() ; i++){
+        if(symbol_table[1][i] == "integer")
+            myfile << "int " << symbol_table[0][i]<<" ;"<<endl;
+    }
+
+
     for(int i = 0; i < quadruple[0].size(); i++){
         myfile << "L" << i <<" : ";
         if(quadruple[2][i] == ":=")
@@ -60,7 +66,7 @@ void quadruple_print() {
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
                     <<  quadruple[1][i] << ";";
     }
-    myfile << "L" << quadruple[0].size()<<" return 0;"<<endl;
+    myfile << "L" << quadruple[0].size()<<":" <<" return 0;"<<endl;
     myfile << endl <<"}" <<endl;
 }
 void quadruple_push(char *arg1, char *arg2, char *op, char *result) {

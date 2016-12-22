@@ -75,9 +75,6 @@ void quadruple_print() {
             myfile << "int " << symbol_table[0][i]<<" ;"<<endl;
         else if(symbol_table[1][i] == "real")
             myfile << "double " << symbol_table[0][i]<<" ;"<<endl;
-        else if(symbol_table[1][i] == "bool")
-            myfile << "bool " << symbol_table[0][i]<<" ;"<<endl;
-
     }
 
 
@@ -308,7 +305,7 @@ returnTypeSpecifier : KW_INT
     | KW_BOOL
     {
         fprintf(fout, "Rule 22 \t\t returnTypeSpecifier -> KW_BOOL\n");
-        $$.type = "bool";
+        $$.type = "integer";
     };
     | KW_CHAR
     {

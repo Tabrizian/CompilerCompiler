@@ -1,4 +1,4 @@
-int #xy21, #df32;
 int #at11()
 {
+int #xy21, #df32;
 }

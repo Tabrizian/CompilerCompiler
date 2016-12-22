@@ -68,11 +68,15 @@ void quadruple_print() {
     myfile << "#include <stdio.h>\n\n";
     myfile << endl<<"int main(){\n\n";
 
+
+    /* for print declaration of  variables*/
     for(int i = 0 ; i < symbol_table[0].size() ; i++){
         if(symbol_table[1][i] == "integer")
             myfile << "int " << symbol_table[0][i]<<" ;"<<endl;
-    if(symbol_table[1][i] == "real")
+        else if(symbol_table[1][i] == "real")
             myfile << "double " << symbol_table[0][i]<<" ;"<<endl;
+        else if(symbol_table[1][i] == "bool")
+            myfile << "bool " << symbol_table[0][i]<<" ;"<<endl;
 
     }
 
@@ -640,6 +644,10 @@ constant : NUMCONST
     | BOOLCONST
     {
         fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        $$.next_list = $1.next_list;
+        quadruple_push($1.place, " ", ":=", $$.place);
     };
 
 %%

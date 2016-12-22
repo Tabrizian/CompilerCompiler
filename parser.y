@@ -71,10 +71,18 @@ void quadruple_print() {
 
     /* for print declaration of  variables*/
     for(int i = 0 ; i < symbol_table[0].size() ; i++){
+        char* normalized;
+        if(symbol_table[0][i][0] == '#'){
+            char* s1 = &symbol_table[0][i][0];
+            *s1++;
+            strcpy(normalized,s1);
+        }
+        else
+            strcpy(normalized, &symbol_table[0][i][0]);
         if(symbol_table[1][i] == "integer")
-            myfile << "int " << symbol_table[0][i]<<" ;"<<endl;
+            myfile << "int " << normalized<<" ;"<<endl;
         else if(symbol_table[1][i] == "real")
-            myfile << "double " << symbol_table[0][i]<<" ;"<<endl;
+            myfile << "double " << normalized<<" ;"<<endl;
     }
 
 

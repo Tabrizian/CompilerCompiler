@@ -1,4 +1,6 @@
 int #at11()
 {
 int #xy21, #df32;
+
+real #xy00;
 }

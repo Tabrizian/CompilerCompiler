@@ -134,7 +134,7 @@ CR_CL [}]
     yylval.eval.next_list[0] = '\0';
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
-    yylval.eval.type = "string";
+    yylval.eval.type = "char";
     return CHARCONST;
 }
 

@@ -6,8 +6,26 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <sstream>
 
 using namespace std;
+
+void split(const string &s, char delim, vector<string> &elems) {
+    stringstream ss;
+    ss.str(s);
+    string item;
+    while (getline(ss, item, delim)) {
+        elems.push_back(item);
+    }
+}
+
+
+vector<string> split(const string &s, char delim) {
+    vector<string> elems;
+    split(s, delim, elems);
+    return elems;
+}
+
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
@@ -24,6 +42,13 @@ int symbol_table_lookup(char *token) {
 void symbol_table_insert(string token, char *type) {
     symbol_table[0].push_back(token);
     symbol_table[1].push_back(type);
+}
+
+void symbol_table_insert(vector<string> tokens, char *type) {
+    for(int i = 0; i < tokens.size(); i++) {
+        symbol_table[0].push_back(tokens[i]);
+        symbol_table[1].push_back(type);
+    }
 }
 
 // What?!
@@ -181,6 +206,12 @@ recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON
     {
         fprintf(fout, "Rule 8 \t\t varDeclaration -> typeSpecifier varDecList KW_SEMICOLON\n");
+        $$.type = $1.type;
+        string declaration_list($2.code);
+
+        vector<string> tokens = split(declaration_list, ',');
+        symbol_table_insert(tokens, $1.type);
+        fprintf(fout, "%s\n", $2.code);
     };
     | ID varDecList KW_SEMICOLON
     {
@@ -190,28 +221,45 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
 scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON
     {
         fprintf(fout, "Rule 9 \t\t scopedVarDeclaration -> scopedTypeSpecifier varDecList KW_SEMICOLON\n");
+        $$.type = $1.type;
+        string declaration_list($2.code);
+
+        vector<string> tokens = split(declaration_list, ',');
+        symbol_table_insert(tokens, $1.type);
+        fprintf(fout, "%s\n", $2.code);
     };
 
 varDecList : varDecList  PUNC_COMMA varDeclInitialize
     {
         fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
+        $$.type = $1.type;
+        char temp[100];
+        strcpy(temp, $1.code);
+        $$.code = strcat(strcat(temp, ","), $3.code);
+
     };
     | varDeclInitialize
     {
+        $$.type = $1.type;
+        $$.code = $1.code;
         fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
     };
 
 varDeclInitialize : varDeclId
     {
+        $$.code = $1.code;
         fprintf(fout, "Rule 12 \t\t varDeclInitialize -> varDeclId\n");
+        fprintf(fout, $$.code);
     };
     | varDeclId KW_COLON simpleExpression
     {
+        $$.code = $1.code;
         fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
     };
 
 varDeclId : ID
     {
+        $$.code = $1.place;
         fprintf(fout, "Rule 14 \t\t varDeclId -> ID\n");
     };
     | ID BR_OP NUMCONST BR_CL
@@ -221,10 +269,12 @@ varDeclId : ID
 
 scopedTypeSpecifier : KW_STATIC typeSpecifier
     {
+        $$.type = $2.type;
         fprintf(fout, "Rule 16 \t\t scopedTypeSpecifier -> KW_STATIC typeSpecifier\n");
     };
     | typeSpecifier
     {
+        $$.type = $1.type;
         fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
     };
     | KW_STATIC ID
@@ -235,23 +285,28 @@ scopedTypeSpecifier : KW_STATIC typeSpecifier
 typeSpecifier : returnTypeSpecifier
     {
         fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
+        $$.type = $1.type;
     };
 
 returnTypeSpecifier : KW_INT
     {
         fprintf(fout, "Rule 20 \t\t returnTypeSpecifier -> KW_INT\n");
+        $$.type = "integer";
     };
     | KW_REAL
     {
         fprintf(fout, "Rule 21 \t\t returnTypeSpecifier -> KW_REAL\n");
+        $$.type = "real";
     };
     | KW_BOOL
     {
         fprintf(fout, "Rule 22 \t\t returnTypeSpecifier -> KW_BOOL\n");
+        $$.type = "bool";
     };
     | KW_CHAR
     {
         fprintf(fout, "Rule 23 \t\t returnTypeSpecifier -> KW_CHAR\n");
+        $$.type = "char";
     };
 
 funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement

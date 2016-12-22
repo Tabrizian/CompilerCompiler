@@ -535,10 +535,12 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
 relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
+        $$.place = $1.place;
     };
     | mathlogicExpression
     {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
+        $$.place = $1.place;
     };
 
 relop : KW_RELOP
@@ -597,7 +599,7 @@ unaryExpression : unaryop unaryExpression
 
 unaryop : KW_MINUS
     {
-        fprintf(fout, "Rfule 90 \t\t unaryop -> KW_MINUS\n");
+        fprintf(fout, "Rule 90 \t\t unaryop -> KW_MINUS\n");
     };
     | KW_MULTIPLY
     {

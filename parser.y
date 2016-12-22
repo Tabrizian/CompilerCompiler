@@ -51,7 +51,7 @@ void symbol_table_insert(vector<string> tokens, char *type) {
     }
 }
 
-// What?!
+
 char* new_temp(char *c) {
     string name("t");
     name += to_string(num);
@@ -71,6 +71,9 @@ void quadruple_print() {
     for(int i = 0 ; i < symbol_table[0].size() ; i++){
         if(symbol_table[1][i] == "integer")
             myfile << "int " << symbol_table[0][i]<<" ;"<<endl;
+    if(symbol_table[1][i] == "real")
+            myfile << "double " << symbol_table[0][i]<<" ;"<<endl;
+
     }
 
 
@@ -624,6 +627,11 @@ constant : NUMCONST
     | REAL
     {
         fprintf(fout, "Rule 107 \t\t constant -> REAL\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        $$.next_list = $1.next_list;
+        quadruple_push($1.place, " ", ":=", $$.place);
+
     };
     | CHARCONST
     {

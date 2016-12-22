@@ -1,5 +1,5 @@
-
 int #at11()
 {
-real #xy00;
+    int #xy21, #df32;
+    real #xy00;
 }

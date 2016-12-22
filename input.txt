@@ -1,5 +1,8 @@
 int #at11()
 {
-    int #xy21, #df32;
-    real #xy00;
+    int #JJ00, #PA95;
+    #JJ00 = 5;
+    #JJ00++;
+    #PA95 = #JJ00 - 3;
+    #PA95 --;
 }

@@ -106,6 +106,11 @@ void quadruple_print() {
         else if(quadruple[2][i] == "%")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                     <<  quadruple[1][i] << ";" << endl;
+        else if(quadruple[2][i] == "++")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i]<<"++ ;"<<endl;
+        else if(quadruple[2][i] == "--")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i]<<"-- ;"<<endl;
+
     }
     myfile << "L" << quadruple[0].size()<<":" <<" return 0;"<<endl;
     myfile << endl <<"}" <<endl;
@@ -488,6 +493,7 @@ breakStmt : KW_BREAK KW_SEMICOLON
 expression : mutable KW_EQUAL expression
     {
         fprintf(fout, "Rule 59 \t\t expression -> mutable KW_EQUAL expression\n");
+        quadruple_push($3.place, "", ":=", $1.place);
     };
     | mutable KW_PLUS_EQUAL expression
     {
@@ -508,10 +514,17 @@ expression : mutable KW_EQUAL expression
     | mutable KW_PLUS_PLUS
     {
         fprintf(fout, "Rule 64 \t\t expression -> mutable KW_PLUS_PLUS\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, "", "++", $$.place);
     };
     | mutable KW_MINUS_MINUS
     {
         fprintf(fout, "Rule 65 \t\t expression -> mutable KW_MINUS_MINUS\n");
+        $$.place = new_temp($1.type);
+        $$.type = $1.type;
+        quadruple_push($1.place, "", "--", $$.place);
+
     };
     | simpleExpression
     {

@@ -84,7 +84,7 @@ void quadruple_print() {
         else if(symbol_table[1][i] == "real")
             myfile << "double " << normalized<<" ;"<<endl;
         else if(symbol_table[1][i] == "char")
-            myfile << "char" << normalized<< " ;"<<endl;
+            myfile << "char " << normalized<< " ;"<<endl;
     }
 
 
@@ -702,7 +702,7 @@ constant : NUMCONST
         $$.place = new_temp($1.type);
         $$.type = $1.type;
         $$.next_list = $1.next_list;
-        quadruple_push($1.place, " ", ":=", $$.place);
+        quadruple_push($1.place, " ", ":=",$$.place);
     };
     | BOOLCONST
     {

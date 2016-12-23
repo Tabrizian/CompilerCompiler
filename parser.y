@@ -10,6 +10,14 @@
 
 using namespace std;
 
+extern FILE *yyin;
+extern int yylineno;
+extern char* yytext;
+vector <string> quadruple[4];
+vector <string> symbol_table[2];
+vector <string> registers;
+ofstream myfile;
+
 void split(const string &s, char delim, vector<string> &elems) {
     stringstream ss;
     ss.str(s);
@@ -26,17 +34,9 @@ vector<string> split(const string &s, char delim) {
     return elems;
 }
 
-extern FILE *yyin;
-extern int yylineno;
-extern char* yytext;
-vector <string> quadruple[4];
-vector <string> symbol_table[2];
-vector <string> registers;
-ofstream myfile;
-
 int num = 0;
 
-int symbol_table_lookup(char *token) {
+int symbol_table_lookup(string token) {
 }
 
 void symbol_table_insert(string token, char *type) {
@@ -50,7 +50,6 @@ void symbol_table_insert(vector<string> tokens, char *type) {
         symbol_table[1].push_back(type);
     }
 }
-
 
 char* new_temp(char *c) {
     string name("t");
@@ -67,7 +66,6 @@ void quadruple_print() {
     myfile.open("intermediatecode.c");
     myfile << "#include <stdio.h>\n\n";
     myfile << endl<<"int main(){\n\n";
-
 
     /* for print declaration of  variables*/
     for(int i = 0 ;i < symbol_table[0].size(); i++) {
@@ -127,6 +125,7 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     if(result[0] == '#') {
         result = result.substr(1);
     }
+
     quadruple[0].push_back(arg1);
     quadruple[1].push_back(arg2);
     quadruple[2].push_back(op);
@@ -264,7 +263,6 @@ scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON
 varDecList : varDecList  PUNC_COMMA varDeclInitialize
     {
         fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
-        $$.type = $1.type;
         char temp[100];
         strcpy(temp, $1.code);
         $$.code = strcat(strcat(temp, ","), $3.code);
@@ -272,28 +270,28 @@ varDecList : varDecList  PUNC_COMMA varDeclInitialize
     };
     | varDeclInitialize
     {
-        $$.type = $1.type;
         $$.code = $1.code;
         fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
     };
 
 varDeclInitialize : varDeclId
     {
-        $$.code = $1.code;
         fprintf(fout, "Rule 12 \t\t varDeclInitialize -> varDeclId\n");
-        fprintf(fout, $$.code);
+        $$.code = $1.code;
+        $$.type = "unknown";
     };
     | varDeclId KW_COLON simpleExpression
     {
+        fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
         $$.code = $1.code;
         $$.place = $3.place;
-        fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
+        $$.type = $3.type;
     };
 
 varDeclId : ID
     {
-        $$.code = $1.place;
         fprintf(fout, "Rule 14 \t\t varDeclId -> ID\n");
+        $$.code = $1.place;
     };
     | ID BR_OP NUMCONST BR_CL
     {
@@ -302,13 +300,13 @@ varDeclId : ID
 
 scopedTypeSpecifier : KW_STATIC typeSpecifier
     {
-        $$.type = $2.type;
         fprintf(fout, "Rule 16 \t\t scopedTypeSpecifier -> KW_STATIC typeSpecifier\n");
+        $$.type = $2.type;
     };
     | typeSpecifier
     {
-        $$.type = $1.type;
         fprintf(fout, "Rule 17 \t\t scopedTypeSpecifier -> typeSpecifier\n");
+        $$.type = $1.type;
     };
     | KW_STATIC ID
     {

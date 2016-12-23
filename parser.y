@@ -528,14 +528,16 @@ expression : mutable KW_EQUAL expression
         fprintf(fout, "Rule 64 \t\t expression -> mutable KW_PLUS_PLUS\n");
         $$.place = new_temp($1.type);
         $$.type = $1.type;
-        quadruple_push($1.place, "", "++", $$.place);
+        quadruple_push($1.place, "1", "+", $$.place);
+        quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_MINUS_MINUS
     {
         fprintf(fout, "Rule 65 \t\t expression -> mutable KW_MINUS_MINUS\n");
         $$.place = new_temp($1.type);
         $$.type = $1.type;
-        quadruple_push($1.place, "", "--", $$.place);
+        quadruple_push($1.place, "1", "-", $1.place);
+        quadruple_push($1.place, "", ":=", $$.place);
 
     };
     | simpleExpression

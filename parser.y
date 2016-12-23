@@ -57,7 +57,7 @@ char* new_temp(char *c) {
     name += to_string(num);
     symbol_table_insert(name, c);
     num++;
-    char *what = (char *) malloc(sizeof(char)*100);
+    char *what = (char *) malloc(sizeof(char) * 100);
     strcpy(what, name.c_str());
     return what;
 }
@@ -70,33 +70,36 @@ void quadruple_print() {
 
 
     /* for print declaration of  variables*/
-    for(int i = 0 ; i < symbol_table[0].size() ; i++){
+    for(int i = 0 ;i < symbol_table[0].size(); i++) {
         char* normalized;
-        if(symbol_table[0][i][0] == '#'){
-            char* s1 = &symbol_table[0][i][0];
-            *s1++;
-            strcpy(normalized,s1);
-        }
-        else
+        if(symbol_table[0][i][0] == '#') {
+            char *s1 = &symbol_table[0][i][0];
+            s1++;
+            strcpy(normalized, s1);
+        } else {
             strcpy(normalized, &symbol_table[0][i][0]);
+        }
+
         if(symbol_table[1][i] == "integer")
-            myfile << "int " << normalized<<" ;"<<endl;
+            myfile << "int " << normalized << ";" << endl;
         else if(symbol_table[1][i] == "real")
-            myfile << "double " << normalized<<" ;"<<endl;
+            myfile << "double " << normalized << ";" << endl;
         else if(symbol_table[1][i] == "char")
-            myfile << "char " << normalized<< " ;"<<endl;
+            myfile << "char " << normalized << ";" << endl;
     }
 
 
-    for(int i = 0; i < quadruple[0].size(); i++){
-        myfile << "L" << i <<" : ";
+    for(int i = 0; i < quadruple[0].size(); i++) {
+        myfile << "L" << i << " : ";
         if(quadruple[2][i] == ":=")
-                myfile<<quadruple[3][i]<<" = "<<quadruple[0][i]<<";"<<endl;
+                myfile << quadruple[3][i] << " = " << quadruple[0][i] << ";"
+                    << endl;
         else if(quadruple[2][i] == "+")
-                myfile << quadruple[3][i]<<" = "<<quadruple[0][i]<<" + "<<quadruple[1][i]<<";" << endl;
+                myfile << quadruple[3][i] << " = " << quadruple[0][i] << " + "
+                    << quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == "-")
                 myfile << quadruple[3][i] << " = " << quadruple[0][i] << " - "
-                    << quadruple[1][i]<<";" << endl;
+                    << quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == "*")
                 myfile << quadruple[3][i] << " = " << quadruple[0][i] << " * "
                     << quadruple[1][i] << ";" << endl;
@@ -107,26 +110,29 @@ void quadruple_print() {
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                     <<  quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == "++")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i]<<"++ ;"<<endl;
+                myfile << quadruple[3][i] << " = " << quadruple[0][i]
+                    << "++;" << endl;
         else if(quadruple[2][i] == "--")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i]<<"-- ;"<<endl;
+                myfile << quadruple[3][i] << " = "
+                    << quadruple[0][i] << "-- ;" << endl;
 
     }
-    myfile << "L" << quadruple[0].size()<<":" <<" return 0;"<<endl;
-    myfile << endl <<"}" <<endl;
+    myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
+    myfile << endl << "}" << endl;
 }
-void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
+
+void quadruple_push(string arg1, string arg2, string op, string result) {
 
     if(arg1[0] == '#') {
-        arg1++;
+        arg1 = arg1.substr(1);
     }
 
     if(arg2[0] == '#') {
-        arg2++;
+        arg2 = arg2.substr(1);
     }
 
     if(result[0] == '#') {
-        result++;
+        result = result.substr(1);
     }
     quadruple[0].push_back(arg1);
     quadruple[1].push_back(arg2);

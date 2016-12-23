@@ -109,13 +109,6 @@ void quadruple_print() {
         else if(quadruple[2][i] == "%")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                     <<  quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == "++")
-                myfile << quadruple[3][i] << " = " << quadruple[0][i]
-                    << "++;" << endl;
-        else if(quadruple[2][i] == "--")
-                myfile << quadruple[3][i] << " = "
-                    << quadruple[0][i] << "-- ;" << endl;
-
     }
     myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
     myfile << endl << "}" << endl;

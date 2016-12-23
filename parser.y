@@ -116,6 +116,18 @@ void quadruple_print() {
     myfile << endl <<"}" <<endl;
 }
 void quadruple_push(char *arg1, char *arg2, char *op, char *result) {
+
+    if(arg1[0] == '#') {
+        arg1++;
+    }
+
+    if(arg2[0] == '#') {
+        arg2++;
+    }
+
+    if(result[0] == '#') {
+        result++;
+    }
     quadruple[0].push_back(arg1);
     quadruple[1].push_back(arg2);
     quadruple[2].push_back(op);

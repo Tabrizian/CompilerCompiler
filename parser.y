@@ -505,30 +505,47 @@ breakStmt : KW_BREAK KW_SEMICOLON
 expression : mutable KW_EQUAL expression
     {
         fprintf(fout, "Rule 59 \t\t expression -> mutable KW_EQUAL expression\n");
+        $$.type = $1.type;
         quadruple_push($3.place, "", ":=", $1.place);
     };
     | mutable KW_PLUS_EQUAL expression
     {
         fprintf(fout, "Rule 60 \t\t expression -> mutable KW_PLUS_EQUAL expression\n");
+        $$.type = $1.type;
+        $$.place = new_temp($1.type);
+        quadruple_push($1.place, $3.place, "+", $1.place);
+        quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_MINUS_EQUAL expression
     {
         fprintf(fout, "Rule 61 \t\t expression -> mutable KW_MINUS_EQUAL expression\n");
+        $$.type = $1.type;
+        $$.place = new_temp($1.type);
+        quadruple_push($1.place, $3.place, "-", $1.place);
+        quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_MULTIPLY_EQUAL expression
     {
         fprintf(fout, "Rule 62 \t\t expression -> mutable KW_MULTIPLY_EQUAL expression\n");
+        $$.type = $1.type;
+        $$.place = new_temp($1.type);
+        quadruple_push($1.place, $3.place, "*", $1.place);
+        quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_DIVIDE_EQUAL expression
     {
         fprintf(fout, "Rule 63 \t\t expression -> mutable KW_DIVIDE_EQUAL expression\n");
+        $$.type = $1.type;
+        $$.place = new_temp($1.type);
+        quadruple_push($1.place, $3.place, "/", $1.place);
+        quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_PLUS_PLUS
     {
         fprintf(fout, "Rule 64 \t\t expression -> mutable KW_PLUS_PLUS\n");
         $$.place = new_temp($1.type);
         $$.type = $1.type;
-        quadruple_push($1.place, "1", "+", $$.place);
+        quadruple_push($1.place, "1", "+", $1.place);
         quadruple_push($1.place, "", ":=", $$.place);
     };
     | mutable KW_MINUS_MINUS

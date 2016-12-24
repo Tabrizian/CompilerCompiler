@@ -69,21 +69,21 @@ void quadruple_print() {
 
     /* for print declaration of  variables*/
     for(int i = 0 ;i < symbol_table[0].size(); i++) {
-        char* normalized;
+        /*char* normalized;
         if(symbol_table[0][i][0] == '#') {
             char *s1 = &symbol_table[0][i][0];
             s1++;
             strcpy(normalized, s1);
         } else {
             strcpy(normalized, &symbol_table[0][i][0]);
-        }
+        }*/
 
         if(symbol_table[1][i] == "integer")
-            myfile << "int " << normalized << ";" << endl;
+            myfile << "int " << symbol_table[0][i] << ";" << endl;
         else if(symbol_table[1][i] == "real")
-            myfile << "double " << normalized << ";" << endl;
+            myfile << "double " << symbol_table[0][i]  << ";" << endl;
         else if(symbol_table[1][i] == "char")
-            myfile << "char " << normalized << ";" << endl;
+            myfile << "char " << symbol_table[0][i] << ";" << endl;
     }
 
 
@@ -107,6 +107,30 @@ void quadruple_print() {
         else if(quadruple[2][i] == "%")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                     <<  quadruple[1][i] << ";" << endl;
+        else if(quadruple[2][i] == ".le")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " < "
+                    <<  quadruple[1][i] << ";" << endl;
+        else if(quadruple[2][i] == ".lt")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
+                    <<  quadruple[1][i] << ";" << endl;
+        else if(quadruple[2][i] == ".gt")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " > "
+                    <<  quadruple[1][i] << ";" << endl;
+         else if(quadruple[2][i] == ".ge")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " >= "
+                    <<  quadruple[1][i] << ";" << endl;
+         else if(quadruple[2][i] == ".eq")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " == "
+                    <<  quadruple[1][i] << ";" << endl;
+         else if(quadruple[2][i] == ".ne")
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " != "
+                    <<  quadruple[1][i] << ";" << endl;
+
+
+
+
+
+
     }
     myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
     myfile << endl << "}" << endl;
@@ -598,11 +622,15 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
 relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
-        $$.place = $1.place;
+        //$$.place = $1.place;
+        $$.place = new_temp("integer");
+        $$.type = "integer";
+        quadruple_push($1.place, $3.place, $2.place, $$.place);
     };
     | mathlogicExpression
     {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
+        $$.place = new_temp("integer");
         $$.place = $1.place;
     };
 

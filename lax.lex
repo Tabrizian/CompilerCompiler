@@ -267,6 +267,16 @@ CR_CL [}]
 }
 
 {KW_RELOP} {
+    yylval.eval.place = new char[strlen(yytext)];
+    yylval.eval.true_list = new char[100];
+    yylval.eval.true_list[0] = '\0';
+    yylval.eval.false_list = new char[100];
+    yylval.eval.false_list[0] = '\0';
+    yylval.eval.next_list = new char[100];
+    yylval.eval.next_list[0] = '\0';
+    strcpy(yylval.eval.place, yytext);
+    yylval.eval.code = "";
+    yylval.eval.type = "relop";
     return KW_RELOP;
 }
 

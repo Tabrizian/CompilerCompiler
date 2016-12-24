@@ -161,17 +161,27 @@ void backpatch(char* a,int b){
 }
 
 char* merge(char* a,char* b){
-
+    char* c = (char *) malloc ( 1+strlen(a)+strlen(b));
+    strcpy(c ,a);
+    strcat(c, b);
+    return c;
 }
 
-char* makeList(int a){
 
-}
 
 char* intToCharStar(int a){
-    char *str = new char[100];
-    return str;
+    stringstream ss;
+    ss << a;
+    string str = ss.str();
+    char* temp =(char*) str.c_str();
+    return temp;
 }
+
+
+char* makeList(int a){
+    return intToCharStar(a);
+}
+
 
 char* addToList(char* a){
 
@@ -789,6 +799,8 @@ constant : NUMCONST
         fprintf(fout, "Rule 109 \t\t constant -> BOOLCONST\n");
         $$.place = new_temp($1.type);
         $$.type = $1.type;
+        $$.true_list = makeList(quadruple[0].size()+1);
+        $$.false_list = makeList(quadruple[0].size()+2);
         $$.next_list = $1.next_list;
         quadruple_push($1.place, " ", ":=", $$.place);
     };

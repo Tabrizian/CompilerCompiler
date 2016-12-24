@@ -256,22 +256,32 @@ scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON
         string declaration_list($2.code);
 
         vector<string> tokens = split(declaration_list, ',');
-        symbol_table_insert(tokens, $1.type);
-        fprintf(fout, "%s\n", $2.code);
+        for(int i = 0; i < tokens.size(); i++) {
+            fprintf(fout, "%s \n", tokens[i].c_str());
+            vector<string> inits = split(tokens[i], ' ');
+            if(inits.size() == 1) {
+                symbol_table_insert(tokens[i], $1.type);
+            } else if(inits.size() == 2) {
+                symbol_table_insert(inits[0], $1.type);
+                quadruple_push(inits[1], "", ":=", inits[0]);
+            }
+        }
     };
 
 varDecList : varDecList  PUNC_COMMA varDeclInitialize
     {
         fprintf(fout, "Rule 10 \t\t varDecList -> varDecList  PUNC_COMMA varDeclInitialize\n");
-        char temp[100];
+        char *temp = new char[100];
         strcpy(temp, $1.code);
         $$.code = strcat(strcat(temp, ","), $3.code);
+        fprintf(fout, "%s \n", $$.code);
 
     };
     | varDeclInitialize
     {
-        $$.code = $1.code;
         fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
+        $$.code = $1.code;
+        fprintf(fout, "%s \n", $$.code);
     };
 
 varDeclInitialize : varDeclId
@@ -283,8 +293,9 @@ varDeclInitialize : varDeclId
     | varDeclId KW_COLON simpleExpression
     {
         fprintf(fout, "Rule 13 \t\t varDeclInitialize -> varDeclId KW_COLON simpleExpression\n");
-        $$.code = $1.code;
-        $$.place = $3.place;
+        char *temp = new char[100];
+        strcpy(temp, $1.code);
+        $$.code = strcat(strcat(temp, " "), $3.place);
         $$.type = $3.type;
     };
 

@@ -1,9 +1,4 @@
 int #at11()
 {
-    int #JJ00, #PA95 : 6;
-    #JJ00 = 5;
-    #JJ00++;
-    #PA95 = #JJ00 - 3;
-    #PA95 --;
-    #FA23 += 2;
+    bool #KK01 : true;
 }

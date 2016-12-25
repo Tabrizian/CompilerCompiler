@@ -125,12 +125,11 @@ void quadruple_print() {
          else if(quadruple[2][i] == ".ne")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " != "
                     <<  quadruple[1][i] << ";" << endl;
-
-
-
-
-
-
+         else if(quadruple[2][i] == "if")
+                myfile << "if" << " ( " <<quadruple[0][i] << " ) "
+                    <<  quadruple[1][i] << ";" << endl;
+         else if(quadruple[2][i] == "goto")
+                myfile << "goto " << quadruple[0][i] << ";";
     }
     myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
     myfile << endl << "}" << endl;

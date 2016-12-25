@@ -137,8 +137,10 @@ CR_CL [}]
 
     if(strcmp(yytext, "false") == 0) {
         yylval.eval.place[0] = '0';
+        yylval.eval.place[1] = '\0';
     } else if(strcmp(yytext, "true") == 0) {
         yylval.eval.place[0] = '1';
+        yylval.eval.place[1] = '\0';
     }
 
     yylval.eval.code = "";

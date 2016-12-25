@@ -178,7 +178,9 @@ int symbol_table_lookup(string token) {
 }
 
 void symbol_table_insert(string token, char *type) {
-    token = token.substr(1);
+    if(token[0] == '#') {
+        token = token.substr(1);
+    }
     symbol_table[0].push_back(token);
     symbol_table[1].push_back(type);
 }

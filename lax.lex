@@ -99,12 +99,9 @@ CR_CL [}]
 {ID} {
     install_id(yytext);
     yylval.eval.place = new char[strlen(yytext)];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
     return ID;
@@ -112,12 +109,9 @@ CR_CL [}]
 
 {NUMCONST} {
     yylval.eval.place = new char[strlen(yytext)];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
     yylval.eval.type = "integer";
@@ -126,12 +120,9 @@ CR_CL [}]
 
 {CHARCONST} {
     yylval.eval.place = new char[strlen(yytext)];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
     yylval.eval.type = "char";
@@ -140,12 +131,9 @@ CR_CL [}]
 
 {BOOLCONST} {
     yylval.eval.place = new char[1];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
 
     if(strcmp(yytext, "false") == 0) {
         yylval.eval.place[0] = '0';
@@ -169,7 +157,6 @@ CR_CL [}]
 {KW_STATIC} {
     return KW_STATIC;
 }
-
 {KW_INT} {
     return KW_INT;
 }
@@ -268,12 +255,9 @@ CR_CL [}]
 
 {KW_RELOP} {
     yylval.eval.place = new char[strlen(yytext)];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
     yylval.eval.type = "relop";
@@ -311,12 +295,9 @@ CR_CL [}]
 
 {REAL} {
     yylval.eval.place = new char[strlen(yytext)];
-    yylval.eval.true_list = new char[100];
-    yylval.eval.true_list[0] = '\0';
-    yylval.eval.false_list = new char[100];
-    yylval.eval.false_list[0] = '\0';
-    yylval.eval.next_list = new char[100];
-    yylval.eval.next_list[0] = '\0';
+    yylval.eval.true_list = NULL;
+    yylval.eval.false_list = NULL;
+    yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
     yylval.eval.type = "real";

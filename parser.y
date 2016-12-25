@@ -297,12 +297,15 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     quadruple[3].push_back(result);
 }
 
-void quadruple_push(int row, char *data) {
+void quadruple_push(int row, string data) {
     quadruple[1][row] = data;
 }
 
-void backpatch(struct node *list, int data) {
-
+void backpatch(struct node *first, int data) {
+    struct node *current;
+    for(current = first; current != NULL; current = current->link) {
+        quadruple_push(first->data, to_string(data));
+    }
 }
 
 void yyerror(const char *s);

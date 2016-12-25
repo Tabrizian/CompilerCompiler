@@ -6,7 +6,7 @@ lex:
 
 parse:
 	bison -d parser.y
-	g++ -std=c++14 lex.yy.c list.c list.h parser.tab.h parser.tab.c -o parser.out
+	g++ -std=c++14 lex.yy.c list.cpp list.h parser.tab.h parser.tab.c -o parser.out
 
 parse-debug:
 	bison -d parser.y

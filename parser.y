@@ -294,7 +294,11 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     quadruple[3].push_back(result);
 }
 
-void backpatch(char* a,int b){
+void quadruple_push(int row, char *data) {
+    quadruple[1][row] = data;
+}
+
+void backpatch(struct node *list, int data) {
 
 }
 
@@ -750,8 +754,8 @@ relExpression : mathlogicExpression relop mathlogicExpression
         $$.false_list = create_node(quadruple[0].size() + 2);
         $$.type = "integer";
         quadruple_push($1.place, "", "if", "");
-        quadruple_push($1.place, "", "goto", "");
-        quadruple_push($1.place, "", "goto", "");
+        quadruple_push("", "", "goto", "");
+        quadruple_push("", "", "goto", "");
     };
     | mathlogicExpression
     {

@@ -197,7 +197,7 @@ void quadruple_push(int row, string data) {
 void backpatch(struct node *first, int data) {
     struct node *current;
     for(current = first; current != NULL; current = current->link) {
-        quadruple_push(first->data, to_string(data));
+        quadruple_push(current->data, to_string(data));
     }
 }
 
@@ -640,26 +640,31 @@ expression : mutable KW_EQUAL expression
     | simpleExpression
     {
         fprintf(fout, "Rule 66 \t\t expression -> simpleExpression\n");
+        //backpatch($1.true_list,quadruple[0].size());
     };
 
-simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
+simpleExpression : simpleExpression KW_COND_OR simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
-        backpatch($1.false_list,$3.quad);
-        $$.true_list = merge_lists($1.true_list,$4.true_list);
-        $$.false_list = $4.false_list;
     };
     | simpleExpression KW_COND_AND simpleExpression
     {
         fprintf(fout, "Rule 68 \t\t simpleExpression -> simpleExpression KW_COND_AND simpleExpression\n");
     };
-    | simpleExpression KW_COND_OR KW_ELSE simpleExpression
+    | simpleExpression KW_COND_OR KW_ELSE null_before_simple_expr simpleExpression
     {
+	backpatch($1.false_list,$4.quad);
+        $$.true_list = merge_lists($1.true_list,$5.true_list);
+        $$.false_list = $5.false_list;
         fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
-    | simpleExpression KW_COND_AND KW_COND_THEN simpleExpression
+    | simpleExpression KW_COND_AND KW_COND_THEN null_before_simple_expr simpleExpression
     {
         fprintf(fout, "Rule 70 \t\t simpleExpression -> simpleExpression KW_COND_AND KW_COND_THEN simpleExpression\n");
+	backpatch($1.true_list,$4.quad);
+	$$.true_list = $5.true_list;
+        $$.false_list = merge_lists($1.false_list,$5.false_list);
+        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
     | KW_COND_NOT simpleExpression
     {

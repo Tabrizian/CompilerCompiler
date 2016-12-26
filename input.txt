@@ -1,14 +1,7 @@
-int #at00()
-{
-    bool #KK03 : true;
-    if(#KK02) {
-        bool #KK02 : true;
-    }
-}
 
 int #at00()
 {
-    if(1 .lt 2  or  3 .lt 4  ) {
+    if(1 .lt 2  and then  5 .lt 6 ) {
         #xx00 = 0;
     }
 }

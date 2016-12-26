@@ -7,5 +7,4 @@ int #at00()
     if(#KK02) {
         bool #KK02 : true;
     }
-
 }

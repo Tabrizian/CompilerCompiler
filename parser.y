@@ -161,9 +161,9 @@ void quadruple_print() {
                     <<  quadruple[1][i] << ";" << endl;
          else if(quadruple[2][i] == "if")
                 myfile << "if" << " ( " <<quadruple[0][i] << " ) "
-                    <<  quadruple[1][i] << ";" << endl;
+                    <<  quadruple[1][i]  << endl;
          else if(quadruple[2][i] == "goto")
-                myfile << "goto " << quadruple[0][i] << ";";
+                myfile << "goto L" << quadruple[0][i] << ";"<<endl;
     }
 
     myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
@@ -191,7 +191,7 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
 }
 
 void quadruple_push(int row, string data) {
-    quadruple[1][row] = data;
+    quadruple[0][row] = data;
 }
 
 void backpatch(struct node *first, int data) {
@@ -237,6 +237,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
+par_cl_var
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -400,17 +401,17 @@ returnTypeSpecifier : KW_INT
         $$.type = "char";
     };
 
-funDeclaration : typeSpecifier ID PAR_OP params PAR_CL statement
+funDeclaration : typeSpecifier ID PAR_OP params par_cl_var statement
     {
-        fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params PAR_CL statement\n");
+        fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params par_cl_var statement\n");
     };
-    | ID PAR_OP params PAR_CL statement
+    | ID PAR_OP params par_cl_var statement
     {
-        fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
+        fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params par_cl_var statement\n");
     };
-    | ID ID PAR_OP params PAR_CL statement
+    | ID ID PAR_OP params par_cl_var statement
     {
-        fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID PAR_OP params PAR_CL statement\n");
+        fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID PAR_OP params par_cl_var statement\n");
     };
 
 params : paramList
@@ -531,18 +532,21 @@ expressionStmt : expression KW_SEMICOLON
         fprintf(fout, "Rule 47 \t\t expressionStmt -> empty\n");
     };
 
-selectionStmt : KW_IF PAR_OP simpleExpression PAR_CL statement %prec IF_WITHOUT_ELSE
+selectionStmt : KW_IF PAR_OP simpleExpression par_cl_var statement  %prec IF_WITHOUT_ELSE
     {
-        fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression PAR_CL statement\n");
+        fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement\n");
+        backpatch($3.false_list,quadruple[0].size());
+        backpatch($3.true_list,$4.quad);
     };
-    | KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement
+    | KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement
     {
-        fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression PAR_CL statement KW_ELSE statement\n");
+        fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement\n");
     };
-    | KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END
+    | KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END
     {
-        fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression PAR_CL caseElement defaultElement KW_END declaration\n");
+        fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
     };
+
 
 caseElement : KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON
     {
@@ -562,9 +566,9 @@ defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
         fprintf(fout, "Rule 54 \t\t defaultElement -> empty\n");
     };
 
-iterationStmt : KW_WHILE PAR_OP simpleExpression PAR_CL statement
+iterationStmt : KW_WHILE PAR_OP simpleExpression par_cl_var statement
     {
-        fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression PAR_CL statement\n");
+        fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression par_cl_var statement\n");
     };
 
 returnStmt : KW_RETURN KW_SEMICOLON
@@ -775,9 +779,9 @@ mutable : ID
         fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
     };
 
-immutable : PAR_OP expression PAR_CL
+immutable : PAR_OP expression par_cl_var
     {
-        fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression PAR_CL\n");
+        fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression par_cl_var\n");
     };
     | call
     {
@@ -788,9 +792,9 @@ immutable : PAR_OP expression PAR_CL
         fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
     };
 
-call : ID PAR_OP args PAR_CL
+call : ID PAR_OP args par_cl_var
     {
-        fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args PAR_CL\n");
+        fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args par_cl_var\n");
     };
 
 args : argList
@@ -845,6 +849,12 @@ constant : NUMCONST
         $$.false_list = create_node(quadruple[0].size() + 2);
         $$.next_list = $1.next_list;
         quadruple_push($1.place, " ", ":=", $$.place);
+    };
+
+par_cl_var : PAR_CL
+    {
+        fprintf(fout, "110 \t\t par_cl_var_VAR -> par_cl_var \n");
+        $$.quad = quadruple[0].size();
     };
 
 %%

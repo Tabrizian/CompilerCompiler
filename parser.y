@@ -7,6 +7,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+
 #include "list.h"
 
 using namespace std;
@@ -14,6 +15,10 @@ using namespace std;
 extern FILE *yyin;
 extern int yylineno;
 extern char* yytext;
+void yyerror(const char *s);
+extern int yylex(void);
+FILE *fout;
+
 vector <string> quadruple[4];
 vector <string> symbol_table[2];
 vector <string> registers;
@@ -73,15 +78,6 @@ void quadruple_print() {
 
     /* for print declaration of  variables*/
     for(int i = 0 ;i < symbol_table[0].size(); i++) {
-        /*char* normalized;
-        if(symbol_table[0][i][0] == '#') {
-            char *s1 = &symbol_table[0][i][0];
-            s1++;
-            strcpy(normalized, s1);
-        } else {
-            strcpy(normalized, &symbol_table[0][i][0]);
-        }*/
-
         if(symbol_table[1][i] == "integer")
             myfile << "int " << symbol_table[0][i] << ";" << endl;
         else if(symbol_table[1][i] == "real")
@@ -89,7 +85,6 @@ void quadruple_print() {
         else if(symbol_table[1][i] == "char")
             myfile << "char " << symbol_table[0][i] << ";" << endl;
     }
-
 
     for(int i = 0; i < quadruple[0].size(); i++) {
         myfile << "L" << i << " : ";
@@ -171,10 +166,8 @@ void backpatch(struct node *first, int data) {
     }
 }
 
-void yyerror(const char *s);
-extern int yylex(void);
-FILE *fout;
 %}
+
 %union {
     struct {
         struct node *true_list;
@@ -187,6 +180,7 @@ FILE *fout;
         char *type;
     } eval;
 }
+
 %token THEN PUNC_COMMA PUNC_DOT FAKE_ID  FAKE_NUMCONST FAKE_REAL
 CHARCONST_SINGLEQOUTE COMMENT KW_RECORD KW_STATIC KW_INT
 KW_REAL KW_BOOL KW_CHAR KW_IF KW_ELSE KW_SWITCH KW_END KW_CASE KW_DEFAULT
@@ -218,7 +212,9 @@ args argList constant
 %nonassoc ID_PREC
 %left KW_COND_THEN
 %left KW_ELSE
+
 %%
+
 program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");

@@ -22,7 +22,7 @@ FILE *fout;
 struct symbol_table_entry {
     string id;
     string type;
-    string link;
+    vector <symbol_table_entry> *link;
 };
 
 vector <symbol_table_entry> symbolTable;

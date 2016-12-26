@@ -19,8 +19,14 @@ void yyerror(const char *s);
 extern int yylex(void);
 FILE *fout;
 
+struct symbol_table_entry {
+    string id;
+    string type;
+    string link;
+};
+
+vector <symbol_table_entry> symbolTable;
 vector <string> quadruple[4];
-vector <string> symbol_table[2];
 vector <string> registers;
 ofstream myfile;
 
@@ -46,27 +52,30 @@ int symbol_table_lookup(string token) {
 }
 
 void symbol_table_insert(string token, char *type) {
+    cout << "Hello";
+    struct symbol_table_entry entry;
+    cout << symbolTable.size() << endl;
     if(token[0] == '#') {
         token = token.substr(1);
     }
-    symbol_table[0].push_back(token);
-    symbol_table[1].push_back(type);
+    entry.id = token;
+    entry.type = type;
+    symbolTable.push_back(entry);
 }
 
 void symbol_table_insert(vector<string> tokens, char *type) {
     for(int i = 0; i < tokens.size(); i++) {
-        symbol_table[0].push_back(tokens[i]);
-        symbol_table[1].push_back(type);
+        symbol_table_insert(tokens[i], type);
     }
 }
 
 char* new_temp(char *c) {
     string name("t");
     name += to_string(num);
-    symbol_table_insert(name, c);
     num++;
     char *what = (char *) malloc(sizeof(char) * 100);
     strcpy(what, name.c_str());
+    //symbol_table_insert(what, c);
     return what;
 }
 
@@ -77,13 +86,13 @@ void quadruple_print() {
     myfile << endl<<"int main(){\n\n";
 
     /* for print declaration of  variables*/
-    for(int i = 0 ;i < symbol_table[0].size(); i++) {
-        if(symbol_table[1][i] == "integer")
-            myfile << "int " << symbol_table[0][i] << ";" << endl;
-        else if(symbol_table[1][i] == "real")
-            myfile << "double " << symbol_table[0][i]  << ";" << endl;
-        else if(symbol_table[1][i] == "char")
-            myfile << "char " << symbol_table[0][i] << ";" << endl;
+    for(int i = 0 ;i < symbolTable.size(); i++) {
+        if(symbolTable[i].type == "integer")
+            myfile << "int " << symbolTable[i].id << ";" << endl;
+        else if(symbolTable[i].type == "real")
+            myfile << "double " << symbolTable[i].id  << ";" << endl;
+        else if(symbolTable[i].type == "char")
+            myfile << "char " << symbolTable[i].id << ";" << endl;
     }
 
     for(int i = 0; i < quadruple[0].size(); i++) {

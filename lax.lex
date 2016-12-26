@@ -9,7 +9,6 @@
 #include "parser.tab.h"
 
 int counter = 0;
-int yylineno = 0;
 char symbol_table[100][50];
 
 int install_id(char *next) {

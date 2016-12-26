@@ -18,11 +18,13 @@ extern char* yytext;
 void yyerror(const char *s);
 extern int yylex(void);
 FILE *fout;
+bool direction = true;
 
 struct symbol_table_entry {
     string id;
     string type;
-    vector <symbol_table_entry> *link = NULL;
+    vector <symbol_table_entry> *forward = NULL;
+    vector <symbol_table_entry> *backward = NULL;
 };
 
 int i = 0;
@@ -32,16 +34,23 @@ vector <string> quadruple[4];
 vector <string> registers;
 ofstream myfile;
 
+int indent = 0;
 void print_symbol_table(vector<symbol_table_entry> *start_symbol_table) {
+    for(int i = 0; i < indent; i++, cout << "\t");
+    cout << "========" << endl;
     for(int i = 0; i < start_symbol_table->size(); i++) {
+        for(int i = 0; i < indent; i++, cout << "\t");
         cout << start_symbol_table->at(i).id << endl;
+        for(int i = 0; i < indent; i++, cout << "\t");
         cout << start_symbol_table->at(i).type << endl;
-        if(start_symbol_table->at(i).link) {
-            cout << "========" << endl;
-            print_symbol_table(start_symbol_table->at(i).link);
-            cout << "========" << endl;
+        if(start_symbol_table->at(i).forward) {
+            indent++;
+            print_symbol_table(start_symbol_table->at(i).forward);
         }
     }
+    for(int i = 0; i < indent; i++, cout << "\t");
+    cout << "========" << endl;
+    indent--;
 }
 
 void split(const string &s, char delim, vector<string> &elems) {
@@ -246,6 +255,9 @@ program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         quadruple_print();
+        if(i != 0) {
+            current_symbol_table->back().forward = NULL;
+        }
         print_symbol_table(start_symbol_table);
 
     };
@@ -469,6 +481,8 @@ statement : expressionStmt
 compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
+        i--;
+        direction = false;
     };
 
 localDeclarations :	localDeclarations scopedVarDeclaration
@@ -477,16 +491,24 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     };
     |
     {
-        if(i != 0) {
-            struct symbol_table_entry entry;
-            entry.id = "new_scope!!!";
-            entry.type = "function";
-            entry.link = create_symbol_table();
-            current_symbol_table->push_back(entry);
-            current_symbol_table = (current_symbol_table->back().link);
-        }
-        i++;
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
+            if(direction) {
+                struct symbol_table_entry entry;
+                entry.id = "new_scope!!!";
+                entry.type = "link";
+                entry.forward = create_symbol_table();
+                current_symbol_table->push_back(entry);
+
+                entry.forward = NULL;
+                entry.id = "link";
+                entry.type = "link";
+                entry.backward = current_symbol_table;
+                current_symbol_table = current_symbol_table->back().forward;
+                current_symbol_table->push_back(entry);
+            } else {
+                current_symbol_table = current_symbol_table->at(0).backward;
+            }
+        direction = true;
     };
 
 statementList :	statementList statement

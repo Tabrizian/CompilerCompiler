@@ -11,7 +11,7 @@ parse:
 parse-debug:
 	bison -d parser.y
 	bison --verbose parser.y
-	g++ -std=c++14 lex.yy.c parser.tab.h parser.tab.c -o parser.out
+	g++ -std=c++14 lex.yy.c list.cpp list.h parser.tab.h parser.tab.c -o parser.out
 
 run:
 	./parser.out

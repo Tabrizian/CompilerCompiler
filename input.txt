@@ -1,7 +1,7 @@
 int #at11()
 {
-    bool #KK01 : true;
-    if(#KK01) {
-        bool #KK01;
+    if ( 1 .lt 2 ){
+        #jj00 = 40 + 50 ;
     }
+    #kk00 = 100+101;
 }

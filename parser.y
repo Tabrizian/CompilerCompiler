@@ -492,7 +492,6 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     |
     {
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
-        if(i != 0) {
             if(direction) {
                 struct symbol_table_entry entry;
                 entry.id = "new_scope!!!";
@@ -509,8 +508,6 @@ localDeclarations :	localDeclarations scopedVarDeclaration
             } else {
                 current_symbol_table = current_symbol_table->at(0).backward;
             }
-        }
-        i++;
         direction = true;
     };
 

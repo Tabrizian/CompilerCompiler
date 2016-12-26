@@ -1,5 +1,13 @@
 int #at00()
 {
+    bool #KK03 : true;
+    if(#KK02) {
+        bool #KK02 : true;
+    }
+}
+
+int #at00()
+{
     bool #KK02 : true;
     if(#KK02) {
         bool #KK02 : true;

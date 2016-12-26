@@ -228,7 +228,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
-par_cl_var
+par_cl_var null_before_simple_expr
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -620,9 +620,12 @@ expression : mutable KW_EQUAL expression
         fprintf(fout, "Rule 66 \t\t expression -> simpleExpression\n");
     };
 
-simpleExpression : simpleExpression KW_COND_OR simpleExpression
+simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
+        backpatch($1.false_list,$3.quad);
+        $$.true_list = merge_lists($1.true_list,$4.true_list);
+        $$.false_list = $4.false_list;
     };
     | simpleExpression KW_COND_AND simpleExpression
     {
@@ -645,6 +648,11 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
         fprintf(fout, "Rule 72 \t\t simpleExpression -> relExpression\n");
     };
 
+null_before_simple_expr : {
+        fprintf(fout, "Rule 67.1 \t\t simpleExpression -> empty\n");
+        $$.quad = quadruple[0].size();
+    }
+
 relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
@@ -654,13 +662,14 @@ relExpression : mathlogicExpression relop mathlogicExpression
         $$.true_list = create_node(quadruple[0].size() + 1);
         $$.false_list = create_node(quadruple[0].size() + 2);
         $$.type = "integer";
-        quadruple_push($1.place, "", "if", "");
+        quadruple_push($$.place, "", "if", "");
         quadruple_push("", "", "goto", "");
         quadruple_push("", "", "goto", "");
     };
     | mathlogicExpression
     {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
+
         $$.place = new_temp("integer");
         $$.place = $1.place;
     };

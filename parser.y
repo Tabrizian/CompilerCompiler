@@ -22,14 +22,27 @@ FILE *fout;
 struct symbol_table_entry {
     string id;
     string type;
-    vector <symbol_table_entry> *link;
+    vector <symbol_table_entry> *link = NULL;
 };
 
-vector <symbol_table_entry> current_symbol_table;
-vector <symbol_table_entry> *start_symbol_table = &current_symbol_table;
+int i = 0;
+vector <symbol_table_entry> *start_symbol_table = new vector<symbol_table_entry>;
+vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
 vector <string> registers;
 ofstream myfile;
+
+void print_symbol_table(vector<symbol_table_entry> *start_symbol_table) {
+    for(int i = 0; i < start_symbol_table->size(); i++) {
+        cout << start_symbol_table->at(i).id << endl;
+        cout << start_symbol_table->at(i).type << endl;
+        if(start_symbol_table->at(i).link) {
+            cout << "========" << endl;
+            print_symbol_table(start_symbol_table->at(i).link);
+            cout << "========" << endl;
+        }
+    }
+}
 
 void split(const string &s, char delim, vector<string> &elems) {
     stringstream ss;
@@ -64,7 +77,7 @@ void symbol_table_insert(string token, char *type) {
     }
     entry.id = token;
     entry.type = type;
-    current_symbol_table.push_back(entry);
+    current_symbol_table->push_back(entry);
 }
 
 void symbol_table_insert(vector<string> tokens, char *type) {
@@ -90,13 +103,13 @@ void quadruple_print() {
     myfile << endl<<"int main(){\n\n";
 
     /* for print declaration of  variables*/
-    for(int i = 0 ;i < current_symbol_table.size(); i++) {
-        if(current_symbol_table[i].type == "integer")
-            myfile << "int " << current_symbol_table[i].id << ";" << endl;
-        else if(current_symbol_table[i].type == "real")
-            myfile << "double " << current_symbol_table[i].id  << ";" << endl;
-        else if(current_symbol_table[i].type == "char")
-            myfile << "char " << current_symbol_table[i].id << ";" << endl;
+    for(int i = 0 ;i < current_symbol_table->size(); i++) {
+        if(current_symbol_table->at(i).type == "integer")
+            myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
+        else if(current_symbol_table->at(i).type == "real")
+            myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
+        else if(current_symbol_table->at(i).type == "char")
+            myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
     }
 
     for(int i = 0; i < quadruple[0].size(); i++) {
@@ -232,6 +245,7 @@ program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         quadruple_print();
+        print_symbol_table(start_symbol_table);
 
     };
 declarationList : declarationList declaration
@@ -269,7 +283,6 @@ varDeclaration : typeSpecifier varDecList KW_SEMICOLON
 
         vector<string> tokens = split(declaration_list, ',');
         symbol_table_insert(tokens, $1.type);
-        fprintf(fout, "%s\n", $2.code);
     };
     | ID varDecList KW_SEMICOLON
     {
@@ -284,7 +297,6 @@ scopedVarDeclaration : scopedTypeSpecifier varDecList KW_SEMICOLON
 
         vector<string> tokens = split(declaration_list, ',');
         for(int i = 0; i < tokens.size(); i++) {
-            fprintf(fout, "%s \n", tokens[i].c_str());
             vector<string> inits = split(tokens[i], ' ');
             if(inits.size() == 1) {
                 symbol_table_insert(tokens[i], $1.type);
@@ -301,14 +313,12 @@ varDecList : varDecList  PUNC_COMMA varDeclInitialize
         char *temp = new char[100];
         strcpy(temp, $1.code);
         $$.code = strcat(strcat(temp, ","), $3.code);
-        fprintf(fout, "%s \n", $$.code);
 
     };
     | varDeclInitialize
     {
         fprintf(fout, "Rule 11 \t\t varDecList -> varDeclInitialize\n");
         $$.code = $1.code;
-        fprintf(fout, "%s \n", $$.code);
     };
 
 varDeclInitialize : varDeclId
@@ -458,12 +468,6 @@ statement : expressionStmt
 compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
-        struct symbol_table_entry entry;
-        entry.id = "new_scope!!!";
-        entry.type = "function";
-        entry.link = create_symbol_table();
-        current_symbol_table.push_back(entry);
-        current_symbol_table = *current_symbol_table.back().link;
     };
 
 localDeclarations :	localDeclarations scopedVarDeclaration
@@ -472,6 +476,15 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     };
     |
     {
+        if(i != 0) {
+            struct symbol_table_entry entry;
+            entry.id = "new_scope!!!";
+            entry.type = "function";
+            entry.link = create_symbol_table();
+            current_symbol_table->push_back(entry);
+            current_symbol_table = (current_symbol_table->back().link);
+        }
+        i++;
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
     };
 

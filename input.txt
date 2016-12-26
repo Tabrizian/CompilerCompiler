@@ -1,15 +1,11 @@
-int #at11()
-{
-    bool #KK01 : true;
-    if(#KK01) {
-        bool #KK01 : true;
-    }
-}
 int #at00()
 {
-    bool #KK01 : true;
-    if(#KK01) {
-        bool #KK01 : true;
+    bool #KK02 : true;
+    if(#KK02) {
         bool #KK02 : true;
     }
+    if(#KK02) {
+        bool #KK02 : true;
+    }
+
 }

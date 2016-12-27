@@ -2,6 +2,7 @@ int #at00()
 {
     int #ff00 : 0;
     if(#ff00) {
+        int #ff00 : 0;
         #ff00++;
     }
 }

@@ -201,13 +201,16 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
 
     if(arg1[0] == '#') {
         arg1 = arg1.substr(1);
+        arg1 = symbol_table_lookup(arg1);
     }
     if(arg2[0] == '#') {
         arg2 = arg2.substr(1);
+        arg2 = symbol_table_lookup(arg2);
     }
 
     if(result[0] == '#') {
         result = result.substr(1);
+        result = symbol_table_lookup(result);
     }
 
     quadruple[0].push_back(arg1);

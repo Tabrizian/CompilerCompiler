@@ -614,7 +614,10 @@ defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
 
 iterationStmt : KW_WHILE PAR_OP simpleExpression par_cl_var statement
     {
-
+        quadruple_push("","","goto","");
+        backpatch($3.false_list,quadruple[0].size());
+        backpatch($3.true_list,$4.quad);
+        backpatch(create_node(quadruple[0].size()-1),$3.quad);
         fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression par_cl_var statement\n");
     };
 

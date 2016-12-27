@@ -509,6 +509,18 @@ localDeclarations :	localDeclarations scopedVarDeclaration
                 current_symbol_table->push_back(entry);
             } else {
                 current_symbol_table = current_symbol_table->at(0).backward;
+                struct symbol_table_entry entry;
+                entry.id = "new_scope!!!";
+                entry.type = "link";
+                entry.forward = create_symbol_table();
+                current_symbol_table->push_back(entry);
+
+                entry.forward = NULL;
+                entry.id = "link";
+                entry.type = "link";
+                entry.backward = current_symbol_table;
+                current_symbol_table = current_symbol_table->back().forward;
+                current_symbol_table->push_back(entry);
             }
         direction = true;
     };

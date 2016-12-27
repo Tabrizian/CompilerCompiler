@@ -1,3 +1,17 @@
+bool #ff01 : true;
+int #at00()
+{
+    if(#ff02) {
+        bool #KK04 : true;
+        bool #KK04 : true;
+        bool #KK04 : true;
+    }
+
+    if(#KK03) {
+        bool #KK04 : true;
+        bool #KK04 : true;
+    }
+}
 
 int #at00()
 {

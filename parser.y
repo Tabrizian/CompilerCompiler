@@ -124,13 +124,7 @@ char* new_temp(char *c) {
     return what;
 }
 
-void quadruple_print() {
-
-    myfile.open("intermediatecode.c");
-    myfile << "#include <stdio.h>\n\n";
-    myfile << endl<<"int main(){\n\n";
-
-    /* for print declaration of  variables*/
+void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0 ;i < current_symbol_table->size(); i++) {
         if(current_symbol_table->at(i).type == "integer")
             myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
@@ -138,7 +132,21 @@ void quadruple_print() {
             myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
         else if(current_symbol_table->at(i).type == "char")
             myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
+        else if(current_symbol_table->at(i).forward) {
+            quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+        }
     }
+
+}
+
+void quadruple_print() {
+
+    myfile.open("intermediatecode.c");
+    myfile << "#include <stdio.h>\n\n";
+    myfile << endl<<"int main(){\n\n";
+
+    /* for print declaration of  variables*/
+    quadruple_print_symbol_table(start_symbol_table);
 
     for(int i = 0; i < quadruple[0].size(); i++) {
         myfile << "L" << i << " : ";

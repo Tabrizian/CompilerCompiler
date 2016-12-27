@@ -517,6 +517,7 @@ compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
         direction = false;
+        current_symbol_table = current_symbol_table->at(0).backward;
     };
 
 localDeclarations :	localDeclarations scopedVarDeclaration

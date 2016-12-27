@@ -20,14 +20,15 @@ extern int yylex(void);
 FILE *fout;
 bool direction = true;
 
+int num_of_tables = 0;
 struct symbol_table_entry {
     string id;
     string type;
     vector <symbol_table_entry> *forward = NULL;
     vector <symbol_table_entry> *backward = NULL;
+    int uid = 0;
 };
 
-int i = 0;
 vector <symbol_table_entry> *start_symbol_table = new vector<symbol_table_entry>;
 vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
@@ -71,7 +72,22 @@ vector<string> split(const string &s, char delim) {
 
 int num = 0;
 
-int symbol_table_lookup(string token) {
+string symbol_table_lookup(string token, vector <symbol_table_entry> *current_symbol_table) {
+    for(int i = 0; i < current_symbol_table->size(); i++) {
+        if(current_symbol_table->at(i).id.compare(token + "_d" + to_string(current_symbol_table->at(0).uid)) == 0) {
+            return current_symbol_table->at(i).id;
+        }
+    }
+    if(current_symbol_table->at(0).backward == NULL) {
+        cout <<token << " " <<("Not implemented") << endl;
+        exit(-1);
+    }
+    current_symbol_table = current_symbol_table->at(0).backward;
+    return symbol_table_lookup(token, current_symbol_table);
+}
+
+string symbol_table_lookup(string token) {
+    return symbol_table_lookup(token, current_symbol_table);
 }
 
 vector<symbol_table_entry>* create_symbol_table() {
@@ -82,7 +98,9 @@ vector<symbol_table_entry>* create_symbol_table() {
 void symbol_table_insert(string token, char *type) {
     struct symbol_table_entry entry;
     if(token[0] == '#') {
-        token = token.substr(1);
+        token = token.substr(1) + "_d" + to_string(current_symbol_table->at(0).uid);
+    } else {
+        token = token + "_d" + to_string(current_symbol_table->at(0).uid);
     }
     entry.id = token;
     entry.type = type;
@@ -102,7 +120,23 @@ char* new_temp(char *c) {
     char *what = (char *) malloc(sizeof(char) * 100);
     strcpy(what, name.c_str());
     symbol_table_insert(what, c);
+    strcpy(what, symbol_table_lookup(what).c_str());
     return what;
+}
+
+void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
+    for(int i = 0 ;i < current_symbol_table->size(); i++) {
+        if(current_symbol_table->at(i).type == "integer")
+            myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
+        else if(current_symbol_table->at(i).type == "real")
+            myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
+        else if(current_symbol_table->at(i).type == "char")
+            myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
+        else if(current_symbol_table->at(i).forward) {
+            quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+        }
+    }
+
 }
 
 void quadruple_print() {
@@ -112,14 +146,7 @@ void quadruple_print() {
     myfile << endl<<"int main(){\n\n";
 
     /* for print declaration of  variables*/
-    for(int i = 0 ;i < current_symbol_table->size(); i++) {
-        if(current_symbol_table->at(i).type == "integer")
-            myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
-        else if(current_symbol_table->at(i).type == "real")
-            myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
-        else if(current_symbol_table->at(i).type == "char")
-            myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
-    }
+    quadruple_print_symbol_table(start_symbol_table);
 
     for(int i = 0; i < quadruple[0].size(); i++) {
         myfile << "L" << i << " : ";
@@ -175,7 +202,6 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     if(arg1[0] == '#') {
         arg1 = arg1.substr(1);
     }
-
     if(arg2[0] == '#') {
         arg2 = arg2.substr(1);
     }
@@ -263,9 +289,7 @@ program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         quadruple_print();
-        if(i != 0) {
-            current_symbol_table->back().forward = NULL;
-        }
+        current_symbol_table->back().forward = NULL;
         print_symbol_table(start_symbol_table);
 
     };
@@ -426,7 +450,7 @@ params : paramList
     {
        fprintf(fout, "Rule 26 \t\t params -> paramList\n");
     };
-    |
+    |/* empty */
     {
         fprintf(fout, "Rule 27 \t\t params -> empty \n");
     };
@@ -463,7 +487,7 @@ paramId : ID
 
 statement : expressionStmt
     {
-          fprintf(fout, "Rule 35 \t\t statement -> expressionStmt\n");
+        fprintf(fout, "Rule 35 \t\t statement -> expressionStmt\n");
     };
     | compoundStmt
     {
@@ -489,7 +513,6 @@ statement : expressionStmt
 compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
-        i--;
         direction = false;
     };
 
@@ -500,22 +523,37 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     |
     {
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
-            if(direction) {
-                struct symbol_table_entry entry;
-                entry.id = "new_scope!!!";
-                entry.type = "link";
-                entry.forward = create_symbol_table();
-                current_symbol_table->push_back(entry);
+        num_of_tables++;
+        if(direction) {
+            struct symbol_table_entry entry;
+            entry.id = "new_scope!!!";
+            entry.type = "link";
+            entry.forward = create_symbol_table();
+            current_symbol_table->push_back(entry);
+            entry.uid = num_of_tables;
 
-                entry.forward = NULL;
-                entry.id = "link";
-                entry.type = "link";
-                entry.backward = current_symbol_table;
-                current_symbol_table = current_symbol_table->back().forward;
-                current_symbol_table->push_back(entry);
-            } else {
-                current_symbol_table = current_symbol_table->at(0).backward;
-            }
+            entry.forward = NULL;
+            entry.id = "link";
+            entry.type = "link";
+            entry.backward = current_symbol_table;
+            current_symbol_table = current_symbol_table->back().forward;
+            current_symbol_table->push_back(entry);
+        } else {
+            current_symbol_table = current_symbol_table->at(0).backward;
+            struct symbol_table_entry entry;
+            entry.id = "new_scope!!!";
+            entry.type = "link";
+            entry.forward = create_symbol_table();
+            current_symbol_table->push_back(entry);
+
+            entry.forward = NULL;
+            entry.id = "link";
+            entry.type = "link";
+            entry.uid = num_of_tables;
+            entry.backward = current_symbol_table;
+            current_symbol_table = current_symbol_table->back().forward;
+            current_symbol_table->push_back(entry);
+        }
         direction = true;
     };
 
@@ -909,9 +947,6 @@ else_var : KW_ELSE
         $$.quad = quadruple[0].size();
         quadruple_push("","","goto","");
     }
-quadder : %empty{
-        $$.quad = quadruple[0].size();
-}
 
 %%
 int main() {

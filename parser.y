@@ -509,18 +509,6 @@ localDeclarations :	localDeclarations scopedVarDeclaration
                 current_symbol_table->push_back(entry);
             } else {
                 current_symbol_table = current_symbol_table->at(0).backward;
-                struct symbol_table_entry entry;
-                entry.id = "new_scope!!!";
-                entry.type = "link";
-                entry.forward = create_symbol_table();
-                current_symbol_table->push_back(entry);
-
-                entry.forward = NULL;
-                entry.id = "link";
-                entry.type = "link";
-                entry.backward = current_symbol_table;
-                current_symbol_table = current_symbol_table->back().forward;
-                current_symbol_table->push_back(entry);
             }
         direction = true;
     };
@@ -660,6 +648,18 @@ expression : mutable KW_EQUAL expression
 simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
+
+        backpatch($1.true_list,$3.quad);
+        backpatch($1.false_list,$3.quad);
+        $$.true_list = $4.true_list;
+        backpatch($4.false_list,quadruple[0].size());
+        quadruple_push($1.place,"","if","");
+        quadruple_push("","","goto","");
+        quadruple_push("","","goto","");
+        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()-2));
+        $$.false_list = create_node(quadruple[0].size()-1);
+
+        /*
         backpatch($1.true_list,$3.quad);
         backpatch($1.false_list,$3.quad);
         $$.true_list = $4.true_list ;
@@ -669,6 +669,7 @@ simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExp
         quadruple_push($1.place,"","if","");
         quadruple_push("","","goto","");
         quadruple_push("","","goto","");
+        */
     };
     | simpleExpression KW_COND_AND simpleExpression
     {

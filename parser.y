@@ -725,9 +725,24 @@ simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExp
         quadruple_push("","","goto","");
         */
     };
-    | simpleExpression KW_COND_AND simpleExpression
+    | simpleExpression KW_COND_AND quadder  simpleExpression
     {
         fprintf(fout, "Rule 68 \t\t simpleExpression -> simpleExpression KW_COND_AND simpleExpression\n");
+        $$.place = new_temp("integer");
+        backpatch($1.true_list,quadruple[0].size());
+        quadruple_push("1","",":=",$$.place);
+        quadruple_push(to_string($3.quad),"","goto","");
+        backpatch($1.false_list,quadruple[0].size());
+        quadruple_push("0","",":=",$$.place);
+        quadruple_push(to_string($3.quad),"","goto","");
+
+        $$.false_list = $4.false_list;
+        backpatch($4.true_list, quadruple[0].size());
+        quadruple_push(strcat((strcat($$.place,"==")),"0"),"","if","");
+        $$.false_list = merge_lists($4.false_list,create_node(quadruple[0].size()));
+        quadruple_push("","","goto","");
+        $$.true_list = create_node(quadruple[0].size());
+        quadruple_push("","","goto","");
     };
     | simpleExpression KW_COND_OR KW_ELSE null_before_simple_expr simpleExpression
     {
@@ -953,6 +968,11 @@ else_var : KW_ELSE
         $$.quad = quadruple[0].size();
         quadruple_push("","","goto","");
     }
+
+quadder : {
+        fprintf(fout, "112 \t\t quadder -> empty \n");
+        $$.quad = quadruple[0].size();
+}
 
 %%
 int main() {

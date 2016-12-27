@@ -228,7 +228,14 @@ void backpatch(struct node *first, int data) {
     for(current = first; current != NULL; current = current->link) {
         quadruple_push(current->data, to_string(data));
     }
+    fprintf(fout, "PARHAM IS UGLY %d\n",data);
+    cout << quadruple[0][4]<<"/n";
 }
+
+void backpatch(int address, int data) {
+    quadruple_push(address, to_string(data));
+}
+
 
 %}
 
@@ -237,6 +244,7 @@ void backpatch(struct node *first, int data) {
         struct node *true_list;
         struct node *false_list;
         struct node *next_list;
+        struct node *case_list;
         int quad;
         int is_boolean;
         char *place;
@@ -266,7 +274,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
-par_cl_var null_before_simple_expr
+par_cl_var null_before_simple_expr else_var quadder
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -445,7 +453,7 @@ params : paramList
     {
        fprintf(fout, "Rule 26 \t\t params -> paramList\n");
     };
-    |
+    |/* empty */
     {
         fprintf(fout, "Rule 27 \t\t params -> empty \n");
     };
@@ -576,9 +584,12 @@ selectionStmt : KW_IF PAR_OP simpleExpression par_cl_var statement  %prec IF_WIT
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
     };
-    | KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement
+    | KW_IF PAR_OP simpleExpression par_cl_var  statement else_var   statement
     {
         fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement\n");
+        backpatch($3.true_list,$4.quad);
+        backpatch($3.false_list, $6.quad+1);
+        backpatch($6.quad,quadruple[0].size());
     };
     | KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END
     {
@@ -606,6 +617,7 @@ defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
 
 iterationStmt : KW_WHILE PAR_OP simpleExpression par_cl_var statement
     {
+
         fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression par_cl_var statement\n");
     };
 
@@ -684,9 +696,31 @@ expression : mutable KW_EQUAL expression
         //backpatch($1.true_list,quadruple[0].size());
     };
 
-simpleExpression : simpleExpression KW_COND_OR simpleExpression
+simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
+
+        backpatch($1.true_list,$3.quad);
+        backpatch($1.false_list,$3.quad);
+        $$.true_list = $4.true_list;
+        backpatch($4.false_list,quadruple[0].size());
+        quadruple_push($1.place,"","if","");
+        quadruple_push("","","goto","");
+        quadruple_push("","","goto","");
+        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()-2));
+        $$.false_list = create_node(quadruple[0].size()-1);
+
+        /*
+        backpatch($1.true_list,$3.quad);
+        backpatch($1.false_list,$3.quad);
+        $$.true_list = $4.true_list ;
+        $$.false_list = create_node(quadruple[0].size()+2);
+        backpatch($4.false_list,quadruple[0].size());
+        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()+1));
+        quadruple_push($1.place,"","if","");
+        quadruple_push("","","goto","");
+        quadruple_push("","","goto","");
+        */
     };
     | simpleExpression KW_COND_AND simpleExpression
     {
@@ -694,10 +728,10 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
     };
     | simpleExpression KW_COND_OR KW_ELSE null_before_simple_expr simpleExpression
     {
+        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
 	backpatch($1.false_list,$4.quad);
         $$.true_list = merge_lists($1.true_list,$5.true_list);
         $$.false_list = $5.false_list;
-        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
     | simpleExpression KW_COND_AND KW_COND_THEN null_before_simple_expr simpleExpression
     {
@@ -705,11 +739,12 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
 	backpatch($1.true_list,$4.quad);
 	$$.true_list = $5.true_list;
         $$.false_list = merge_lists($1.false_list,$5.false_list);
-        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
     | KW_COND_NOT simpleExpression
     {
         fprintf(fout, "Rule 71 \t\t simpleExpression -> KW_COND_NOT simpleExpression\n");
+        $$.true_list = $2.false_list;
+        $$.false_list = $2.true_list;
     };
     | relExpression
     {
@@ -784,6 +819,7 @@ mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
     };
     | unaryExpression
     {
+    	$$.place = $1.place;
         fprintf(fout, "Rule 86 \t\t mathlogicExpression -> unaryExpression\n");
     };
 
@@ -908,6 +944,12 @@ par_cl_var : PAR_CL
         fprintf(fout, "110 \t\t par_cl_var_VAR -> par_cl_var \n");
         $$.quad = quadruple[0].size();
     };
+else_var : KW_ELSE
+    {
+        fprintf(fout, "111 \t\t else_var -> KW_ELSE \n");
+        $$.quad = quadruple[0].size();
+        quadruple_push("","","goto","");
+    }
 
 %%
 int main() {

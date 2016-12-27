@@ -700,31 +700,25 @@ expression : mutable KW_EQUAL expression
         //backpatch($1.true_list,quadruple[0].size());
     };
 
-simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
+simpleExpression : simpleExpression KW_COND_OR quadder simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
-
-        backpatch($1.true_list,$3.quad);
-        backpatch($1.false_list,$3.quad);
+        // Generate the gotos under the main gotos
+        $$.place = new_temp("integer");
+        backpatch($1.true_list,quadruple[0].size());
+        quadruple_push("1","",":=",$$.place);
+        quadruple_push(to_string($3.quad),"","goto","");
+        backpatch($1.false_list,quadruple[0].size());
+        quadruple_push("0","",":=",$$.place);
+        quadruple_push(to_string($3.quad),"","goto","");
         $$.true_list = $4.true_list;
-        backpatch($4.false_list,quadruple[0].size());
-        quadruple_push($1.place,"","if","");
+        backpatch($4.false_list, quadruple[0].size());
+        quadruple_push(strcat((strcat($$.place,"==")),"0"),"","if","");
+        $$.false_list = create_node(quadruple[0].size());
         quadruple_push("","","goto","");
+        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()));
         quadruple_push("","","goto","");
-        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()-2));
-        $$.false_list = create_node(quadruple[0].size()-1);
 
-        /*
-        backpatch($1.true_list,$3.quad);
-        backpatch($1.false_list,$3.quad);
-        $$.true_list = $4.true_list ;
-        $$.false_list = create_node(quadruple[0].size()+2);
-        backpatch($4.false_list,quadruple[0].size());
-        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()+1));
-        quadruple_push($1.place,"","if","");
-        quadruple_push("","","goto","");
-        quadruple_push("","","goto","");
-        */
     };
     | simpleExpression KW_COND_AND quadder  simpleExpression
     {
@@ -736,7 +730,6 @@ simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExp
         backpatch($1.false_list,quadruple[0].size());
         quadruple_push("0","",":=",$$.place);
         quadruple_push(to_string($3.quad),"","goto","");
-
         $$.false_list = $4.false_list;
         backpatch($4.true_list, quadruple[0].size());
         quadruple_push(strcat((strcat($$.place,"==")),"0"),"","if","");

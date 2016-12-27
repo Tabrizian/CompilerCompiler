@@ -1,11 +1,8 @@
 int #at00()
 {
-    switch (#xx00)
-        case 1:
-        #xx00 = 0 + 1 ;;
-        case 2:
-        #xx00 = 0 +1 ;;
-        default:
-        ;;
-    end
+    int #ff00 : 0;
+    if(#ff00) {
+        int #ff00 : 0;
+        #ff00++;
+    }
 }

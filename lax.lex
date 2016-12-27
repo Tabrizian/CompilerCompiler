@@ -260,7 +260,19 @@ CR_CL [}]
     yylval.eval.true_list = NULL;
     yylval.eval.false_list = NULL;
     yylval.eval.next_list = NULL;
-    strcpy(yylval.eval.place, yytext);
+    if (!strcmp (yytext,".lt"))
+        strcpy(yylval.eval.place, " < ");
+    if (!strcmp (yytext,".le"))
+        strcpy(yylval.eval.place, " <= ");
+    if (!strcmp (yytext,".gt"))
+        strcpy(yylval.eval.place, " > ");
+    if (!strcmp (yytext,".ge"))
+        strcpy(yylval.eval.place, " >= ");
+    if (!strcmp (yytext,".eq"))
+        strcpy(yylval.eval.place, " == ");
+    if (!strcmp (yytext,".ne"))
+        strcpy(yylval.eval.place, " != ");
+
     yylval.eval.code = "";
     yylval.eval.type = "relop";
     return KW_RELOP;

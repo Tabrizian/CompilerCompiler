@@ -1,21 +1,8 @@
-bool #ff01 : true;
 int #at00()
 {
-    if(#ff02) {
-        bool #KK04 : true;
-        bool #KK04 : true;
-        bool #KK04 : true;
+    if(  1 .lt 2  ){
+        #xy00 = 0 + 100;
     }
-
-    if(#KK03) {
-        bool #KK04 : true;
-        bool #KK04 : true;
-    }
-}
-
-int #at00()
-{
-    if(1 .lt 2  or 5 .lt 6 ) {
-        #xx00 = 0;
-    }
+    else
+        #NN00 = -10 - 20;
 }

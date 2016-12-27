@@ -203,6 +203,11 @@ void backpatch(struct node *first, int data) {
     cout << quadruple[0][4]<<"/n";
 }
 
+void backpatch(int address, int data) {
+    quadruple_push(address, to_string(data));
+}
+
+
 %}
 
 %union {
@@ -210,6 +215,7 @@ void backpatch(struct node *first, int data) {
         struct node *true_list;
         struct node *false_list;
         struct node *next_list;
+        struct node *case_list;
         int quad;
         int is_boolean;
         char *place;
@@ -239,7 +245,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
-par_cl_var null_before_simple_expr
+par_cl_var null_before_simple_expr else_var quadder
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -537,9 +543,12 @@ selectionStmt : KW_IF PAR_OP simpleExpression par_cl_var statement  %prec IF_WIT
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
     };
-    | KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement
+    | KW_IF PAR_OP simpleExpression par_cl_var  statement else_var   statement
     {
         fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement\n");
+        backpatch($3.true_list,$4.quad);
+        backpatch($3.false_list, $6.quad+1);
+        backpatch($6.quad,quadruple[0].size());
     };
     | KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END
     {
@@ -567,6 +576,7 @@ defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
 
 iterationStmt : KW_WHILE PAR_OP simpleExpression par_cl_var statement
     {
+
         fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression par_cl_var statement\n");
     };
 
@@ -692,6 +702,8 @@ simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExp
     | KW_COND_NOT simpleExpression
     {
         fprintf(fout, "Rule 71 \t\t simpleExpression -> KW_COND_NOT simpleExpression\n");
+        $$.true_list = $2.false_list;
+        $$.false_list = $2.true_list;
     };
     | relExpression
     {
@@ -890,6 +902,15 @@ par_cl_var : PAR_CL
         fprintf(fout, "110 \t\t par_cl_var_VAR -> par_cl_var \n");
         $$.quad = quadruple[0].size();
     };
+else_var : KW_ELSE
+    {
+        fprintf(fout, "111 \t\t else_var -> KW_ELSE \n");
+        $$.quad = quadruple[0].size();
+        quadruple_push("","","goto","");
+    }
+quadder : %empty{
+        $$.quad = quadruple[0].size();
+}
 
 %%
 int main() {

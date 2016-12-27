@@ -169,10 +169,10 @@ void quadruple_print() {
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                     <<  quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == ".le")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " < "
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
                     <<  quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == ".lt")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
+                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " < "
                     <<  quadruple[1][i] << ";" << endl;
         else if(quadruple[2][i] == ".gt")
                 myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " > "

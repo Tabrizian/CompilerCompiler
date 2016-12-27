@@ -763,15 +763,12 @@ relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
         //$$.place = $1.place;
-        $$.place = new_temp("bool");
-        //quadruple_push($1.place, $3.place, $2.place, $$.place);
+        $$.place = new_temp("integer");
+        quadruple_push($1.place, $3.place, $2.place, $$.place);
         $$.true_list = create_node(quadruple[0].size() + 1);
         $$.false_list = create_node(quadruple[0].size() + 2);
-        $$.type = "bool";
-        string s;// = $1.place + " " + $2.place + " " + $3.place;
-        s = strcat((strcat($1.place,$2.place)),$3.place);
-        //s = strcat(s , $3.place);
-        quadruple_push(s, "", "if", "");
+        $$.type = "integer";
+        quadruple_push($$.place, "", "if", "");
         quadruple_push("", "", "goto", "");
         quadruple_push("", "", "goto", "");
     };

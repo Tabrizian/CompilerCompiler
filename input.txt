@@ -1,8 +1,11 @@
 int #at00()
 {
-    if(  1 .lt 2  ){
-        #xy00 = 0 + 100;
-    }
-    else
-        #NN00 = -10 - 20;
+    switch (#xx00)
+        case 1:
+        #xx00 = 0 + 1 ;;
+        case 2:
+        #xx00 = 0 +1 ;;
+        default:
+        ;;
+    end
 }

@@ -778,6 +778,7 @@ mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
     };
     | unaryExpression
     {
+    	$$.place = $1.place;
         fprintf(fout, "Rule 86 \t\t mathlogicExpression -> unaryExpression\n");
     };
 

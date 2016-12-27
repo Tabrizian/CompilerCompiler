@@ -199,6 +199,8 @@ void backpatch(struct node *first, int data) {
     for(current = first; current != NULL; current = current->link) {
         quadruple_push(current->data, to_string(data));
     }
+    fprintf(fout, "PARHAM IS UGLY %d\n",data);
+    cout << quadruple[0][4]<<"/n";
 }
 
 %}
@@ -643,9 +645,18 @@ expression : mutable KW_EQUAL expression
         //backpatch($1.true_list,quadruple[0].size());
     };
 
-simpleExpression : simpleExpression KW_COND_OR simpleExpression
+simpleExpression : simpleExpression KW_COND_OR null_before_simple_expr simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
+        backpatch($1.true_list,$3.quad);
+        backpatch($1.false_list,$3.quad);
+        $$.true_list = $4.true_list ;
+        $$.false_list = create_node(quadruple[0].size()+2);
+        backpatch($4.false_list,quadruple[0].size());
+        $$.true_list = merge_lists($4.true_list,create_node(quadruple[0].size()+1));
+        quadruple_push($1.place,"","if","");
+        quadruple_push("","","goto","");
+        quadruple_push("","","goto","");
     };
     | simpleExpression KW_COND_AND simpleExpression
     {
@@ -653,10 +664,10 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
     };
     | simpleExpression KW_COND_OR KW_ELSE null_before_simple_expr simpleExpression
     {
+        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
 	backpatch($1.false_list,$4.quad);
         $$.true_list = merge_lists($1.true_list,$5.true_list);
         $$.false_list = $5.false_list;
-        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
     | simpleExpression KW_COND_AND KW_COND_THEN null_before_simple_expr simpleExpression
     {
@@ -664,7 +675,6 @@ simpleExpression : simpleExpression KW_COND_OR simpleExpression
 	backpatch($1.true_list,$4.quad);
 	$$.true_list = $5.true_list;
         $$.false_list = merge_lists($1.false_list,$5.false_list);
-        fprintf(fout, "Rule 69 \t\t simpleExpression -> simpleExpression KW_COND_OR KW_ELSE simpleExpression\n");
     };
     | KW_COND_NOT simpleExpression
     {

@@ -1,7 +1,7 @@
 int #at00()
 {
     int #ff00 : 1;
-    if(#ff00 .eq 0) {
+    while(#ff00 .eq 0 and #ff00 .eq 0) {
         int #ff00 : 0;
         #ff00++;
     }

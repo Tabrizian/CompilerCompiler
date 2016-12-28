@@ -953,18 +953,18 @@ constant : NUMCONST
 
 par_cl_var : PAR_CL
     {
-        fprintf(fout, "110 \t\t par_cl_var_VAR -> par_cl_var \n");
+        fprintf(fout, "Rule 110 \t\t par_cl_var_VAR -> par_cl_var \n");
         $$.quad = quadruple[0].size();
     };
 else_var : KW_ELSE
     {
-        fprintf(fout, "111 \t\t else_var -> KW_ELSE \n");
+        fprintf(fout, "Rule 111 \t\t else_var -> KW_ELSE \n");
         $$.quad = quadruple[0].size();
         quadruple_push("","","goto","");
     }
 
 quadder : {
-        fprintf(fout, "112 \t\t quadder -> empty \n");
+        fprintf(fout, "Rule 112 \t\t quadder -> empty \n");
         $$.quad = quadruple[0].size();
 }
 

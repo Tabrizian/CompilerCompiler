@@ -20,6 +20,7 @@ extern int yylex(void);
 FILE *fout;
 bool direction = true;
 int changed = 1;
+char symbol = 'L';
 
 int num_of_tables = 0;
 struct symbol_table_entry {
@@ -30,10 +31,17 @@ struct symbol_table_entry {
     int uid = 0;
 };
 
+struct function_name {
+    string id;
+    int line;
+};
+
 vector <symbol_table_entry> *start_symbol_table = new vector<symbol_table_entry>;
 vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
-vector <string> registers;
+vector <vector<symbol_table_entry> *> quad_symbol;
+vector <function_name> registers;
+vector <symbol_table_entry> activation_record;
 ofstream myfile;
 
 int indent = 0;
@@ -140,6 +148,17 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
 
 }
 
+bool is_main_function(vector<symbol_table_entry> *symbol_table) {
+    if(symbol_table->at(0).id.compare("#at00") == 0) {
+        return true;
+    } else if(symbol_table->at(0).id.compare("link_back") == 0){
+        symbol_table = symbol_table->at(0).backward;
+        return is_main_function(symbol_table);
+    } else {
+        return false;
+    }
+}
+
 void quadruple_print() {
 
     myfile.open("intermediatecode.c");
@@ -150,52 +169,55 @@ void quadruple_print() {
     quadruple_print_symbol_table(start_symbol_table);
 
     for(int i = 0; i < quadruple[0].size(); i++) {
-        myfile << "L" << i << " : ";
-        if(quadruple[2][i] == ":=")
-                myfile << quadruple[3][i] << " = " << quadruple[0][i] << ";"
-                    << endl;
-        else if(quadruple[2][i] == "+")
-                myfile << quadruple[3][i] << " = " << quadruple[0][i] << " + "
-                    << quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == "-")
-                myfile << quadruple[3][i] << " = " << quadruple[0][i] << " - "
-                    << quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == "*")
-                myfile << quadruple[3][i] << " = " << quadruple[0][i] << " * "
-                    << quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == "/")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
-                    <<  quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == "%")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
-                    <<  quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == ".le")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
-                    <<  quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == ".lt")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " < "
-                    <<  quadruple[1][i] << ";" << endl;
-        else if(quadruple[2][i] == ".gt")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " > "
-                    <<  quadruple[1][i] << ";" << endl;
-         else if(quadruple[2][i] == ".ge")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " >= "
-                    <<  quadruple[1][i] << ";" << endl;
-         else if(quadruple[2][i] == ".eq")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " == "
-                    <<  quadruple[1][i] << ";" << endl;
-         else if(quadruple[2][i] == ".ne")
-                myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " != "
-                    <<  quadruple[1][i] << ";" << endl;
-         else if(quadruple[2][i] == "if")
-                myfile << "if" << " ( " <<quadruple[0][i] << " ) "
-                    <<  quadruple[1][i]  << endl;
-         else if(quadruple[2][i] == "goto")
-                myfile << "goto L" << quadruple[0][i] << ";"<<endl;
+        if(i == registers.at(0).line) {
+            symbol = 'F';
+            myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
+        }
+            myfile << symbol << i << " : ";
+            if(quadruple[2][i] == ":=")
+                    myfile << quadruple[3][i] << " = " << quadruple[0][i] << ";"
+                        << endl;
+            else if(quadruple[2][i] == "+")
+                    myfile << quadruple[3][i] << " = " << quadruple[0][i] << " + "
+                        << quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "-")
+                    myfile << quadruple[3][i] << " = " << quadruple[0][i] << " - "
+                        << quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "*")
+                    myfile << quadruple[3][i] << " = " << quadruple[0][i] << " * "
+                        << quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "/")
+                    myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " / "
+                        <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "%")
+                    myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
+                        <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".le")
+                    myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
+                        <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".lt")
+                    myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " < "
+                        <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".gt")
+                    myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " > "
+                        <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".ge")
+                   myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " >= "
+                       <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".eq")
+                   myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " == "
+                       <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == ".ne")
+                   myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " != "
+                       <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "if")
+                   myfile << "if" << " ( " <<quadruple[0][i] << " ) "
+                       <<  quadruple[1][i]  << endl;
+            else if(quadruple[2][i] == "goto")
+                    myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
     }
 
-    myfile << "L" << quadruple[0].size() << ":" << " return 0;" << endl;
-    myfile << endl << "}" << endl;
+        myfile << endl << "}" << endl;
 }
 
 void quadruple_push(string arg1, string arg2, string op, string result) {
@@ -218,6 +240,8 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     quadruple[1].push_back(arg2);
     quadruple[2].push_back(op);
     quadruple[3].push_back(result);
+    quad_symbol.push_back(current_symbol_table);
+    cout << current_symbol_table->at(0).id;
 }
 
 void quadruple_push(int row, string data) {
@@ -229,13 +253,13 @@ void backpatch(struct node *first, int data) {
     for(current = first; current != NULL; current = current->link) {
         quadruple_push(current->data, to_string(data));
     }
-    fprintf(fout, "PARHAM IS UGLY %d\n",data);
-    cout << quadruple[0][4]<<"/n";
 }
 
 void backpatch(int address, int data) {
     quadruple_push(address, to_string(data));
 }
+
+bool once = false;
 
 
 %}
@@ -439,6 +463,12 @@ returnTypeSpecifier : KW_INT
 funDeclaration : typeSpecifier ID PAR_OP params par_cl_var statement
     {
         fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params par_cl_var statement\n");
+        current_symbol_table->back().id = $2.place;
+        current_symbol_table->back().type = $1.type;
+        struct function_name function;
+        function.id = $2.place;
+        function.line = quadruple[0].size();
+        registers.push_back(function);
     };
     | ID PAR_OP params par_cl_var statement
     {
@@ -453,7 +483,7 @@ params : paramList
     {
        fprintf(fout, "Rule 26 \t\t params -> paramList\n");
     };
-    |/* empty */
+    |
     {
         fprintf(fout, "Rule 27 \t\t params -> empty \n");
     };
@@ -517,8 +547,7 @@ compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         changed--;
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
-        cout << "GONE" << endl;
-            current_symbol_table = current_symbol_table->at(0).backward;
+        current_symbol_table = current_symbol_table->at(0).backward;
 
     };
 
@@ -531,14 +560,14 @@ localDeclarations :	localDeclarations scopedVarDeclaration
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
         num_of_tables++;
             struct symbol_table_entry entry;
-            entry.id = "new_scope!!!";
+            entry.id = "statement_scope";
             entry.type = "link";
             entry.forward = create_symbol_table();
             current_symbol_table->push_back(entry);
             entry.uid = num_of_tables;
 
             entry.forward = NULL;
-            entry.id = "link";
+            entry.id = "link_back";
             entry.type = "link";
             entry.backward = current_symbol_table;
             current_symbol_table = current_symbol_table->back().forward;
@@ -879,6 +908,11 @@ immutable : PAR_OP expression par_cl_var
 call : ID PAR_OP args par_cl_var
     {
         fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args par_cl_var\n");
+        for(int i = 0; i < start_symbol_table->size(); i++) {
+            if(start_symbol_table->at(i).id.compare($1.place) == 0) {
+
+            }
+        }
     };
 
 args : argList

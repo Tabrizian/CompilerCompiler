@@ -19,3 +19,24 @@ int #at00()
     #ff00++;
     #ff00++;
 }
+int #at01()
+{
+    int #ff00 : 1;
+    if (#ff00 .eq 1) {
+        #ff00++;
+    }
+    if (#ff00 .eq 1) {
+        int #ff00 : 1;
+        #ff00++;
+    }
+    if (#ff00 .eq 1) {
+        int #ff00 : 1;
+        #ff00++;
+        if (#ff00 .eq 1) {
+            int #ff00 : 1;
+           #ff00++;
+          }
+    }
+    #ff00++;
+    #ff00++;
+}

@@ -292,7 +292,6 @@ program : declarationList
     {
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         quadruple_print();
-        current_symbol_table->back().forward = NULL;
         print_symbol_table(start_symbol_table);
 
     };

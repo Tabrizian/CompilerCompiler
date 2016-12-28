@@ -19,6 +19,7 @@ void yyerror(const char *s);
 extern int yylex(void);
 FILE *fout;
 bool direction = true;
+int changed = 1;
 
 int num_of_tables = 0;
 struct symbol_table_entry {
@@ -514,9 +515,11 @@ statement : expressionStmt
 
 compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
+        changed--;
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
-        direction = false;
-        current_symbol_table = current_symbol_table->at(0).backward;
+        cout << "GONE" << endl;
+            current_symbol_table = current_symbol_table->at(0).backward;
+
     };
 
 localDeclarations :	localDeclarations scopedVarDeclaration
@@ -527,7 +530,6 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     {
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
         num_of_tables++;
-        if(direction) {
             struct symbol_table_entry entry;
             entry.id = "new_scope!!!";
             entry.type = "link";
@@ -541,23 +543,6 @@ localDeclarations :	localDeclarations scopedVarDeclaration
             entry.backward = current_symbol_table;
             current_symbol_table = current_symbol_table->back().forward;
             current_symbol_table->push_back(entry);
-        } else {
-            current_symbol_table = current_symbol_table->at(0).backward;
-            struct symbol_table_entry entry;
-            entry.id = "new_scope!!!";
-            entry.type = "link";
-            entry.forward = create_symbol_table();
-            current_symbol_table->push_back(entry);
-
-            entry.forward = NULL;
-            entry.id = "link";
-            entry.type = "link";
-            entry.uid = num_of_tables;
-            entry.backward = current_symbol_table;
-            current_symbol_table = current_symbol_table->back().forward;
-            current_symbol_table->push_back(entry);
-        }
-        direction = true;
     };
 
 statementList :	statementList statement

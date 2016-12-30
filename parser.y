@@ -170,6 +170,7 @@ void quadruple_print() {
 
     myfile.open("intermediatecode.c");
     myfile << "#include <stdio.h>\n\n";
+    myfile << "#include \"stack.h\"\n\n";
     myfile << endl<<"int main(){\n\n";
 
     /* for print declaration of  variables*/

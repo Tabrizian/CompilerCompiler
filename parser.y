@@ -18,8 +18,6 @@ extern char* yytext;
 void yyerror(const char *s);
 extern int yylex(void);
 FILE *fout;
-bool direction = true;
-int changed = 1;
 char symbol = 'L';
 
 int num_of_tables = 0;
@@ -571,7 +569,6 @@ statement : expressionStmt
 
 compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
-        changed--;
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
         current_symbol_table = current_symbol_table->at(0).backward;
 

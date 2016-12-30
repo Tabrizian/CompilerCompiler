@@ -36,6 +36,7 @@ struct function_name {
     int line;
 };
 
+vector <string> var_decleration[2];
 vector <symbol_table_entry> *start_symbol_table = new vector<symbol_table_entry>;
 vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
@@ -45,6 +46,13 @@ vector <symbol_table_entry> activation_record;
 ofstream myfile;
 
 int indent = 0;
+
+void temp_symbol_table_insert(string token, char *type) {
+    struct symbol_table_entry entry;
+    var_decleration[0].push_back(token);
+    var_decleration[1].push_back(type);
+}
+
 void print_symbol_table(vector<symbol_table_entry> *start_symbol_table) {
     for(int i = 0; i < indent; i++, cout << "\t");
     cout << "========" << endl;
@@ -104,7 +112,7 @@ vector<symbol_table_entry>* create_symbol_table() {
     return symbol_table;
 }
 
-void symbol_table_insert(string token, char *type) {
+void symbol_table_insert(string token, string type) {
     struct symbol_table_entry entry;
     if(token[0] == '#') {
         token = token.substr(1) + "_d" + to_string(current_symbol_table->at(0).uid);
@@ -141,7 +149,7 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
             myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
         else if(current_symbol_table->at(i).type == "char")
             myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
-        else if(current_symbol_table->at(i).forward) {
+        if(current_symbol_table->at(i).forward) {
             quadruple_print_symbol_table(current_symbol_table->at(i).forward);
         }
     }
@@ -318,7 +326,6 @@ program : declarationList
         fprintf(fout, "Rule 1 \t\t program -> declarationList\n");
         quadruple_print();
         print_symbol_table(start_symbol_table);
-
     };
 declarationList : declarationList declaration
     {
@@ -498,20 +505,38 @@ paramList : paramList KW_SEMICOLON paramTypeList
 paramTypeList : typeSpecifier paramIdList
     {
         fprintf(fout, "Rule 30 \t\t paramTypeList -> typeSpecifier paramIdList\n");
+        $$.type = $1.type;
+        string declaration_list($2.code);
+
+        vector<string> tokens = split(declaration_list, ',');
+        for(int i = 0; i < tokens.size(); i++) {
+            vector<string> inits = split(tokens[i], ' ');
+            if(inits.size() == 1) {
+                temp_symbol_table_insert(tokens[i], $1.type);
+            } else if(inits.size() == 2) {
+                temp_symbol_table_insert(inits[0], $1.type);
+                quadruple_push(inits[1], "", ":=", inits[0]);
+            }
+        }
     };
 
 paramIdList : paramIdList PUNC_COMMA paramId
     {
         fprintf(fout, "Rule 31 \t\t paramIdList -> paramIdList PUNC_COMMA paramId\n");
+        char *temp = new char[100];
+        strcpy(temp, $1.code);
+        $$.code = strcat(strcat(temp, ","), $3.code);
     };
     | paramId
     {
         fprintf(fout, "Rule 32 \t\t paramIdList -> paramId\n");
+        $$.code = $1.code;
     };
 
 paramId : ID
     {
         fprintf(fout, "Rule 33 \t\t paramId -> ID\n");
+        $$.code = $1.place;
     };
     | ID BR_OP BR_CL
     {
@@ -572,6 +597,13 @@ localDeclarations :	localDeclarations scopedVarDeclaration
             entry.backward = current_symbol_table;
             current_symbol_table = current_symbol_table->back().forward;
             current_symbol_table->push_back(entry);
+
+        for(int i = 0; i < var_decleration[0].size(); i++)
+        {
+            symbol_table_insert(var_decleration[0][i], var_decleration[1][i]);
+        }
+        var_decleration[0].clear();
+        var_decleration[1].clear();
     };
 
 statementList :	statementList statement

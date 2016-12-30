@@ -42,7 +42,6 @@ vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
 vector <vector<symbol_table_entry> *> quad_symbol;
 vector <function_name> registers;
-vector <symbol_table_entry> activation_record;
 ofstream myfile;
 
 int indent = 0;
@@ -143,12 +142,14 @@ char* new_temp(char *c) {
 
 void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0 ;i < current_symbol_table->size(); i++) {
-        if(current_symbol_table->at(i).type == "integer")
-            myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
-        else if(current_symbol_table->at(i).type == "real")
-            myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
-        else if(current_symbol_table->at(i).type == "char")
-            myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
+        if(current_symbol_table->at(i).id[0] != '#') {
+            if(current_symbol_table->at(i).type == "integer")
+                myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
+            else if(current_symbol_table->at(i).type == "real")
+                myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
+            else if(current_symbol_table->at(i).type == "char")
+                myfile << "char " << current_symbol_table->at(i).id << ";" << endl;
+        }
         if(current_symbol_table->at(i).forward) {
             quadruple_print_symbol_table(current_symbol_table->at(i).forward);
         }

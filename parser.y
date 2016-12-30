@@ -93,7 +93,7 @@ string symbol_table_lookup(string token, vector <symbol_table_entry> *current_sy
         }
     }
     if(current_symbol_table->at(0).backward == NULL) {
-        cout <<token << " " <<("Not implemented") << endl;
+        cout << token << " " << "Not defined" << endl;
         exit(-1);
     }
     current_symbol_table = current_symbol_table->at(0).backward;
@@ -141,7 +141,7 @@ char* new_temp(char *c) {
 void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0 ;i < current_symbol_table->size(); i++) {
         if(current_symbol_table->at(i).id[0] != '#') {
-            if(current_symbol_table->at(i).type == "integer")
+            if(current_symbol_table->at(i).type == "int")
                 myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
             else if(current_symbol_table->at(i).type == "real")
                 myfile << "double " << current_symbol_table->at(i).id  << ";" << endl;
@@ -173,6 +173,7 @@ void quadruple_print() {
     myfile << "#include \"stack.h\"\n\n";
     myfile << endl<<"int main(){\n\n";
 
+            myfile << "struct stack *activation_stack = stack_create();\n";
     /* for print declaration of  variables*/
     quadruple_print_symbol_table(start_symbol_table);
 
@@ -221,6 +222,10 @@ void quadruple_print() {
             else if(quadruple[2][i] == "if")
                    myfile << "if" << " ( " <<quadruple[0][i] << " ) "
                        <<  quadruple[1][i]  << endl;
+            else if(quadruple[2][i] == "push")
+                myfile <<  "stack_push(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
+            else if(quadruple[2][i] == "pop")
+                myfile <<  "stack_pop(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
             else if(quadruple[2][i] == "goto")
                     myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
     }
@@ -249,7 +254,6 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     quadruple[2].push_back(op);
     quadruple[3].push_back(result);
     quad_symbol.push_back(current_symbol_table);
-    cout << current_symbol_table->at(0).id;
 }
 
 void quadruple_push(int row, string data) {
@@ -449,7 +453,7 @@ typeSpecifier : returnTypeSpecifier
 returnTypeSpecifier : KW_INT
     {
         fprintf(fout, "Rule 20 \t\t returnTypeSpecifier -> KW_INT\n");
-        $$.type = "integer";
+        $$.type = "int";
     };
     | KW_REAL
     {
@@ -459,7 +463,7 @@ returnTypeSpecifier : KW_INT
     | KW_BOOL
     {
         fprintf(fout, "Rule 22 \t\t returnTypeSpecifier -> KW_BOOL\n");
-        $$.type = "integer";
+        $$.type = "int";
     };
     | KW_CHAR
     {
@@ -748,7 +752,7 @@ simpleExpression : simpleExpression KW_COND_OR quadder simpleExpression
     {
         fprintf(fout, "Rule 67 \t\t simpleExpression -> simpleExpression KW_COND_OR simpleExpression\n");
         // Generate the gotos under the main gotos
-        $$.place = new_temp("integer");
+        $$.place = new_temp("int");
         backpatch($1.true_list,quadruple[0].size());
         quadruple_push("1","",":=",$$.place);
         quadruple_push(to_string($3.quad),"","goto","");
@@ -767,7 +771,7 @@ simpleExpression : simpleExpression KW_COND_OR quadder simpleExpression
     | simpleExpression KW_COND_AND quadder  simpleExpression
     {
         fprintf(fout, "Rule 68 \t\t simpleExpression -> simpleExpression KW_COND_AND simpleExpression\n");
-        $$.place = new_temp("integer");
+        $$.place = new_temp("int");
         backpatch($1.true_list,quadruple[0].size());
         quadruple_push("1","",":=",$$.place);
         quadruple_push(to_string($3.quad),"","goto","");
@@ -816,11 +820,11 @@ relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
         //$$.place = $1.place;
-        $$.place = new_temp("integer");
+        $$.place = new_temp("int");
         quadruple_push($1.place, $3.place, $2.place, $$.place);
         $$.true_list = create_node(quadruple[0].size() + 1);
         $$.false_list = create_node(quadruple[0].size() + 2);
-        $$.type = "integer";
+        $$.type = "int";
         quadruple_push($$.place, "", "if", "");
         quadruple_push("", "", "goto", "");
         quadruple_push("", "", "goto", "");
@@ -829,7 +833,7 @@ relExpression : mathlogicExpression relop mathlogicExpression
     {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
 
-        $$.place = new_temp("integer");
+        $$.place = new_temp("int");
         $$.place = $1.place;
     };
 
@@ -939,10 +943,15 @@ immutable : PAR_OP expression par_cl_var
 call : ID PAR_OP args par_cl_var
     {
         fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args par_cl_var\n");
+        bool found = false;
         for(int i = 0; i < start_symbol_table->size(); i++) {
             if(start_symbol_table->at(i).id.compare($1.place) == 0) {
-
+                found = true;
             }
+        }
+        if(!found) {
+            cout << "Error: Didn't find any function " << $1.place << endl;
+            exit(-1);
         }
     };
 
@@ -958,9 +967,11 @@ args : argList
 argList : argList PUNC_COMMA expression
     {
         fprintf(fout, "Rule 104 \t\t argList -> argList PUNC_COMMA expression\n");
+        quadruple_push($3.place, $3.type, "push", "");
     };
     | expression
     {
+        quadruple_push($1.place, $1.type, "push", "");
         fprintf(fout, "Rule 105 \t\t argList -> expression\n");
     };
 

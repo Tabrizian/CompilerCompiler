@@ -1,6 +1,8 @@
 #ifndef STACK_H
 #define STACK_H
 
+#include <stddef.h>
+
 struct node {
 	void *data;
 	struct node *next;

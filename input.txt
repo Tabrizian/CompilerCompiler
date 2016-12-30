@@ -2,8 +2,10 @@ int #at00(int #af00)
 {
 int #ff00;
 
+
 }
 int #at01(int #af00)
 {
+    #at00(2);
 
 }

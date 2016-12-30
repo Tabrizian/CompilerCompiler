@@ -114,7 +114,7 @@ CR_CL [}]
     yylval.eval.next_list = NULL;
     strcpy(yylval.eval.place, yytext);
     yylval.eval.code = "";
-    yylval.eval.type = "integer";
+    yylval.eval.type = "int";
     return NUMCONST;
 }
 
@@ -144,7 +144,7 @@ CR_CL [}]
     }
 
     yylval.eval.code = "";
-    yylval.eval.type = "integer";
+    yylval.eval.type = "int";
     return BOOLCONST;
 }
 

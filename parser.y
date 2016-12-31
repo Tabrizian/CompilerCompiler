@@ -158,7 +158,7 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
 bool is_main_function(vector<symbol_table_entry> *symbol_table) {
     if(symbol_table->at(0).id.compare("#at00") == 0) {
         return true;
-    } else if(symbol_table->at(0).id.compare("link_back") == 0){
+    } else if(symbol_table->at(0).type.compare("link") == 0){
         symbol_table = symbol_table->at(0).backward;
         return is_main_function(symbol_table);
     } else {
@@ -179,7 +179,6 @@ void quadruple_print() {
 
     for(int i = 0; i < quadruple[0].size(); i++) {
         if(i == registers.at(0).line) {
-            symbol = 'F';
             myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
         }
             myfile << symbol << i << " : ";
@@ -596,7 +595,7 @@ localDeclarations :	localDeclarations scopedVarDeclaration
         entry.uid = num_of_tables;
 
         entry.forward = NULL;
-        entry.id = "link_back";
+        entry.id = to_string(current_symbol_table->size());
         entry.type = "link";
         entry.backward = current_symbol_table;
         current_symbol_table = current_symbol_table->back().forward;
@@ -946,11 +945,30 @@ call : ID PAR_OP args par_cl_var
     {
         fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args par_cl_var\n");
         bool found = false;
+        bool found_2 = false;
         for(int i = 0; i < start_symbol_table->size(); i++) {
             if(start_symbol_table->at(i).id.compare($1.place) == 0) {
                 found = true;
+                for(int j = 0; j < registers.size(); j++) {
+                    if(registers[j].id.compare($1.place) == 0) {
+                        found_2 = true;
+                        if(j == 0)
+                            quadruple_push(to_string(0), "", "goto", "");
+                        else
+                            quadruple_push(to_string(registers[j - 1].line), "", "goto", "");
+                        break;
+                    }
+                }
+
+                if(!found_2) {
+                    cout << "Error: function definition order not relevant " << $1.place << endl;
+                    exit(-1);
+                } else {
+                    break;
+                }
             }
         }
+
         if(!found) {
             cout << "Error: Didn't find any function " << $1.place << endl;
             exit(-1);

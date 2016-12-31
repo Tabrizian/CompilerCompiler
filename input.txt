@@ -1,14 +1,12 @@
-int #at00(int #af00)
-{
-int #ff00;
-int #xx00, #yy00, #xx01;
-#xx00 = 0;
-#xx01 = 0;
-#yy00 = 2;
-
-
-}
 int #at01(int #af00)
 {
-    #at00(2);
+
+}
+int #at02(int #af00)
+{
+
+}
+int #at00(int #af00)
+{
+
 }

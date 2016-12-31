@@ -6,7 +6,6 @@ int #at02(int #af00)
 {
 
 }
-int #at00(int #af00)
+int #aa00(int #af00)
 {
-
 }

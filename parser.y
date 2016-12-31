@@ -310,7 +310,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
-par_cl_var null_before_simple_expr else_var quadder
+par_cl_var par_op_var null_before_simple_expr else_var quadder
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -471,9 +471,9 @@ returnTypeSpecifier : KW_INT
         $$.type = "char";
     };
 
-funDeclaration : typeSpecifier ID PAR_OP params par_cl_var statement
+funDeclaration : typeSpecifier ID par_op_var params par_cl_var statement
     {
-        fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID PAR_OP params par_cl_var statement\n");
+        fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID par_op_var params par_cl_var statement\n");
         current_symbol_table->back().id = $2.place;
         current_symbol_table->back().type = $1.type;
         struct function_name function;
@@ -481,13 +481,13 @@ funDeclaration : typeSpecifier ID PAR_OP params par_cl_var statement
         function.line = quadruple[0].size();
         registers.push_back(function);
     };
-    | ID PAR_OP params par_cl_var statement
+    | ID par_op_var params par_cl_var statement
     {
-        fprintf(fout, "Rule 25 \t\t funDeclaration -> ID PAR_OP params par_cl_var statement\n");
+        fprintf(fout, "Rule 25 \t\t funDeclaration -> ID par_op_var params par_cl_var statement\n");
     };
-    | ID ID PAR_OP params par_cl_var statement
+    | ID ID par_op_var params par_cl_var statement
     {
-        fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID PAR_OP params par_cl_var statement\n");
+        fprintf(fout, "Rule 25.1 \t\t funDeclaration -> ID par_op_var params par_cl_var statement\n");
     };
 
 params : paramList
@@ -628,22 +628,22 @@ expressionStmt : expression KW_SEMICOLON
         fprintf(fout, "Rule 47 \t\t expressionStmt -> empty\n");
     };
 
-selectionStmt : KW_IF PAR_OP simpleExpression par_cl_var statement  %prec IF_WITHOUT_ELSE
+selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF_WITHOUT_ELSE
     {
-        fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement\n");
+        fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF par_op_var simpleExpression par_cl_var statement\n");
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
     };
-    | KW_IF PAR_OP simpleExpression par_cl_var  statement else_var   statement
+    | KW_IF par_op_var simpleExpression par_cl_var  statement else_var   statement
     {
-        fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF PAR_OP simpleExpression par_cl_var statement KW_ELSE statement\n");
+        fprintf(fout, "Rule 49 \t\t selectionStmt -> KW_IF par_op_var simpleExpression par_cl_var statement KW_ELSE statement\n");
         backpatch($3.true_list,$4.quad);
         backpatch($3.false_list, $6.quad+1);
         backpatch($6.quad,quadruple[0].size());
     };
-    | KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END
+    | KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END
     {
-        fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH PAR_OP simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
+        fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
     };
 
 
@@ -665,13 +665,13 @@ defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
         fprintf(fout, "Rule 54 \t\t defaultElement -> empty\n");
     };
 
-iterationStmt : KW_WHILE PAR_OP simpleExpression par_cl_var statement
+iterationStmt : KW_WHILE par_op_var simpleExpression par_cl_var statement
     {
         quadruple_push("","","goto","");
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
-        backpatch(create_node(quadruple[0].size()-1),$3.quad);
-        fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE PAR_OP simpleExpression par_cl_var statement\n");
+        backpatch(create_node(quadruple[0].size()-1),$2.quad);
+        fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE par_op_var simpleExpression par_cl_var statement\n");
     };
 
 returnStmt : KW_RETURN KW_SEMICOLON
@@ -928,9 +928,9 @@ mutable : ID
         fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
     };
 
-immutable : PAR_OP expression par_cl_var
+immutable : par_op_var expression par_cl_var
     {
-        fprintf(fout, "Rule 98 \t\t immutable -> PAR_OP expression par_cl_var\n");
+        fprintf(fout, "Rule 98 \t\t immutable -> par_op_var expression par_cl_var\n");
     };
     | call
     {
@@ -941,9 +941,9 @@ immutable : PAR_OP expression par_cl_var
         fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
     };
 
-call : ID PAR_OP args par_cl_var
+call : ID par_op_var args par_cl_var
     {
-        fprintf(fout, "Rule 101 \t\t call -> ID PAR_OP args par_cl_var\n");
+        fprintf(fout, "Rule 101 \t\t call -> ID par_op_var args par_cl_var\n");
         bool found = false;
         bool found_2 = false;
         for(int i = 0; i < start_symbol_table->size(); i++) {
@@ -1033,18 +1033,25 @@ constant : NUMCONST
 
 par_cl_var : PAR_CL
     {
-        fprintf(fout, "Rule 110 \t\t par_cl_var_VAR -> par_cl_var \n");
+        fprintf(fout, "Rule 110 \t\t par_cl_var -> par_cl \n");
         $$.quad = quadruple[0].size();
     };
+
+par_op_var : PAR_OP
+	{
+	fprintf(fout, "Rule 111 \t\t par_op_var -> par_op \n");
+        $$.quad = quadruple[0].size();
+	};
+
 else_var : KW_ELSE
     {
-        fprintf(fout, "Rule 111 \t\t else_var -> KW_ELSE \n");
+        fprintf(fout, "Rule 112 \t\t else_var -> KW_ELSE \n");
         $$.quad = quadruple[0].size();
         quadruple_push("","","goto","");
     }
 
 quadder : {
-        fprintf(fout, "Rule 112 \t\t quadder -> empty \n");
+        fprintf(fout, "Rule 113 \t\t quadder -> empty \n");
         $$.quad = quadruple[0].size();
 }
 

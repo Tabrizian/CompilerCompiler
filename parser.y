@@ -491,6 +491,10 @@ typeSpecifier : returnTypeSpecifier
     {
         fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
         $$.type = $1.type;
+    }
+    | KW_RECORD typeSpecifier
+    {
+        fprintf(fout, "Rule 19 \t\t typeSpecifier -> KW_RECORD returnTypeSpecifier\n");
     };
 
 returnTypeSpecifier : KW_INT

@@ -180,13 +180,15 @@ void quadruple_print() {
 
     int line = 0;
     int index = -1;
+    bool found = false;
     for(int i = 0; i < registers.size(); i++) {
         if(registers[i].id.compare("#aa00") == 0) {
             line = registers[i].line;
             index = i;
+            found = true;
         }
     }
-    if(line == 0) {
+    if(!found) {
         cout << "Error main function not defined" << endl;
         exit(-1);
     }
@@ -399,6 +401,10 @@ declaration : varDeclaration
 recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
     {
         fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
+        current_symbol_table = current_symbol_table->at(0).backward;
+        current_symbol_table->back().id = $2.place;
+        current_symbol_table->back().type = string("record ") + string($2.place);
+        $$.next_list = $4.next_list;
     };
 
 varDeclaration : typeSpecifier varDecList KW_SEMICOLON

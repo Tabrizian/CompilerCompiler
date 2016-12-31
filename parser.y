@@ -331,6 +331,7 @@ program : declarationList
         quadruple_print();
         print_symbol_table(start_symbol_table);
     };
+
 declarationList : declarationList declaration
     {
         fprintf(fout, "Rule 2 \t\t declarationList -> declarationList declaration\n");
@@ -587,23 +588,24 @@ localDeclarations :	localDeclarations scopedVarDeclaration
     {
         fprintf(fout, "Rule 43 \t\t localDeclarations -> empty\n");
         num_of_tables++;
-            struct symbol_table_entry entry;
-            entry.id = "statement_scope";
-            entry.type = "link";
-            entry.forward = create_symbol_table();
-            current_symbol_table->push_back(entry);
-            entry.uid = num_of_tables;
+        struct symbol_table_entry entry;
+        entry.id = "statement_scope";
+        entry.type = "link";
+        entry.forward = create_symbol_table();
+        current_symbol_table->push_back(entry);
+        entry.uid = num_of_tables;
 
-            entry.forward = NULL;
-            entry.id = "link_back";
-            entry.type = "link";
-            entry.backward = current_symbol_table;
-            current_symbol_table = current_symbol_table->back().forward;
-            current_symbol_table->push_back(entry);
+        entry.forward = NULL;
+        entry.id = "link_back";
+        entry.type = "link";
+        entry.backward = current_symbol_table;
+        current_symbol_table = current_symbol_table->back().forward;
+        current_symbol_table->push_back(entry);
 
         for(int i = 0; i < var_decleration[0].size(); i++)
         {
             symbol_table_insert(var_decleration[0][i], var_decleration[1][i]);
+            quadruple_push(var_decleration[0][i], var_decleration[1][i], "pop", "");
         }
         var_decleration[0].clear();
         var_decleration[1].clear();

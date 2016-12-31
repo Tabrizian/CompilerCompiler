@@ -686,6 +686,7 @@ returnStmt : KW_RETURN KW_SEMICOLON
 breakStmt : KW_BREAK KW_SEMICOLON
     {
           fprintf(fout, "Rule 58 \t\t breakStmt -> KW_BREAK KW_SEMICOLON\n");
+        quadruple_push("","","goto","");
     };
 
 expression : mutable KW_EQUAL expression

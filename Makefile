@@ -16,5 +16,8 @@ parse-debug:
 run:
 	./parser.out
 
+compile:
+	gcc intermediatecode.c stack.c stack.h
+
 clean:
 	rm lex.yy.c parser.tab.c parser.tab.h parser.out

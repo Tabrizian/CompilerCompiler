@@ -141,7 +141,13 @@ char* new_temp(char *c) {
 
 void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0 ;i < current_symbol_table->size(); i++) {
-        if(current_symbol_table->at(i).id[0] != '#') {
+        if(current_symbol_table->at(i).type[0] == 's') {
+            myfile << current_symbol_table->at(i).type << "{" << endl;
+            quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+            myfile << "};" << endl;
+            continue;
+        }
+        else if(current_symbol_table->at(i).id[0] != '#') {
             if(current_symbol_table->at(i).type == "int")
                 myfile << "int " << current_symbol_table->at(i).id << ";" << endl;
             else if(current_symbol_table->at(i).type == "real")
@@ -402,8 +408,10 @@ recDeclaration : KW_RECORD ID CR_OP localDeclarations CR_CL
     {
         fprintf(fout, "Rule 7 \t\t recDeclaration -> KW_RECORD ID CR_OP localDeclarations CR_CL\n");
         current_symbol_table = current_symbol_table->at(0).backward;
-        current_symbol_table->back().id = $2.place;
-        current_symbol_table->back().type = string("record ") + string($2.place);
+        string token = $2.place;
+        token = token.substr(1) + "_d" + to_string(current_symbol_table->at(0).uid);
+        current_symbol_table->back().id = token;
+        current_symbol_table->back().type = string("struct ") + token;
         $$.next_list = $4.next_list;
     };
 

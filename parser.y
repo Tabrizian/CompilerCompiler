@@ -592,26 +592,32 @@ paramId : ID
 
 statement : expressionStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 35 \t\t statement -> expressionStmt\n");
     };
     | compoundStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 36 \t\t statement -> compoundStmt\n");
     };
     | selectionStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 37 \t\t statement -> selectionStmt\n");
     };
     | iterationStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 38 \t\t statement -> iterationStmt\n");
     };
     | returnStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 39 \t\t statement -> returnStmt\n");
     };
     | breakStmt
     {
+        $$.next_list = $1.next_list;
         fprintf(fout, "Rule 40 \t\t statement -> breakStmt\n");
     };
 
@@ -619,7 +625,7 @@ compoundStmt :	CR_OP localDeclarations statementList CR_CL
     {
         fprintf(fout, "Rule 41 \t\t compoundStmt -> CR_OP localDeclarations statementList CR_CL\n");
         current_symbol_table = current_symbol_table->at(0).backward;
-
+        $$.next_list = $3.next_list;
     };
 
 localDeclarations :	localDeclarations scopedVarDeclaration
@@ -656,6 +662,7 @@ localDeclarations :	localDeclarations scopedVarDeclaration
 statementList :	statementList statement
     {
         fprintf(fout, "Rule 44 \t\t statementList -> statementList statement\n");
+        $$.next_list = $2.next_list;
     };
     |
     {
@@ -676,6 +683,7 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
         fprintf(fout, "Rule 48 \t\t selectionStmt -> KW_IF par_op_var simpleExpression par_cl_var statement\n");
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
+        $$.next_list = $5.next_list;
     };
     | KW_IF par_op_var simpleExpression par_cl_var  statement else_var   statement
     {
@@ -683,6 +691,7 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
         backpatch($3.true_list,$4.quad);
         backpatch($3.false_list, $6.quad+1);
         backpatch($6.quad,quadruple[0].size());
+        $$.next_list = $7.next_list;
     };
     | KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END
     {
@@ -714,6 +723,7 @@ iterationStmt : KW_WHILE par_op_var simpleExpression par_cl_var statement
         backpatch($3.false_list,quadruple[0].size());
         backpatch($3.true_list,$4.quad);
         backpatch(create_node(quadruple[0].size()-1),$2.quad);
+        backpatch($5.next_list,quadruple[0].size());
         fprintf(fout, "Rule 55 \t\t iterationStmt -> KW_WHILE par_op_var simpleExpression par_cl_var statement\n");
     };
 
@@ -733,6 +743,8 @@ returnStmt : KW_RETURN KW_SEMICOLON
 breakStmt : KW_BREAK KW_SEMICOLON
     {
           fprintf(fout, "Rule 58 \t\t breakStmt -> KW_BREAK KW_SEMICOLON\n");
+        $$.next_list = create_node(quadruple[0].size());
+        quadruple_push("","","goto","");
     };
 
 expression : mutable KW_EQUAL expression

@@ -4,5 +4,5 @@ record #aa11 {
 
 int #aa00()
 {
-    int #af00;
+    record #aa11 #aa10;
 }

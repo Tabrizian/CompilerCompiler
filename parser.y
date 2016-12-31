@@ -105,6 +105,7 @@ string symbol_table_lookup(string token) {
     return symbol_table_lookup(token, current_symbol_table);
 }
 
+
 vector<symbol_table_entry>* create_symbol_table() {
     vector<symbol_table_entry>* symbol_table = new vector<symbol_table_entry>();
     return symbol_table;
@@ -141,11 +142,13 @@ char* new_temp(char *c) {
 
 void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0 ;i < current_symbol_table->size(); i++) {
-        if(current_symbol_table->at(i).type[0] == 's') {
+        if(current_symbol_table->at(i).type[0] == 's' && current_symbol_table->at(i).forward) {
             myfile << current_symbol_table->at(i).type << "{" << endl;
             quadruple_print_symbol_table(current_symbol_table->at(i).forward);
             myfile << "};" << endl;
             continue;
+        } else if (current_symbol_table->at(i).type[0] == 's') {
+            myfile << current_symbol_table->at(i).type << " " << current_symbol_table->at(i).id << ";" << endl;
         }
         else if(current_symbol_table->at(i).id[0] != '#') {
             if(current_symbol_table->at(i).type == "int")
@@ -506,9 +509,10 @@ typeSpecifier : returnTypeSpecifier
         fprintf(fout, "Rule 18 \t\t typeSpecifier -> returnTypeSpecifier\n");
         $$.type = $1.type;
     }
-    | KW_RECORD typeSpecifier
+    | KW_RECORD ID
     {
         fprintf(fout, "Rule 19 \t\t typeSpecifier -> KW_RECORD returnTypeSpecifier\n");
+        $$.type = (char *) ("struct " +  symbol_table_lookup(string($2.place).substr(1))).c_str();
     };
 
 returnTypeSpecifier : KW_INT

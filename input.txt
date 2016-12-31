@@ -1,11 +1,10 @@
-int #at01(int #af00)
-{
-
-}
 int #at02(int #af00)
 {
+    return 2*#af00;
 
 }
-int #aa00(int #af00)
+int #aa00()
 {
+    int #af00 : #at02(2);
+
 }

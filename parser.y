@@ -38,6 +38,7 @@ vector <string> var_decleration[2];
 vector <symbol_table_entry> *start_symbol_table = new vector<symbol_table_entry>;
 vector <symbol_table_entry> *current_symbol_table = start_symbol_table;
 vector <string> quadruple[4];
+vector <string> quadruple_temp[4];
 vector <vector<symbol_table_entry> *> quad_symbol;
 vector <function_name> registers;
 ofstream myfile;
@@ -178,9 +179,11 @@ void quadruple_print() {
     quadruple_print_symbol_table(start_symbol_table);
 
     int line = 0;
+    int index = -1;
     for(int i = 0; i < registers.size(); i++) {
         if(registers[i].id.compare("#aa00") == 0) {
             line = registers[i].line;
+            index = i;
         }
     }
     if(line == 0) {
@@ -189,6 +192,10 @@ void quadruple_print() {
     }
 
     bool printed = false;
+    if(index == 0)
+            myfile << "goto L" << 0 << ";" << endl;
+    else
+            myfile << "goto L" << registers[index - 1].line << ";" << endl;
     for(int i = 0; i < quadruple[0].size(); i++) {
             if(i == line) {
                 myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
@@ -268,6 +275,27 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
     quadruple[2].push_back(op);
     quadruple[3].push_back(result);
     quad_symbol.push_back(current_symbol_table);
+}
+void quadruple_push_temp(string arg1, string arg2, string op, string result) {
+
+    if(arg1[0] == '#') {
+        arg1 = arg1.substr(1);
+        arg1 = symbol_table_lookup(arg1);
+    }
+    if(arg2[0] == '#') {
+        arg2 = arg2.substr(1);
+        arg2 = symbol_table_lookup(arg2);
+    }
+
+    if(result[0] == '#') {
+        result = result.substr(1);
+        result = symbol_table_lookup(result);
+    }
+
+    quadruple_temp[0].push_back(arg1);
+    quadruple_temp[1].push_back(arg2);
+    quadruple_temp[2].push_back(op);
+    quadruple_temp[3].push_back(result);
 }
 
 void quadruple_push(int row, string data) {
@@ -696,6 +724,10 @@ returnStmt : KW_RETURN KW_SEMICOLON
     | KW_RETURN expression KW_SEMICOLON
     {
         fprintf(fout, "Rule 57 \t\t returnStmt -> KW_RETURN expression KW_SEMICOLON\n");
+        string temp = new_temp("int");
+        quadruple_push(temp, "int", "pop", "");
+        quadruple_push($2.place, $2.type, "push", "");
+        quadruple_push(temp, "", "goto", "");
     };
 
 breakStmt : KW_BREAK KW_SEMICOLON
@@ -924,6 +956,7 @@ unaryop : KW_MINUS
 factor : immutable
     {
         fprintf(fout, "Rule 93 \t\t factor -> immutable\n");
+        $$.place = $1.place;
     };
     | mutable
     {
@@ -950,6 +983,9 @@ immutable : par_op_var expression par_cl_var
     | call
     {
         fprintf(fout, "Rule 99 \t\t immutable -> call\n");
+        $1.place = new_temp($1.type);
+        $$.place = $1.place;
+        quadruple_push($1.place, $1.type, "pop", "");
     };
     | constant
     {
@@ -961,12 +997,24 @@ call : ID par_op_var args par_cl_var
         fprintf(fout, "Rule 101 \t\t call -> ID par_op_var args par_cl_var\n");
         bool found = false;
         bool found_2 = false;
+        string temp = new_temp("int");
+        quadruple_push(to_string(quadruple[0].size() + 3 + quadruple_temp[0].size())
+            , "", ":=", temp);
+        quadruple_push(temp, "int", "push", "");
+        for(int i = 0;i < quadruple_temp[0].size(); i++) {
+            quadruple_push(quadruple_temp[0][i], quadruple_temp[1][i], quadruple_temp[2][i], quadruple_temp[3][i]);
+        }
+        quadruple_temp[0].clear();
+        quadruple_temp[1].clear();
+        quadruple_temp[2].clear();
+        quadruple_temp[3].clear();
         for(int i = 0; i < start_symbol_table->size(); i++) {
             if(start_symbol_table->at(i).id.compare($1.place) == 0) {
                 found = true;
                 for(int j = 0; j < registers.size(); j++) {
                     if(registers[j].id.compare($1.place) == 0) {
                         found_2 = true;
+                        $$.type = (char *)start_symbol_table->at(i).type.c_str();
                         if(j == 0)
                             quadruple_push(to_string(0), "", "goto", "");
                         else
@@ -1002,11 +1050,11 @@ args : argList
 argList : argList PUNC_COMMA expression
     {
         fprintf(fout, "Rule 104 \t\t argList -> argList PUNC_COMMA expression\n");
-        quadruple_push($3.place, $3.type, "push", "");
+        quadruple_push_temp($3.place, $3.type, "push", "");
     };
     | expression
     {
-        quadruple_push($1.place, $1.type, "push", "");
+        quadruple_push_temp($1.place, $1.type, "push", "");
         fprintf(fout, "Rule 105 \t\t argList -> expression\n");
     };
 

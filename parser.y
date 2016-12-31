@@ -87,10 +87,18 @@ vector<string> split(const string &s, char delim) {
 
 int num = 0;
 
-string symbol_table_lookup(string token, vector <symbol_table_entry> *current_symbol_table) {
+symbol_table_entry symbol_table_lookup(string token, vector <symbol_table_entry> *current_symbol_table) {
     for(int i = 0; i < current_symbol_table->size(); i++) {
-        if(current_symbol_table->at(i).id.compare(token + "_d" + to_string(current_symbol_table->at(0).uid)) == 0) {
-            return current_symbol_table->at(i).id;
+        if(token[0] == '#') {
+            token = token.substr(1);
+        }
+        if(token.find("_") != string::npos) {
+            if(current_symbol_table->at(i).id.compare(token) == 0) {
+                return current_symbol_table->at(i);
+            }
+        }
+        else if(current_symbol_table->at(i).id.compare(token + "_d" + to_string(current_symbol_table->at(0).uid)) == 0) {
+            return current_symbol_table->at(i);
         }
     }
     if(current_symbol_table->at(0).backward == NULL) {
@@ -101,7 +109,7 @@ string symbol_table_lookup(string token, vector <symbol_table_entry> *current_sy
     return symbol_table_lookup(token, current_symbol_table);
 }
 
-string symbol_table_lookup(string token) {
+symbol_table_entry symbol_table_lookup(string token) {
     return symbol_table_lookup(token, current_symbol_table);
 }
 
@@ -136,7 +144,7 @@ char* new_temp(char *c) {
     char *what = (char *) malloc(sizeof(char) * 100);
     strcpy(what, name.c_str());
     symbol_table_insert(what, c);
-    strcpy(what, symbol_table_lookup(what).c_str());
+    strcpy(what, symbol_table_lookup(what).id.c_str());
     return what;
 }
 
@@ -268,17 +276,14 @@ void quadruple_print() {
 void quadruple_push(string arg1, string arg2, string op, string result) {
 
     if(arg1[0] == '#') {
-        arg1 = arg1.substr(1);
-        arg1 = symbol_table_lookup(arg1);
+        arg1 = symbol_table_lookup(arg1).id;
     }
     if(arg2[0] == '#') {
-        arg2 = arg2.substr(1);
-        arg2 = symbol_table_lookup(arg2);
+        arg2 = symbol_table_lookup(arg2).id;
     }
 
     if(result[0] == '#') {
-        result = result.substr(1);
-        result = symbol_table_lookup(result);
+        result = symbol_table_lookup(result).id;
     }
 
     quadruple[0].push_back(arg1);
@@ -290,17 +295,14 @@ void quadruple_push(string arg1, string arg2, string op, string result) {
 void quadruple_push_temp(string arg1, string arg2, string op, string result) {
 
     if(arg1[0] == '#') {
-        arg1 = arg1.substr(1);
-        arg1 = symbol_table_lookup(arg1);
+        arg1 = symbol_table_lookup(arg1).id;
     }
     if(arg2[0] == '#') {
-        arg2 = arg2.substr(1);
-        arg2 = symbol_table_lookup(arg2);
+        arg2 = symbol_table_lookup(arg2).id;
     }
 
     if(result[0] == '#') {
-        result = result.substr(1);
-        result = symbol_table_lookup(result);
+        result = symbol_table_lookup(result).id;
     }
 
     quadruple_temp[0].push_back(arg1);
@@ -512,7 +514,7 @@ typeSpecifier : returnTypeSpecifier
     | KW_RECORD ID
     {
         fprintf(fout, "Rule 19 \t\t typeSpecifier -> KW_RECORD returnTypeSpecifier\n");
-        $$.type = (char *) ("struct " +  symbol_table_lookup(string($2.place).substr(1))).c_str();
+        $$.type = (char *) ("struct " +  symbol_table_lookup($2.place).id).c_str();
     };
 
 returnTypeSpecifier : KW_INT
@@ -1000,6 +1002,8 @@ factor : immutable
 mutable : ID
     {
         fprintf(fout, "Rule 95 \t\t mutable -> ID\n");
+        $$.type = (char *) symbol_table_lookup($1.place).type.c_str();
+        $$.place = (char *) symbol_table_lookup($1.place).id.c_str();
     };
     | mutable BR_OP expression BR_CL
     {
@@ -1008,6 +1012,18 @@ mutable : ID
     | mutable PUNC_DOT ID
     {
         fprintf(fout, "Rule 97 \t\t mutable -> mutable PUNC_DOT ID\n");
+        if($1.type[0] != 's') {
+            cout << "Only records can have DOT!" << endl;
+            exit(-1);
+        }
+        vector<symbol_table_entry> *symbol_table = symbol_table_lookup(string($1.type).substr(7)).forward;
+        $$.type = $1.type;
+        char *what = (char *) malloc(sizeof(char) * 100);
+        strcpy(what, $1.place);
+        what = strcat(what, ".");
+        what = strcat(what, symbol_table_lookup($3.place, symbol_table).id.c_str());
+        $$.place = what;
+
     };
 
 immutable : par_op_var expression par_cl_var

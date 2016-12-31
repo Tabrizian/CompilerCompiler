@@ -5,4 +5,6 @@ record #aa11 {
 int #aa00()
 {
     record #aa11 #aa10;
+    int #xx88 : 0;
+    #aa10.#xx11 = 2;
 }

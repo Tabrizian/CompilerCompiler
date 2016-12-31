@@ -177,10 +177,23 @@ void quadruple_print() {
     /* for print declaration of  variables*/
     quadruple_print_symbol_table(start_symbol_table);
 
-    for(int i = 0; i < quadruple[0].size(); i++) {
-        if(i == registers.at(0).line) {
-            myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
+    int line = 0;
+    for(int i = 0; i < registers.size(); i++) {
+        if(registers[i].id.compare("#aa00") == 0) {
+            line = registers[i].line;
         }
+    }
+    if(line == 0) {
+        cout << "Error main function not defined" << endl;
+        exit(-1);
+    }
+
+    bool printed = false;
+    for(int i = 0; i < quadruple[0].size(); i++) {
+            if(i == line) {
+                myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
+                printed = true;
+            }
             myfile << symbol << i << " : ";
             if(quadruple[2][i] == ":=")
                     myfile << quadruple[3][i] << " = " << quadruple[0][i] << ";"
@@ -228,6 +241,8 @@ void quadruple_print() {
             else if(quadruple[2][i] == "goto")
                     myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
     }
+    if(!printed)
+       myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
 
         myfile << endl << "}" << endl;
 }

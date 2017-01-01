@@ -195,6 +195,10 @@ void quadruple_print() {
             myfile << "struct stack *activation_stack = stack_create();\n";
     /* for print declaration of  variables*/
     quadruple_print_symbol_table(start_symbol_table);
+    for(int i = 0; i < registers.size(); i++) {
+        cout << registers[i].id << endl;
+        cout << registers[i].line << endl;
+    }
 
     int line = 0;
     int index = -1;
@@ -215,7 +219,7 @@ void quadruple_print() {
     if(index == 0)
             myfile << "goto L" << 0 << ";" << endl;
     else
-            myfile << "goto L" << registers[index - 1].line << ";" << endl;
+            myfile << "goto L" << registers[index].line << ";" << endl;
     for(int i = 0; i < quadruple[0].size(); i++) {
             if(i == line) {
                 myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
@@ -366,7 +370,7 @@ typeSpecifier returnTypeSpecifier funDeclaration params paramList paramTypeList
 paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
-mathlogicExpression unaryExpression unaryop factor mutable immutable call
+mathlogicExpression unaryExpression unaryop factor mutable immutable call funInitiation
 par_cl_var par_op_var null_before_simple_expr else_var quadder
 args argList constant
 %left KW_COND_OR
@@ -543,11 +547,20 @@ returnTypeSpecifier : KW_INT
         $$.type = "char";
     };
 
-funDeclaration : typeSpecifier ID par_op_var params par_cl_var statement
+funDeclaration : funInitiation statement
+    {
+        current_symbol_table->back();
+    };
+
+funInitiation : typeSpecifier ID par_op_var params par_cl_var
     {
         fprintf(fout, "Rule 24 \t\t funDeclaration -> typeSpecifier ID par_op_var params par_cl_var statement\n");
-        current_symbol_table->back().id = $2.place;
-        current_symbol_table->back().type = $1.type;
+        struct symbol_table_entry entry;
+        entry.type = $1.type;
+        entry.id = $2.place;
+        current_symbol_table->push_back(entry);
+        $$.type = $1.type;
+        $$.place = $2.place;
         struct function_name function;
         function.id = $2.place;
         function.line = quadruple[0].size();
@@ -1075,11 +1088,10 @@ call : ID par_op_var args par_cl_var
                 for(int j = 0; j < registers.size(); j++) {
                     if(registers[j].id.compare($1.place) == 0) {
                         found_2 = true;
-                        $$.type = (char *)start_symbol_table->at(i).type.c_str();
-                        if(j == 0)
-                            quadruple_push(to_string(0), "", "goto", "");
-                        else
-                            quadruple_push(to_string(registers[j - 1].line), "", "goto", "");
+                        char *what = (char *) malloc(sizeof(char) * 100);
+                        strcpy(what, start_symbol_table->at(i).type.c_str());
+                        $$.type = what;
+                        quadruple_push(to_string(registers[j].line), "", "goto", "");
                         break;
                     }
                 }
@@ -1115,8 +1127,8 @@ argList : argList PUNC_COMMA expression
     };
     | expression
     {
-        quadruple_push_temp($1.place, $1.type, "push", "");
         fprintf(fout, "Rule 105 \t\t argList -> expression\n");
+        quadruple_push_temp($1.place, $1.type, "push", "");
     };
 
 constant : NUMCONST

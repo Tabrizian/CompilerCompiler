@@ -216,6 +216,12 @@ void quadruple_print() {
     }
 
     bool printed = false;
+    myfile << "const void *labels[] = {";
+    for(int i = 0; i < quadruple[0].size() - 1; i++) {
+        myfile << "&&L" << i << ", ";
+    }
+    myfile << "&&L" << quadruple[0].size() - 1 << "};" << endl;
+
     if(index == 0)
             myfile << "goto L" << 0 << ";" << endl;
     else
@@ -269,8 +275,13 @@ void quadruple_print() {
                 myfile <<  "stack_push(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
             else if(quadruple[2][i] == "pop")
                 myfile <<  "stack_pop(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
-            else if(quadruple[2][i] == "goto")
-                    myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
+            else if(quadruple[2][i] == "goto") {
+                    if(quadruple[0][i][0] != 'L') {
+                        myfile << "goto *labels[" << quadruple[0][i] << "];"<<endl;
+                    } else {
+                        myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
+                    }
+            }
     }
     if(!printed)
        myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;

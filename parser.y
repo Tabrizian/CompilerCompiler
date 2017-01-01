@@ -368,7 +368,7 @@ paramIdList paramId statement compoundStmt localDeclarations statementList
 expressionStmt selectionStmt caseElement defaultElement iterationStmt
 returnStmt breakStmt expression simpleExpression relExpression relop
 mathlogicExpression unaryExpression unaryop factor mutable immutable call
-par_cl_var par_op_var null_before_simple_expr else_var quadder
+par_cl_var par_op_var null_before_simple_expr else_var quadder switch_var
 args argList constant
 %left KW_COND_OR
 %left KW_COND_AND
@@ -723,11 +723,12 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
         backpatch($6.quad,quadruple[0].size());
         $$.next_list = $7.next_list;
     };
-    | KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END
+    | switch_var par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END
     {
-        fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
+        fprintf(fout, "Rule 50 \t\t selectionStmt -> switch_var par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
         struct node *current;
         struct node *currentAddress;
+        backpatch($1.next_list, quadruple[0].size());
         for(current = $5.case_list, currentAddress=$5.case_address_list;
             current != NULL; current = current->link, currentAddress=currentAddress->link) {
         char *what = (char *) malloc (sizeof(char)*100);
@@ -741,6 +742,10 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
         strcpy(cast,to_string(currentAddress->data).c_str());
         quadruple_push(cast,"","goto","");
         }
+        char *cast2 = (char *)malloc(sizeof(char)*100);
+        strcpy(cast2,to_string($6.quad).c_str());
+        quadruple_push(cast2,"","goto","");
+        backpatch($6.next_list,quadruple[0].size());
     };
 
 
@@ -757,13 +762,20 @@ caseElement : KW_CASE NUMCONST KW_COLON quadder  statement KW_SEMICOLON
         $$.case_address_list = merge_lists($1.case_address_list, (create_node($5.quad)));
     };
 
-defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON
+defaultElement : KW_DEFAULT KW_COLON quadder statement KW_SEMICOLON
     {
         fprintf(fout, "Rule 53 \t\t defaultElement -> KW_DEFAULT KW_COLON statement KW_SEMICOLON\n");
+        $$.quad = $3.quad;
+        quadruple_push("","","goto","");
+        $$.next_list = create_node(quadruple[0].size()-1);
     };
     |
     {
+        $$.quad = quadruple[0].size();
         fprintf(fout, "Rule 54 \t\t defaultElement -> empty\n");
+         quadruple_push("","","goto","");
+        $$.next_list = create_node(quadruple[0].size()-1);
+
     };
 
 iterationStmt : KW_WHILE par_op_var simpleExpression par_cl_var statement
@@ -1197,6 +1209,12 @@ else_var : KW_ELSE
 quadder : {
         fprintf(fout, "Rule 113 \t\t quadder -> empty \n");
         $$.quad = quadruple[0].size();
+}
+
+switch_var : KW_SWITCH{
+        fprintf(fout, "Rule 114 \t\t switch_var -> KW_SWITCH");
+        quadruple_push("","","goto","");
+        $$.next_list = create_node(quadruple[0].size()-1);
 }
 
 %%

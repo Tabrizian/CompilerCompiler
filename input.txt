@@ -1,17 +1,15 @@
-record #aa22 {
-    int #xx11;
-}
-
 record #aa11 {
     int #xx11;
-    record #aa22 #ab11;
 }
 
-int #aa11() {
+int #aa11(record #aa11 #aa21) {
+    #aa21.#xx11 = 2;
+    return #aa21.#xx11;
 }
 
 int #aa00()
 {
     record #aa11 #aa10;
-    #aa10.#ab11.#xx11 = 2;
+    #aa10.#xx11 = 5;
+    #aa11(#aa10);
 }

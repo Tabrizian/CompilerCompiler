@@ -24,6 +24,7 @@ int num_of_tables = 0;
 struct symbol_table_entry {
     string id;
     string type;
+    bool is_array = false;
     vector <symbol_table_entry> *forward = NULL;
     vector <symbol_table_entry> *backward = NULL;
     int uid = 0;
@@ -490,6 +491,7 @@ varDeclId : ID
     | ID BR_OP NUMCONST BR_CL
     {
         fprintf(fout, "Rule 15 \t\t varDeclId -> ID BR_OP NUMCONST BR_CL\n");
+        $$.code = $1.place;
     };
 
 scopedTypeSpecifier : KW_STATIC typeSpecifier
@@ -515,7 +517,10 @@ typeSpecifier : returnTypeSpecifier
     | KW_RECORD ID
     {
         fprintf(fout, "Rule 19 \t\t typeSpecifier -> KW_RECORD returnTypeSpecifier\n");
-        $$.type = (char *) ("struct " +  symbol_table_lookup($2.place).id).c_str();
+
+        char *what = (char *) malloc(sizeof(char) * 100);
+        strcpy(what, ("struct " +  symbol_table_lookup($2.place).id).c_str());
+        $$.type = what;
     };
 
 returnTypeSpecifier : KW_INT
@@ -1022,8 +1027,12 @@ factor : immutable
 mutable : ID
     {
         fprintf(fout, "Rule 95 \t\t mutable -> ID\n");
-        $$.type = (char *) symbol_table_lookup($1.place).type.c_str();
-        $$.place = (char *) symbol_table_lookup($1.place).id.c_str();
+        char *what1 = (char *) malloc(sizeof(char) * 100);
+        strcpy(what1, symbol_table_lookup($1.place).type.c_str());
+        char *what2 = (char *) malloc(sizeof(char) * 100);
+        strcpy(what2, symbol_table_lookup($1.place).id.c_str());
+        $$.type = what1;
+        $$.place = what2;
     };
     | mutable BR_OP expression BR_CL
     {
@@ -1037,9 +1046,11 @@ mutable : ID
             exit(-1);
         }
         vector<symbol_table_entry> *symbol_table = symbol_table_lookup(string($1.type).substr(7)).forward;
-        $$.type = $1.type;
         char *what = (char *) malloc(sizeof(char) * 100);
         strcpy(what, $1.place);
+        char *what2 = (char *) malloc(sizeof(char) * 100);
+        $$.type = what2;
+        strcpy(what2, symbol_table_lookup($3.place, symbol_table).type.c_str());
         what = strcat(what, ".");
         what = strcat(what, symbol_table_lookup($3.place, symbol_table).id.c_str());
         $$.place = what;

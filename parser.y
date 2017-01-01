@@ -969,11 +969,26 @@ relExpression : mathlogicExpression relop mathlogicExpression
         fprintf(fout, "Rule 73 \t\t relExpression -> mathlogicExpression relop mathlogicExpression\n");
         //$$.place = $1.place;
         $$.place = new_temp("int");
-        quadruple_push($1.place, $3.place, $2.place, $$.place);
+        //quadruple_push($1.place, $3.place, $2.place, $$.place);
         $$.true_list = create_node(quadruple[0].size() + 1);
         $$.false_list = create_node(quadruple[0].size() + 2);
-        $$.type = "int";
-        quadruple_push($$.place, "", "if", "");
+        $$.type = "bool";
+        char* temp = (char *) malloc (sizeof(char)*100);
+        strcpy(temp,$1.place);
+        if(strcmp($2.place , ".lt")==0)
+            strcat(temp," < ");
+        else if(strcmp($2.place , ".le")==0)
+            strcat(temp," <= ");
+        else if(strcmp($2.place , ".gt")==0)
+            strcat(temp," > ");
+        else if(strcmp($2.place , ".ge")==0)
+            strcat(temp," >= ");
+        else if(strcmp($2.place , ".eq")==0)
+            strcat(temp," == ");
+        else if(strcmp($2.place , ".ne")==0)
+            strcat(temp," != ");
+        strcat(temp,$3.place);
+        quadruple_push(temp, "", "if", "");
         quadruple_push("", "", "goto", "");
         quadruple_push("", "", "goto", "");
     };

@@ -1,10 +1,17 @@
+record #aa22 {
+    int #xx11;
+}
+
 record #aa11 {
     int #xx11;
+    record #aa22 #ab11;
+}
+
+int #aa11() {
 }
 
 int #aa00()
 {
     record #aa11 #aa10;
-    int #xx88 : 0;
-    #aa10.#xx11 = 2;
+    #aa10.#ab11.#xx11 = 2;
 }

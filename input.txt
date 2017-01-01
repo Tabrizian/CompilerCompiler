@@ -11,5 +11,7 @@ int #aa00()
 {
     record #aa11 #aa10;
     #aa10.#xx11 = 5;
-    #aa11(#aa10);
+    if(#aa10.#xx11 .gt 2) {
+        #aa11(#aa10);
+    }
 }

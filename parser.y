@@ -94,6 +94,9 @@ symbol_table_entry symbol_table_lookup(string token, vector <symbol_table_entry>
         if(token[0] == '#') {
             token = token.substr(1);
         }
+        if(token.back() == '*') {
+            token.pop_back();
+        }
         if(token.find("_") != string::npos) {
             if(current_symbol_table->at(i).id.compare(token) == 0) {
                 return current_symbol_table->at(i);
@@ -159,7 +162,7 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
             continue;
         } else if (current_symbol_table->at(i).type[0] == 's') {
             myfile << current_symbol_table->at(i).type << " " << current_symbol_table->at(i).id
-           << "=(" <<  current_symbol_table->at(i).type << "*)  malloc(sizeof(" << current_symbol_table->at(i).type<< "));" << endl;
+           << "=(" <<  current_symbol_table->at(i).type << ")  malloc(sizeof(" << current_symbol_table->at(i).type<< "));" << endl;
         }
         else if(current_symbol_table->at(i).id[0] != '#') {
             if(current_symbol_table->at(i).type == "int")
@@ -564,7 +567,7 @@ typeSpecifier : returnTypeSpecifier
         fprintf(fout, "Rule 19 \t\t typeSpecifier -> KW_RECORD returnTypeSpecifier\n");
 
         char *what = (char *) malloc(sizeof(char) * 100);
-        strcpy(what, ("struct " +  symbol_table_lookup($2.place).id).c_str());
+        strcpy(what, ("struct " +  symbol_table_lookup($2.place).id + "*").c_str());
         $$.type = what;
     };
 

@@ -1,10 +1,15 @@
-int #ff00(int #ff11)
+record #aa22{
+    int #xx22;
+}
+int #ff00(record #aa22 #aa11)
 {
-    return 2 * #ff11;
+
+    return #aa11.#xx22;
 }
 
 int #aa00()
 {
-    #ff00(10);
+    record #aa22 #aa11;
+    #ff00(#aa11);
     return;
 }

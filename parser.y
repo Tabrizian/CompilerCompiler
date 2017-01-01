@@ -158,7 +158,8 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
             myfile << "};" << endl;
             continue;
         } else if (current_symbol_table->at(i).type[0] == 's') {
-            myfile << current_symbol_table->at(i).type << " " << current_symbol_table->at(i).id << ";" << endl;
+            myfile << current_symbol_table->at(i).type << " " << current_symbol_table->at(i).id
+           << "=(" <<  current_symbol_table->at(i).type << "*)  malloc(sizeof(" << current_symbol_table->at(i).type<< "));" << endl;
         }
         else if(current_symbol_table->at(i).id[0] != '#') {
             if(current_symbol_table->at(i).type == "int")
@@ -173,17 +174,6 @@ void quadruple_print_symbol_table(vector <symbol_table_entry> *current_symbol_ta
         }
     }
 
-}
-
-bool is_main_function(vector<symbol_table_entry> *symbol_table) {
-    if(symbol_table->at(0).id.compare("#at00") == 0) {
-        return true;
-    } else if(symbol_table->at(0).type.compare("link") == 0){
-        symbol_table = symbol_table->at(0).backward;
-        return is_main_function(symbol_table);
-    } else {
-        return false;
-    }
 }
 
 void quadruple_print() {
@@ -269,9 +259,9 @@ void quadruple_print() {
                    myfile << "if" << " ( " <<quadruple[0][i] << " ) "
                        <<  quadruple[1][i]  << endl;
             else if(quadruple[2][i] == "push")
-                myfile <<  "stack_push(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
+                myfile <<  "stack_push(activation_stack, &(" << quadruple[0][i] << "),sizeof(" << quadruple[1][i] << "));" <<endl;
             else if(quadruple[2][i] == "pop")
-                myfile <<  "stack_pop(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
+                myfile <<  "stack_pop(activation_stack, &(" << quadruple[0][i] << "),sizeof(" << quadruple[1][i] << "));" <<endl;
             else if(quadruple[2][i] == "goto") {
                 myfile << "goto *labels[" << quadruple[0][i] << "];"<<endl;
             } else if(quadruple[2][i] == "comment") {
@@ -1131,7 +1121,7 @@ mutable : ID
         char *what2 = (char *) malloc(sizeof(char) * 100);
         $$.type = what2;
         strcpy(what2, symbol_table_lookup($3.place, symbol_table).type.c_str());
-        what = strcat(what, ".");
+        what = strcat(what, "->");
         what = strcat(what, symbol_table_lookup($3.place, symbol_table).id.c_str());
         $$.place = what;
 

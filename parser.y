@@ -337,6 +337,7 @@ bool once = false;
         struct node *false_list;
         struct node *next_list;
         struct node *case_list;
+        struct node *case_address_list;
         int quad;
         int is_boolean;
         char *place;
@@ -720,16 +721,35 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
     | KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END
     {
         fprintf(fout, "Rule 50 \t\t selectionStmt -> KW_SWITCH par_op_var simpleExpression par_cl_var caseElement defaultElement KW_END declaration\n");
+        struct node *current;
+        struct node *currentAddress;
+        for(current = $5.case_list, currentAddress=$5.case_address_list;
+            current != NULL; current = current->link, currentAddress=currentAddress->link) {
+        char *what = (char *) malloc (sizeof(char)*100);
+        strcpy(what,to_string(current->data).c_str());
+        char* temp = (char *) malloc (sizeof(char)*100);
+        strcpy(temp , $3.place);
+        strcat(temp , "==");
+        strcat(temp , what);
+        quadruple_push(temp,"","if","");
+        char *cast = (char *)malloc(sizeof(char)*100);
+        strcpy(cast,to_string(currentAddress->data).c_str());
+        quadruple_push(cast,"","goto","");
+        }
     };
 
 
-caseElement : KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON
+caseElement : KW_CASE NUMCONST KW_COLON quadder  statement KW_SEMICOLON
     {
         fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
+        $$.case_list = create_node(atoi($2.place));
+        $$.case_address_list = create_node($4.quad);
     };
-    | caseElement KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON
+    | caseElement KW_CASE NUMCONST KW_COLON quadder statement KW_SEMICOLON
     {
         fprintf(fout, "Rule 52 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
+        $$.case_list = merge_lists($1.case_list, (create_node(atoi($3.place))));
+        $$.case_address_list = merge_lists($1.case_address_list, (create_node($5.quad)));
     };
 
 defaultElement : KW_DEFAULT KW_COLON statement KW_SEMICOLON

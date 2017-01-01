@@ -52,6 +52,7 @@ void temp_symbol_table_insert(string token, char *type) {
     var_decleration[1].push_back(type);
 }
 
+
 void print_symbol_table(vector<symbol_table_entry> *start_symbol_table) {
     for(int i = 0; i < indent; i++, cout << "\t");
     cout << "========" << endl;
@@ -227,10 +228,6 @@ void quadruple_print() {
     else
             myfile << "goto L" << registers[index].line << ";" << endl;
     for(int i = 0; i < quadruple[0].size(); i++) {
-            if(i == line) {
-                myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
-                printed = true;
-            }
             myfile << symbol << i << " : ";
             if(quadruple[2][i] == ":=")
                     myfile << quadruple[3][i] << " = " << quadruple[0][i] << ";"
@@ -276,14 +273,11 @@ void quadruple_print() {
             else if(quadruple[2][i] == "pop")
                 myfile <<  "stack_pop(activation_stack, &" << quadruple[0][i] << ",sizeof(" << quadruple[1][i] << "));" <<endl;
             else if(quadruple[2][i] == "goto") {
-                    if(quadruple[0][i][0] != 'L') {
-                        myfile << "goto *labels[" << quadruple[0][i] << "];"<<endl;
-                    } else {
-                        myfile << "goto " << symbol << quadruple[0][i] << ";"<<endl;
-                    }
+                myfile << "goto *labels[" << quadruple[0][i] << "];"<<endl;
+            } else if(quadruple[2][i] == "comment") {
+                myfile << "//" << quadruple[0][i] << endl;
             }
     }
-    if(!printed)
        myfile << symbol << quadruple[0].size() << ":" << " return 0;" << endl;
 
         myfile << endl << "}" << endl;
@@ -344,6 +338,52 @@ void backpatch(int address, int data) {
 
 bool once = false;
 
+void save_environment(vector<symbol_table_entry> *current_symbol_table) {
+    for(int i = 0; i < current_symbol_table->size(); i++) {
+        if(current_symbol_table->at(i).type[0] == 's' && current_symbol_table->at(i).forward) {
+            //myfile << current_symbol_table->at(i).type << "{" << endl;
+            //quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+            //myfile << "};" << endl;
+            //continue;
+        } else if (current_symbol_table->at(i).type[0] == 's') {
+            quadruple_push(current_symbol_table->at(i).id, current_symbol_table->at(i).type, "push", "");
+        }
+        else if(current_symbol_table->at(i).id[0] != '#') {
+            if(current_symbol_table->at(i).type == "int")
+                quadruple_push(current_symbol_table->at(i).id, "int", "push", "");
+            else if(current_symbol_table->at(i).type == "real")
+                quadruple_push(current_symbol_table->at(i).id, "double", "push", "");
+            else if(current_symbol_table->at(i).type == "char")
+                quadruple_push(current_symbol_table->at(i).id, "char", "push", "");
+        }
+        if(current_symbol_table->at(i).forward) {
+            save_environment(current_symbol_table->at(i).forward);
+        }
+    }
+}
+void restore_environment(vector<symbol_table_entry> *current_symbol_table) {
+    for(int i = current_symbol_table->size() - 1; i >= 0; i--) {
+        if(current_symbol_table->at(i).forward) {
+            quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+        }
+        if(current_symbol_table->at(i).type[0] == 's' && current_symbol_table->at(i).forward) {
+            //myfile << current_symbol_table->at(i).type << "{" << endl;
+            //quadruple_print_symbol_table(current_symbol_table->at(i).forward);
+            //myfile << "};" << endl;
+            //continue;
+        } else if (current_symbol_table->at(i).type[0] == 's') {
+            quadruple_push(current_symbol_table->at(i).id, current_symbol_table->at(i).type, "pop", "");
+        }
+        else if(current_symbol_table->at(i).id[0] != '#') {
+            if(current_symbol_table->at(i).type == "int")
+                quadruple_push(current_symbol_table->at(i).id, "int", "pop", "");
+            else if(current_symbol_table->at(i).type == "real")
+                quadruple_push(current_symbol_table->at(i).id, "double", "pop", "");
+            else if(current_symbol_table->at(i).type == "char")
+                quadruple_push(current_symbol_table->at(i).id, "char", "pop", "");
+        }
+    }
+}
 
 %}
 
@@ -822,6 +862,7 @@ returnStmt : KW_RETURN KW_SEMICOLON
     | KW_RETURN expression KW_SEMICOLON
     {
         fprintf(fout, "Rule 57 \t\t returnStmt -> KW_RETURN expression KW_SEMICOLON\n");
+        quadruple_push("Beginning of return statement", "", "comment", "");
         string temp = new_temp("int");
         quadruple_push(temp, "int", "pop", "");
         quadruple_push($2.place, $2.type, "push", "");
@@ -1103,9 +1144,11 @@ immutable : par_op_var expression par_cl_var
     | call
     {
         fprintf(fout, "Rule 99 \t\t immutable -> call\n");
+        restore_environment(current_symbol_table);
         $1.place = new_temp($1.type);
         $$.place = $1.place;
         quadruple_push($1.place, $1.type, "pop", "");
+
     };
     | constant
     {
@@ -1117,7 +1160,9 @@ call : ID par_op_var args par_cl_var
         fprintf(fout, "Rule 101 \t\t call -> ID par_op_var args par_cl_var\n");
         bool found = false;
         bool found_2 = false;
+        quadruple_push_temp(string("Related call for function ") + $1.place,"", "comment", "");
         string temp = new_temp("int");
+        save_environment(current_symbol_table);
         quadruple_push(to_string(quadruple[0].size() + 3 + quadruple_temp[0].size())
             , "", ":=", temp);
         quadruple_push(temp, "int", "push", "");

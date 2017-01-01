@@ -1,9 +1,10 @@
 int #ff00(int #ff11)
 {
-    return ##ff00(#ff11 - 1);
+    return 2 * #ff11;
 }
 
 int #aa00()
 {
-    #ff00(2);
+    #ff00(10);
+    return;
 }

@@ -1109,6 +1109,7 @@ factor : immutable
     | mutable
     {
         fprintf(fout, "Rule 94 \t\t factor -> mutable\n");
+        $$.place = $1.place;
     };
 
 mutable : ID
@@ -1160,6 +1161,7 @@ immutable : par_op_var expression par_cl_var
     | constant
     {
         fprintf(fout, "Rule 100 \t\t immutable -> constant\n");
+        $$.place = $1.place;
     };
 
 call : ID par_op_var args par_cl_var

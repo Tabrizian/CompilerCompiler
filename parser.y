@@ -731,21 +731,22 @@ selectionStmt : KW_IF par_op_var simpleExpression par_cl_var statement  %prec IF
         backpatch($1.next_list, quadruple[0].size());
         for(current = $5.case_list, currentAddress=$5.case_address_list;
             current != NULL; current = current->link, currentAddress=currentAddress->link) {
-        char *what = (char *) malloc (sizeof(char)*100);
-        strcpy(what,to_string(current->data).c_str());
-        char* temp = (char *) malloc (sizeof(char)*100);
-        strcpy(temp , $3.place);
-        strcat(temp , "==");
-        strcat(temp , what);
-        quadruple_push(temp,"","if","");
-        char *cast = (char *)malloc(sizeof(char)*100);
-        strcpy(cast,to_string(currentAddress->data).c_str());
-        quadruple_push(cast,"","goto","");
+            char *what = (char *) malloc (sizeof(char)*100);
+            strcpy(what,to_string(current->data).c_str());
+            char* temp = (char *) malloc (sizeof(char)*100);
+            strcpy(temp , $3.place);
+            strcat(temp , "==");
+            strcat(temp , what);
+            quadruple_push(temp,"","if","");
+            char *cast = (char *)malloc(sizeof(char)*100);
+            strcpy(cast,to_string(currentAddress->data).c_str());
+            quadruple_push(cast,"","goto","");
         }
         char *cast2 = (char *)malloc(sizeof(char)*100);
         strcpy(cast2,to_string($6.quad).c_str());
         quadruple_push(cast2,"","goto","");
         backpatch($6.next_list,quadruple[0].size());
+        backpatch($5.next_list,quadruple[0].size());
     };
 
 
@@ -754,12 +755,14 @@ caseElement : KW_CASE NUMCONST KW_COLON quadder  statement KW_SEMICOLON
         fprintf(fout, "Rule 51 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
         $$.case_list = create_node(atoi($2.place));
         $$.case_address_list = create_node($4.quad);
+        $$.next_list = $5.next_list;
     };
     | caseElement KW_CASE NUMCONST KW_COLON quadder statement KW_SEMICOLON
     {
         fprintf(fout, "Rule 52 \t\t caseElement -> KW_CASE NUMCONST KW_COLON statement KW_SEMICOLON\n");
         $$.case_list = merge_lists($1.case_list, (create_node(atoi($3.place))));
         $$.case_address_list = merge_lists($1.case_address_list, (create_node($5.quad)));
+        $$.next_list = merge_lists($1.next_list,$6.next_list);
     };
 
 defaultElement : KW_DEFAULT KW_COLON quadder statement KW_SEMICOLON

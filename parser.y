@@ -1029,7 +1029,6 @@ relExpression : mathlogicExpression relop mathlogicExpression
     | mathlogicExpression
     {
         fprintf(fout, "Rule 74 \t\t relExpression -> mathlogicExpression\n");
-
         $$.place = new_temp("int");
         $$.place = $1.place;
     };

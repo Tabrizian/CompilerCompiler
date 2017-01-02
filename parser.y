@@ -240,6 +240,8 @@ void quadruple_print() {
             else if(quadruple[2][i] == "%")
                     myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " % "
                         <<  quadruple[1][i] << ";" << endl;
+            else if(quadruple[2][i] == "minus")
+                    myfile << quadruple[3][i] << " = "<<" -1 * " <<quadruple[0][i]  << ";" << endl;
             else if(quadruple[2][i] == ".le")
                     myfile << quadruple[3][i] << " = " <<quadruple[0][i] << " <= "
                         <<  quadruple[1][i] << ";" << endl;
@@ -1082,15 +1084,22 @@ mathlogicExpression : mathlogicExpression KW_PLUS mathlogicExpression
 unaryExpression : unaryop unaryExpression
     {
         fprintf(fout, "Rule 88 \t\t unaryExpression -> unaryop unaryExpression\n");
+        if(strcmp($1.place , "minus")==0){
+            $$.place = new_temp("int");
+            $$.type = $1.type;
+            quadruple_push($2.place,"","minus",$$.place);
+        }
     };
     | factor
     {
+        $$.place = $1.place;
         fprintf(fout, "Rule 89 \t\t unaryExpression -> factor\n");
     };
 
 unaryop : KW_MINUS
     {
         fprintf(fout, "Rule 90 \t\t unaryop -> KW_MINUS\n");
+        $$.place = "minus";
     };
     | KW_MULTIPLY
     {
@@ -1147,6 +1156,9 @@ mutable : ID
 
 immutable : par_op_var expression par_cl_var
     {
+        $$.type = $2.type;
+        $$.place = $2.place;
+
         fprintf(fout, "Rule 98 \t\t immutable -> par_op_var expression par_cl_var\n");
     };
     | call

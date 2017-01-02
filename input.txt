@@ -3,13 +3,14 @@ record #aa22{
 }
 int #ff00(record #aa22 #aa11)
 {
-
     return #aa11.#xx22;
 }
 
 int #aa00()
 {
-    record #aa22 #aa11;
-    #ff00(#aa11);
+    int #xx11 : 0;
+    if(#xx11 .gt 2) {
+        #xx11++;
+    }
     return;
 }

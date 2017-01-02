@@ -183,6 +183,7 @@ void quadruple_print() {
 
     myfile.open("intermediatecode.c");
     myfile << "#include <stdio.h>\n\n";
+    myfile << "#include <stdlib.h>\n\n";
     myfile << "#include \"stack.h\"\n\n";
     myfile << endl<<"int main(){\n\n";
 

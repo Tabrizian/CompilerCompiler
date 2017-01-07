@@ -67,7 +67,7 @@ void print_symbol_table(vector<symbol_table_entry> *start_symbol_table) {
         }
     }
     for(int i = 0; i < indent; i++, cout << "\t");
-    cout << "========" << endl;
+    cout << "=========" << endl;
     indent--;
 }
 

@@ -7,5 +7,6 @@ Running is pretty simple:
 make
 ```
 
-
-this project is done by Mr. iman tabrizian and mahdi samiei
+# Contributors
+* Mohammad Mahdi Samiei Paqale
+* Iman Tabrizian
